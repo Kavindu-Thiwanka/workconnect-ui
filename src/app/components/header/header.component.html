@@ -1,0 +1,19 @@
+<nav class="navbar">
+  <div class="nav-brand">
+    <a routerLink="/">WorkConnect</a>
+  </div>
+  <ul class="nav-links">
+    <ng-container *ngIf="!currentUser">
+      <li><a routerLink="/login">Login</a></li>
+      <li><a routerLink="/register">Register</a></li>
+    </ng-container>
+
+    <ng-container *ngIf="currentUser">
+      <li><span>Welcome, {{ currentUser.username }}</span></li>
+      <li><a routerLink="/profile">Profile</a></li>
+      <li><a routerLink="/jobs">Find Jobs</a></li>
+      <li><a routerLink="/post-job">Post Job</a></li>
+      <li><a (click)="onLogout()" style="cursor: pointer;">Logout</a></li>
+    </ng-container>
+  </ul>
+</nav>

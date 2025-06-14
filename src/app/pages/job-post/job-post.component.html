@@ -1,0 +1,45 @@
+<div class="form-container">
+  <h2>Post a New Job</h2>
+  <p>Fill out the details below to find the perfect candidate.</p>
+
+  <form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="title">Job Title</label>
+      <input id="title" type="text" formControlName="title" placeholder="e.g., Senior Carpenter">
+      <div *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched" class="error-text">
+        Job title is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="location">Location</label>
+      <input id="location" type="text" formControlName="location" placeholder="e.g., Colombo, Sri Lanka">
+      <div *ngIf="jobForm.get('location')?.invalid && jobForm.get('location')?.touched" class="error-text">
+        Location is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="salary">Salary (Optional)</label>
+      <input id="salary" type="text" formControlName="salary" placeholder="e.g., LKR 80,000 / month">
+    </div>
+
+    <div class="form-group">
+      <label for="requiredSkills">Required Skills</label>
+      <input id="requiredSkills" type="text" formControlName="requiredSkills" placeholder="e.g., Woodworking, Finishing, Tool Maintenance">
+      <div *ngIf="jobForm.get('requiredSkills')?.invalid && jobForm.get('requiredSkills')?.touched" class="error-text">
+        Required skills are necessary.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Job Description</label>
+      <textarea id="description" formControlName="description" rows="6"></textarea>
+      <div *ngIf="jobForm.get('description')?.invalid && jobForm.get('description')?.touched" class="error-text">
+        A description is required.
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="jobForm.invalid">Post Job</button>
+  </form>
+</div>
