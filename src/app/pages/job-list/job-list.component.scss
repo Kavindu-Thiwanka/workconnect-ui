@@ -1,0 +1,58 @@
+.job-list-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.job-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+
+  .job-title {
+    margin-top: 0;
+  }
+
+  .job-description {
+    flex-grow: 1;
+    color: #555;
+    font-size: 0.9em;
+  }
+
+  .skills-container {
+    margin: 15px 0;
+    font-size: 0.85em;
+  }
+
+  .details-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: auto; // Pushes the button to the bottom
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}
+
+.loading-indicator, .error-message, .no-jobs {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2em;
+  color: #777;
+}
