@@ -14,6 +14,7 @@ export class JobDetailComponent implements OnInit {
   job: any = null;
   isLoading = true;
   error: string | null = null;
+  isApplying = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -40,5 +41,22 @@ export class JobDetailComponent implements OnInit {
       this.error = 'Job ID not found.';
       this.isLoading = false;
     }
+  }
+
+  onApply() {
+    if (!this.job?.id) return;
+    this.isApplying = true;
+    this.jobService.applyForJob(this.job.id).subscribe({
+      next: (response) => {
+        alert('Successfully applied for this job!');
+        this.isApplying = false;
+        // Optionally, disable the apply button after successful application
+      },
+      error: (err) => {
+        console.error('Failed to apply for job', err);
+        alert(err.error?.message || 'Could not apply for this job.');
+        this.isApplying = false;
+      }
+    });
   }
 }

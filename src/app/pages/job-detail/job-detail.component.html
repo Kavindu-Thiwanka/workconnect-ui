@@ -26,7 +26,9 @@
     </div>
 
     <div class="job-actions">
-      <a class="apply-button">Apply Now</a>
+      <a class="apply-button" (click)="onApply()" [class.disabled]="isApplying">
+        {{ isApplying ? 'Applying...' : 'Apply Now' }}
+      </a>
       <a routerLink="/jobs" class="back-button">Back to All Jobs</a>
     </div>
   </div>
