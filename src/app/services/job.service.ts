@@ -20,7 +20,6 @@ export class JobService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  // --- ADD THIS NEW METHOD ---
   getJobById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
@@ -28,5 +27,13 @@ export class JobService {
   applyForJob(jobId: string): Observable<any> {
     const params = new HttpParams().set('jobId', jobId);
     return this.http.post(this.applicationApiUrl, null, { params });
+  }
+
+  getMyJobs(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/my-jobs`);
+  }
+
+  getApplicationsForJob(jobId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.applicationApiUrl}/job/${jobId}`);
   }
 }
