@@ -1,0 +1,33 @@
+<div class="job-detail-container">
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>Loading job details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <a routerLink="/jobs">Back to Jobs</a>
+  </div>
+
+  <div *ngIf="job" class="job-content">
+    <h2 class="job-title">{{ job.title }}</h2>
+    <div class="job-meta">
+      <span>{{ job.location }}</span>
+      <span *ngIf="job.salary">{{ job.salary }}</span>
+    </div>
+
+    <div class="job-section">
+      <h3>Job Description</h3>
+      <p class="job-description">{{ job.description }}</p>
+    </div>
+
+    <div class="job-section">
+      <h3>Required Skills</h3>
+      <p>{{ job.requiredSkills }}</p>
+    </div>
+
+    <div class="job-actions">
+      <a class="apply-button">Apply Now</a>
+      <a routerLink="/jobs" class="back-button">Back to All Jobs</a>
+    </div>
+  </div>
+</div>
