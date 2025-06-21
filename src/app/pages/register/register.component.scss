@@ -1,0 +1,61 @@
+.register-container {
+  max-width: 650px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.role-selection {
+  h2 {
+    font-size: 2em;
+  }
+  p {
+    color: var(--text-color-light);
+    font-size: 1.1em;
+  }
+}
+
+.role-options {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.role-button {
+  padding: 30px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--surface-color);
+  cursor: pointer;
+  width: 250px;
+  transition: all 0.2s ease-in-out;
+  text-align: left;
+
+  h3 {
+    margin: 0 0 5px 0;
+    color: var(--primary-color);
+  }
+  p {
+    font-size: 0.9em;
+    color: var(--text-color-light);
+  }
+
+  &:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+}
+
+.change-role-link {
+  font-size: 0.7em;
+  color: var(--primary-color);
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 15px;
+  font-weight: 500;
+  &:hover {
+    text-decoration: underline;
+  }
+}
