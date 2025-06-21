@@ -1,21 +1,22 @@
 <div class="login-page">
   <div class="login-card">
-    <h2>Log in to your account</h2>
-    <form (ngSubmit)="onSubmit()">
+    <h2>Sign in to WorkConnect</h2>
+    <form (ngSubmit)="onSubmit()" autocomplete="on">
       <div class="form-group">
-        <input id="email" type="email" [(ngModel)]="model.email" name="email" placeholder="Email address" required>
+        <input id="email" type="email" [(ngModel)]="model.email" name="email" placeholder="Email address" required autofocus>
       </div>
       <div class="form-group">
         <input id="password" type="password" [(ngModel)]="model.password" name="password" placeholder="Password" required>
       </div>
       <div class="forgot-password">
-        <a href="#">Forgot your password?</a>
+        <a href="#">Forgot password?</a>
       </div>
-      <button type="submit" class="login-button">Log In</button>
+      <button type="submit" class="login-button">Sign In</button>
     </form>
+    <div class="divider"><span>or</span></div>
     <div class="signup-link">
       <span>Don't have an account?</span>
-      <a routerLink="/register">Sign up</a>
+      <a routerLink="/register">Create one</a>
     </div>
   </div>
 </div>
