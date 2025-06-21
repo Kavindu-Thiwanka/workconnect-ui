@@ -1,27 +1,39 @@
-<div class="home-container">
+<div class="home-page container">
 
-  <div *ngIf="!currentUser" class="welcome-banner">
-    <h1>Welcome to WorkConnect</h1>
-    <p>The smarter way for blue-collar workers and employers in Sri Lanka to connect.</p>
-    <div class="welcome-actions">
-      <a routerLink="/register" class="btn btn-primary">Get Started</a>
-      <a routerLink="/login" class="btn btn-secondary">Login</a>
+  <ng-container *ngIf="!currentUser">
+    <div class="hero-section">
+      <h1>Find Your Next Blue-Collar Job, Smarter.</h1>
+      <p class="subtitle">WorkConnect uses AI to match skilled workers with quality employers in Sri Lanka.</p>
+      <div class="cta-buttons">
+        <a routerLink="/jobs" class="btn btn-primary">Find a Job</a>
+        <a routerLink="/register" class="btn btn-secondary">Post a Job</a>
+      </div>
     </div>
-  </div>
+    <div class="features-section">
+      <div class="feature-card">
+        <h3>Create Your Profile</h3>
+        <p>Build a professional profile that showcases your unique skills and experience.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Get AI Matches</h3>
+        <p>Our intelligent system recommends the best job opportunities for you.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Apply With Ease</h3>
+        <p>Connect directly with employers and track your application status.</p>
+      </div>
+    </div>
+  </ng-container>
 
-  <div *ngIf="currentUser">
-    <h2>Hello, {{ currentUser.username }}!</h2>
+  <ng-container *ngIf="currentUser && userProfile">
+    <div class="dashboard-header">
+      <h2>Welcome back, {{ currentUser.attributes?.given_name || currentUser.username }}!</h2>
+    </div>
 
-    <div class="recommendations-section">
+    <div *ngIf="userProfile.userRole === 'WORKER'" class="recommendations-section">
       <h3>✨ Recommended Jobs For You</h3>
-      <p>Our AI has matched these jobs to your profile.</p>
-
-      <div *ngIf="isLoading" class="loading-indicator">
-        <p>Finding your personalized job matches...</p>
-      </div>
-      <div *ngIf="error" class="error-message">
-        <p>Could not load recommendations. {{ error }}</p>
-      </div>
+      <div *ngIf="isLoading" class="loading-indicator"><p>Finding your personalized job matches...</p></div>
+      <div *ngIf="error" class="error-message"><p>Could not load recommendations. {{ error }}</p></div>
 
       <div *ngIf="!isLoading && !error" class="job-grid">
         <div *ngFor="let job of recommendedJobs" class="job-card">
@@ -31,11 +43,24 @@
           <a class="details-button" [routerLink]="['/job', job.id]">View Details</a>
         </div>
         <div *ngIf="recommendedJobs.length === 0" class="no-jobs">
-          <p>No specific recommendations found right now. Try updating your profile or browse all jobs!</p>
+          <p>No specific recommendations found. Try updating your profile or browse all jobs!</p>
           <a routerLink="/jobs" class="btn btn-secondary">Browse All Jobs</a>
         </div>
       </div>
     </div>
-  </div>
 
+    <div *ngIf="userProfile.userRole === 'EMPLOYER'" class="employer-dashboard">
+      <h3>Your Employer Hub</h3>
+      <div class="action-cards">
+        <a routerLink="/post-job" class="action-card">
+          <h4>Post a New Job</h4>
+          <p>Find your next great hire by posting a job vacancy.</p>
+        </a>
+        <a routerLink="/dashboard" class="action-card">
+          <h4>View Dashboard</h4>
+          <p>Manage your job postings and review applications.</p>
+        </a>
+      </div>
+    </div>
+  </ng-container>
 </div>
