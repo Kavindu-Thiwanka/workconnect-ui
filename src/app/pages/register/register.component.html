@@ -20,6 +20,7 @@
           <p>Hire skilled blue-collar talent.</p>
         </div>
       </div>
+      <div class="divider"><span>or</span></div>
       <div class="signin-link">
         <span>Already have an account?</span>
         <a routerLink="/login">Log in</a>
@@ -28,9 +29,9 @@
 
     <div *ngIf="selectedRole" class="form-container">
       <h2>Create Account <a (click)="selectedRole = null" class="change-role-link">(Change Role)</a></h2>
-      <form (ngSubmit)="onSubmit()">
+      <form (ngSubmit)="onSubmit()" autocomplete="on">
         <div class="form-group">
-          <input type="text" [(ngModel)]="model.firstName" name="firstName" placeholder="First name" required>
+          <input type="text" [(ngModel)]="model.firstName" name="firstName" placeholder="First name" required autofocus>
         </div>
         <div class="form-group">
           <input type="text" [(ngModel)]="model.lastName" name="lastName" placeholder="Last name" required>
@@ -43,6 +44,7 @@
         </div>
         <button type="submit" class="register-button">Create Account</button>
       </form>
+      <div class="divider"><span>or</span></div>
       <div class="signin-link">
         <span>Already have an account?</span>
         <a routerLink="/login">Log in</a>
