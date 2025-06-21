@@ -137,3 +137,40 @@ button:disabled {
 .error-message {
   color: var(--error-color);
 }
+
+main.container,
+.profile-card,
+.dashboard-card,
+.job-detail-card,
+.register-card,
+.login-card {
+  max-width: 1200px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 48px 32px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  main.container,
+  .profile-card,
+  .dashboard-card,
+  .job-detail-card,
+  .register-card,
+  .login-card {
+    padding: 24px 8px;
+    margin: 24px 0;
+  }
+}
+@media (max-width: 600px) {
+  main.container,
+  .profile-card,
+  .dashboard-card,
+  .job-detail-card,
+  .register-card,
+  .login-card {
+    padding: 12px 0;
+    margin: 12px 0;
+    max-width: 100%;
+  }
+}
