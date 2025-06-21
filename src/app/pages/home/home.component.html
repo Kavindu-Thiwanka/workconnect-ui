@@ -26,9 +26,10 @@
   </ng-container>
 
   <ng-container *ngIf="currentUser && userProfile">
-    <div class="dashboard-header">
-      <h2>Welcome back, {{ currentUser.attributes?.given_name || currentUser.username }}!</h2>
-    </div>
+<!--    <div class="dashboard-header">-->
+<!--&lt;!&ndash;      <h2>Welcome back, {{ currentUser?.attributes?.given_name || currentUser.username }}!</h2>&ndash;&gt;-->
+<!--      <h2>Welcome back, {{ currentUser.username }}!</h2>-->
+<!--    </div>-->
 
     <div *ngIf="userProfile.userRole === 'WORKER'" class="recommendations-section">
       <h3>✨ Recommended Jobs For You</h3>
