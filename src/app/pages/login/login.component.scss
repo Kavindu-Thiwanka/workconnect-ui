@@ -1,0 +1,70 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+}
+
+.login-card {
+  background-color: var(--surface-color);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+
+  h2 {
+    font-size: 1.75em;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1em;
+  }
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 20px;
+
+  a {
+    font-size: 0.9em;
+    color: var(--primary-color);
+  }
+}
+
+.login-button {
+  width: 100%;
+  padding: 14px;
+  font-size: 1em;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.signup-link {
+  font-size: 0.9em;
+  color: var(--text-color-light);
+
+  a {
+    font-weight: 600;
+    margin-left: 5px;
+  }
+}
