@@ -1,17 +1,36 @@
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 40px;
-  background-color: var(--surface-color);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  height: 70px;
+  padding: 0 48px;
+  background: var(--surface-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  height: 72px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .nav-brand a {
-  font-size: 1.5em;
-  font-weight: 700;
-  color: var(--text-color);
+  font-size: 1.7em;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -1px;
+  text-decoration: none;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: 16px;
+  svg {
+    display: block;
+    color: var(--primary-color);
+  }
 }
 
 .nav-links {
@@ -20,14 +39,17 @@
   padding: 0;
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 32px;
 }
 
 .nav-links a {
   color: var(--text-color-light);
-  font-weight: 500;
-  padding: 5px 0;
+  font-weight: 600;
+  padding: 6px 0;
   border-bottom: 2px solid transparent;
+  font-size: 1.08em;
+  transition: color 0.18s, border 0.18s;
+  text-decoration: none;
 }
 
 .nav-links a:hover, .nav-links a.active {
@@ -38,5 +60,43 @@
 .nav-links span {
   color: var(--text-color);
   font-weight: 500;
-  font-size: 0.9em;
+  font-size: 1em;
+}
+
+@media (max-width: 900px) {
+  .navbar {
+    padding: 0 16px;
+    height: 60px;
+  }
+  .nav-brand a {
+    font-size: 1.2em;
+  }
+  .nav-links {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 0 6px;
+  }
+  .nav-toggle {
+    display: block;
+  }
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    background: var(--surface-color);
+    position: absolute;
+    left: 0;
+    top: 60px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 0;
+    gap: 0;
+    display: none; /* For now, always hidden on mobile, JS needed for toggle */
+  }
 }

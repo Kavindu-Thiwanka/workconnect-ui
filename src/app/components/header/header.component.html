@@ -1,7 +1,10 @@
-<nav class="navbar">
+<header class="navbar">
   <div class="nav-brand">
     <a routerLink="/">WorkConnect</a>
   </div>
+  <button class="nav-toggle" aria-label="Toggle navigation">
+    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+  </button>
   <ul class="nav-links">
     <ng-container *ngIf="!currentUser">
       <li><a routerLink="/login">Login</a></li>
@@ -16,4 +19,4 @@
       <li><a (click)="onLogout()" style="cursor: pointer;">Logout</a></li>
     </ng-container>
   </ul>
-</nav>
+</header>
