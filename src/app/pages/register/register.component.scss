@@ -1,43 +1,71 @@
-.register-container {
-  max-width: 650px;
-  margin: 40px auto;
+:host {
+  display: block;
+  height: 100%;
+}
+
+.register-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
   padding: 20px;
+}
+
+.register-card {
+  background-color: var(--surface-color);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 700px;
   text-align: center;
 }
 
-.role-selection {
-  h2 {
-    font-size: 2em;
-    font-weight: 500;
-  }
-  p {
-    color: var(--text-color-light);
-    font-size: 1.1em;
-  }
+h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 8px;
 }
 
+.subtitle {
+  color: var(--text-color-light);
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+// Styles for Step 1: Role Selection
 .role-options {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin-top: 30px;
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
-.role-button {
-  padding: 30px;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--surface-color);
+.role-option {
+  padding: 25px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
   cursor: pointer;
-  width: 250px;
+  flex: 1;
   transition: all 0.2s ease-in-out;
-  text-align: left;
+
+  svg {
+    width: 48px;
+    height: 48px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+  }
 
   h3 {
-    margin: 0 0 5px 0;
-    color: var(--primary-color);
+    margin: 0 0 4px 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-color);
   }
+
   p {
+    margin: 0;
     font-size: 0.9em;
     color: var(--text-color-light);
   }
@@ -45,18 +73,48 @@
   &:hover {
     border-color: var(--primary-color);
     transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   }
 }
 
+// Styles for Step 2: Form
+.form-container h2 {
+  margin-bottom: 30px;
+}
+
 .change-role-link {
-  font-size: 0.7em;
+  font-size: 0.6em;
   color: var(--primary-color);
   cursor: pointer;
   vertical-align: middle;
-  margin-left: 15px;
+  margin-left: 10px;
   font-weight: 500;
   &:hover {
     text-decoration: underline;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.register-button {
+  width: 100%;
+  padding: 14px;
+  font-size: 1em;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.signin-link {
+  margin-top: 25px;
+  font-size: 0.9em;
+  color: var(--text-color-light);
+
+  a {
+    font-weight: 600;
+    margin-left: 5px;
+    color: var(--primary-color);
   }
 }

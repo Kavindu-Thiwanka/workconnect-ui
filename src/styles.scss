@@ -1,9 +1,11 @@
+/* Import the new, clean font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
+/* CSS Variables for a consistent, modern theme */
 :root {
   --primary-color: #3B82F6;
   --primary-color-dark: #2563EB;
-  --background-color: #F3F4F6;
+  --background-color: #F3F4F6; /* Light gray full-page background */
   --surface-color: #ffffff;
   --text-color: #1F2937;
   --text-color-light: #6B7280;
@@ -25,10 +27,17 @@ body {
   line-height: 1.6;
 }
 
+/* Base Typography - adjusted for a cleaner look */
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
-  font-weight: 500;
+  font-weight: 600;
 }
+
+h1 { font-size: 2.2em; margin-bottom: 1rem; }
+h2 { font-size: 1.5em; margin-bottom: 0.75rem; }
+h3 { font-size: 1.15em; margin-bottom: 0.5rem; }
+p { line-height: 1.6; }
+
 
 a {
   text-decoration: none;
@@ -40,21 +49,19 @@ a:hover {
   color: var(--primary-color-dark);
 }
 
-/* Main Content Container */
-.container {
+/* Main Content Container for standard pages */
+main.container {
   max-width: 1200px;
   margin: 20px auto;
   padding: 0 20px;
 }
 
-/* General Form Styling */
-.form-container {
-  background-color: var(--surface-color);
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  max-width: 500px;
-  margin: 40px auto;
+/* General Form Styling for cards */
+.form-container, .register-card, .login-card {
+  h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+  }
 }
 
 .form-group {
@@ -75,7 +82,7 @@ a:hover {
   width: 100%;
   padding: 12px;
   border: 1px solid var(--border-color);
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 1em;
   font-family: var(--font-family);
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -86,7 +93,7 @@ a:hover {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
 }
 
 /* General Button Styling */
@@ -94,7 +101,7 @@ button, .btn {
   display: inline-block;
   border: none;
   padding: 12px 25px;
-  border-radius: 5px;
+  border-radius: 8px;
   background-color: var(--primary-color);
   color: white;
   font-size: 1em;
@@ -108,7 +115,7 @@ button:hover, .btn:hover {
 }
 
 button:disabled {
-  background-color: var(--secondary-color);
+  background-color: #9CA3AF;
   cursor: not-allowed;
 }
 
@@ -117,12 +124,13 @@ button:disabled {
   color: var(--error-color);
   font-size: 0.85em;
   margin-top: 5px;
+  text-align: left;
 }
 
 .loading-indicator, .error-message, .no-jobs {
   text-align: center;
   padding: 40px;
-  font-size: 1.2em;
+  font-size: 1.1em;
   color: var(--text-color-light);
 }
 
