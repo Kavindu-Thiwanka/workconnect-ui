@@ -1,42 +1,47 @@
 .home-page {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: auto;
-  padding: 20px;
+  padding: 32px 16px;
 }
 
 // Logged-Out View Styles
 .hero-section {
   text-align: center;
-  padding: 80px 20px;
-  background-color: var(--surface-color);
-  border-radius: 12px;
-  margin-bottom: 40px;
+  padding: 96px 16px 64px 16px;
+  background: var(--surface-color);
+  border-radius: 18px;
+  margin-bottom: 48px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
 
   h1 {
-    font-size: 2.5em;
-    font-weight: 700;
-    margin-bottom: 15px;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    margin-bottom: 18px;
+    letter-spacing: -1px;
   }
   .subtitle {
-    font-size: 1.1em;
+    font-size: 1.2em;
     color: var(--text-color-light);
     max-width: 600px;
-    margin: 0 auto 30px auto;
+    margin: 0 auto 36px auto;
   }
   .cta-buttons {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 18px;
     .btn {
-      padding: 12px 30px;
+      padding: 14px 36px;
       font-size: 1.1em;
-      font-weight: 500;
+      font-weight: 600;
+      border-radius: 8px;
     }
     .btn-secondary {
-      background-color: #e9ecef;
-      color: var(--text-color);
+      background: #f4f6fb;
+      color: var(--primary-color);
+      border: 1px solid var(--border-color);
       &:hover {
-        background-color: #dee2e6;
+        background: #e9ecef;
       }
     }
   }
@@ -44,17 +49,35 @@
 
 .features-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+  margin: 0 auto 48px auto;
   text-align: center;
   .feature-card {
+    background: var(--surface-color);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    border: 1px solid var(--border-color);
+    padding: 32px 20px 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .icon {
+      margin-bottom: 18px;
+      color: var(--primary-color);
+      svg {
+        display: block;
+      }
+    }
     h3 {
-      font-size: 1.2em;
+      font-size: 1.18em;
       margin-bottom: 10px;
+      font-weight: 700;
     }
     p {
       color: var(--text-color-light);
-      font-size: 0.95em;
+      font-size: 1em;
+      margin: 0;
     }
   }
 }
@@ -70,79 +93,148 @@
 
 .recommendations-section, .employer-dashboard {
   h3 {
-    font-size: 1.4em;
+    font-size: 1.35em;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    font-weight: 700;
   }
 }
 
 .job-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 25px;
+  gap: 28px;
 }
 .job-card {
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 20px;
-  background-color: var(--surface-color);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 28px 20px 22px 20px;
+  background: var(--surface-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   display: flex;
   flex-direction: column;
+  transition: box-shadow 0.18s, transform 0.18s;
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.10);
   }
   .job-title {
     font-size: 1.1em;
+    font-weight: 700;
   }
   .job-location {
-    font-size: 0.9em;
+    font-size: 0.97em;
     color: var(--text-color-light);
     margin-bottom: 10px;
   }
   .job-description {
     flex-grow: 1;
-    font-size: 0.95em;
-    margin-bottom: 15px;
+    font-size: 1em;
+    margin-bottom: 16px;
   }
   .details-button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 10px 15px;
+    background: var(--primary-color);
+    color: #fff;
+    padding: 10px 18px;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 6px;
     text-decoration: none;
     cursor: pointer;
     margin-top: auto;
+    font-weight: 600;
+    font-size: 1em;
+    transition: background 0.18s;
+    &:hover {
+      background: var(--primary-color-dark);
+    }
   }
 }
 
 .action-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px;
+  gap: 28px;
   .action-card {
-    background-color: var(--surface-color);
-    padding: 25px;
-    border-radius: 8px;
+    background: var(--surface-color);
+    padding: 32px 20px 28px 20px;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
-    transition: all 0.2s ease-in-out;
-    &:hover {
-      border-color: var(--primary-color);
-      transform: translateY(-5px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.18s;
+    .icon {
+      margin-bottom: 14px;
+      color: var(--primary-color);
+      svg {
+        display: block;
+      }
     }
     h4 {
       margin: 0 0 8px 0;
-      font-size: 1.2em;
+      font-size: 1.13em;
       color: var(--primary-color);
+      font-weight: 700;
     }
     p {
       margin: 0;
-      font-size: 0.95em;
+      font-size: 1em;
       color: var(--text-color-light);
     }
+    &:hover {
+      border-color: var(--primary-color);
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .home-page {
+    padding: 24px 4px;
+  }
+  .hero-section {
+    padding: 64px 8px 40px 8px;
+  }
+  .features-section {
+    gap: 18px;
+  }
+  .job-grid, .action-cards {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-page {
+    padding: 12px 0;
+  }
+  .hero-section {
+    padding: 36px 0 24px 0;
+    h1 {
+      font-size: 1.5em;
+    }
+    .subtitle {
+      font-size: 1em;
+    }
+    .cta-buttons {
+      flex-direction: column;
+      gap: 10px;
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+  .features-section {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .job-grid, .action-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .job-card, .action-card {
+    padding: 18px 8px 14px 8px;
   }
 }

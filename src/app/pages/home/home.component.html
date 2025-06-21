@@ -1,37 +1,35 @@
-<div class="home-page container">
+<div class="home-page">
 
   <ng-container *ngIf="!currentUser">
-    <div class="hero-section">
+    <section class="hero-section">
       <h1>Find Your Next Blue-Collar Job, Smarter.</h1>
       <p class="subtitle">WorkConnect uses AI to match skilled workers with quality employers in Sri Lanka.</p>
       <div class="cta-buttons">
         <a routerLink="/jobs" class="btn btn-primary">Find a Job</a>
         <a routerLink="/register" class="btn btn-secondary">Post a Job</a>
       </div>
-    </div>
-    <div class="features-section">
+    </section>
+    <section class="features-section">
       <div class="feature-card">
+        <div class="icon"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg></div>
         <h3>Create Your Profile</h3>
-        <p>Build a professional profile that showcases your unique skills and experience.</p>
+        <p>Showcase your unique skills and experience.</p>
       </div>
       <div class="feature-card">
+        <div class="icon"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3v4M8 3v4"/></svg></div>
         <h3>Get AI Matches</h3>
-        <p>Our intelligent system recommends the best job opportunities for you.</p>
+        <p>Intelligent system recommends the best jobs for you.</p>
       </div>
       <div class="feature-card">
+        <div class="icon"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 17l4 4 4-4M12 12v9"/><rect x="3" y="3" width="18" height="6" rx="2"/></svg></div>
         <h3>Apply With Ease</h3>
-        <p>Connect directly with employers and track your application status.</p>
+        <p>Connect directly with employers and track your status.</p>
       </div>
-    </div>
+    </section>
   </ng-container>
 
   <ng-container *ngIf="currentUser && userProfile">
-<!--    <div class="dashboard-header">-->
-<!--&lt;!&ndash;      <h2>Welcome back, {{ currentUser?.attributes?.given_name || currentUser.username }}!</h2>&ndash;&gt;-->
-<!--      <h2>Welcome back, {{ currentUser.username }}!</h2>-->
-<!--    </div>-->
-
-    <div *ngIf="userProfile.userRole === 'WORKER'" class="recommendations-section">
+    <section *ngIf="userProfile.userRole === 'WORKER'" class="recommendations-section">
       <h3>✨ Recommended Jobs For You</h3>
       <div *ngIf="isLoading" class="loading-indicator"><p>Finding your personalized job matches...</p></div>
       <div *ngIf="error" class="error-message"><p>Could not load recommendations. {{ error }}</p></div>
@@ -48,20 +46,22 @@
           <a routerLink="/jobs" class="btn btn-secondary">Browse All Jobs</a>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div *ngIf="userProfile.userRole === 'EMPLOYER'" class="employer-dashboard">
+    <section *ngIf="userProfile.userRole === 'EMPLOYER'" class="employer-dashboard">
       <h3>Your Employer Hub</h3>
       <div class="action-cards">
         <a routerLink="/post-job" class="action-card">
+          <div class="icon"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
           <h4>Post a New Job</h4>
           <p>Find your next great hire by posting a job vacancy.</p>
         </a>
         <a routerLink="/dashboard" class="action-card">
+          <div class="icon"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
           <h4>View Dashboard</h4>
           <p>Manage your job postings and review applications.</p>
         </a>
       </div>
-    </div>
+    </section>
   </ng-container>
 </div>
