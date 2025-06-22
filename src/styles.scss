@@ -19,7 +19,11 @@
   box-sizing: border-box;
 }
 
-html, body {
+html, body, app-root {
+  max-height: 100vh;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: auto;
   font-size: 15px;
 }
 

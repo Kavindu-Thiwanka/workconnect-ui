@@ -1,5 +1,6 @@
 .job-detail-container {
-  min-height: 100vh;
+  min-height: unset;
+  max-height: unset;
   display: flex;
   align-items: center;
   justify-content: center;

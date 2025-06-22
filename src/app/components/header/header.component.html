@@ -1,22 +1,24 @@
 <header class="navbar">
   <div class="nav-brand">
-    <a routerLink="/">WorkConnect</a>
+    <a routerLink="/">
+      <img src="assets/logo.svg" alt="WorkConnect Logo" class="logo" />
+      <span class="brand-text">WorkConnect</span>
+    </a>
   </div>
+  <nav class="nav-links" *ngIf="!currentUser">
+    <a routerLink="/login">Login</a>
+    <a routerLink="/register">Register</a>
+  </nav>
+  <nav class="nav-links" *ngIf="currentUser">
+    <a routerLink="/jobs">Find Jobs</a>
+    <a routerLink="/post-job">Post Job</a>
+    <a routerLink="/profile">Profile</a>
+    <span class="user-avatar" title="{{ currentUser.username }}">
+      <img src="assets/avatar-placeholder.png" alt="User Avatar" />
+    </span>
+    <a (click)="onLogout()" class="logout-link" style="cursor: pointer;">Logout</a>
+  </nav>
   <button class="nav-toggle" aria-label="Toggle navigation">
     <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
   </button>
-  <ul class="nav-links">
-    <ng-container *ngIf="!currentUser">
-      <li><a routerLink="/login">Login</a></li>
-      <li><a routerLink="/register">Register</a></li>
-    </ng-container>
-
-    <ng-container *ngIf="currentUser">
-      <li><span>Welcome, {{ currentUser.username }}</span></li>
-      <li><a routerLink="/profile">Profile</a></li>
-      <li><a routerLink="/jobs">Find Jobs</a></li>
-      <li><a routerLink="/post-job">Post Job</a></li>
-      <li><a (click)="onLogout()" style="cursor: pointer;">Logout</a></li>
-    </ng-container>
-  </ul>
 </header>
