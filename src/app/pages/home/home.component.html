@@ -69,26 +69,75 @@
     </section>
   </ng-container>
 
-  <ng-container *ngIf="currentUser && userProfile">
-    <section *ngIf="userProfile.userRole === 'WORKER'" class="recommendations-section">
-      <h3>✨ Recommended Jobs For You</h3>
-      <div *ngIf="isLoading" class="loading-indicator"><p>Finding your personalized job matches...</p></div>
-      <div *ngIf="error" class="error-message"><p>Could not load recommendations. {{ error }}</p></div>
+  <ng-container *ngIf="currentUser && userProfile && userProfile.userRole === 'WORKER'">
+    <section class="dashboard-header">
+      <h1>Welcome back, {{ userProfile.firstName || 'User' }}!</h1>
+      <p class="subtitle">Here's what's new for you today.</p>
+    </section>
 
-      <div *ngIf="!isLoading && !error" class="job-grid">
-        <div *ngFor="let job of recommendedJobs" class="job-card">
+    <section class="recommended-jobs-section">
+      <div class="section-header">
+        <h2>Recommended Jobs</h2>
+        <a class="view-all" routerLink="/jobs">View All</a>
+      </div>
+      <div class="recommended-jobs-grid">
+        <div *ngFor="let job of recommendedJobs; let i = index" class="job-card">
+          <img *ngIf="job.image" [src]="job.image" alt="{{ job.title }}" class="job-image" />
+          <div *ngIf="!job.image" class="job-icon-placeholder"><!-- icon or placeholder --></div>
           <h3 class="job-title">{{ job.title }}</h3>
-          <p class="job-location">{{ job.location }}</p>
-          <p class="job-description">{{ job.description | slice:0:100 }}...</p>
-          <a class="details-button" [routerLink]="['/job', job.id]">View Details</a>
-        </div>
-        <div *ngIf="recommendedJobs.length === 0" class="no-jobs">
-          <p>No specific recommendations found. Try updating your profile or browse all jobs!</p>
-          <a routerLink="/jobs" class="btn btn-secondary">Browse All Jobs</a>
+          <p class="job-description">{{ job.description }}</p>
         </div>
       </div>
     </section>
 
+    <section class="application-status-section">
+      <h2>Application Status</h2>
+      <div class="status-table-wrapper">
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Date Applied</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let app of applicationStatus">
+              <td>{{ app.jobTitle }}</td>
+              <td>{{ app.company }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="app.statusType">{{ app.status }}</span>
+              </td>
+              <td>{{ app.dateApplied }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="messages-section">
+      <div class="section-header">
+        <h2>Messages</h2>
+        <a class="view-all" href="#">View All</a>
+      </div>
+      <div class="messages-list">
+        <div *ngFor="let msg of messages" class="message-card" [ngClass]="{unread: msg.unread}">
+          <img [src]="msg.logo" alt="{{ msg.company }}" class="company-logo" />
+          <div class="message-content">
+            <div class="company-name">{{ msg.company }}</div>
+            <div class="message-text">{{ msg.message }}</div>
+          </div>
+          <div class="message-meta">
+            <span class="message-time">{{ msg.time }}</span>
+            <span *ngIf="msg.unread" class="unread-dot"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-container *ngIf="currentUser && userProfile && userProfile.userRole === 'EMPLOYER'">
     <section *ngIf="userProfile.userRole === 'EMPLOYER'" class="employer-dashboard">
       <h3>Your Employer Hub</h3>
       <div class="action-cards">

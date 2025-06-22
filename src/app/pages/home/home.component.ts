@@ -20,6 +20,47 @@ export class HomeComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
 
+  applicationStatus = [
+    {
+      jobTitle: 'Construction Worker',
+      company: 'BuildRight Inc.',
+      status: 'Interview Scheduled',
+      statusType: 'scheduled',
+      dateApplied: '2023-08-15'
+    },
+    {
+      jobTitle: 'Warehouse Associate',
+      company: 'Quick Logistics',
+      status: 'Application Received',
+      statusType: 'received',
+      dateApplied: '2023-08-10'
+    },
+    {
+      jobTitle: 'Delivery Driver',
+      company: 'Swift Transport',
+      status: 'Rejected',
+      statusType: 'rejected',
+      dateApplied: '2023-08-05'
+    }
+  ];
+
+  messages = [
+    {
+      company: 'BuildRight Inc.',
+      logo: 'assets/company1.svg',
+      message: 'Interview scheduled for next week. Please confirm your availability.',
+      time: '2 days ago',
+      unread: true
+    },
+    {
+      company: 'Quick Logistics',
+      logo: 'assets/company2.svg',
+      message: 'Your application has been received. We will review it and get back to you soon.',
+      time: '5 days ago',
+      unread: false
+    }
+  ];
+
   constructor(
     private authService: AuthService,
     private jobService: JobService,
