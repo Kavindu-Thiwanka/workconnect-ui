@@ -1,8 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+interface LoginModel {
+  email: string;
+  password: string;
+  remember: boolean;
+}
 
 @Component({
   selector: 'app-login',
@@ -11,13 +17,29 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
-  model: any = {};
+export class LoginComponent implements OnInit {
+  model: LoginModel = {
+    email: '',
+    password: '',
+    remember: false
+  };
 
-  constructor(private authService: AuthService, private router: Router) { }
+  loading = false;
+  error = '';
+  showPassword = false;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) { }
+
+  ngOnInit() { }
 
   async onSubmit(): Promise<void> {
     try {
+      this.loading = true;
+      this.error = '';
+
       // Pass an object to the signIn method
       const { isSignedIn, nextStep } = await this.authService.signIn({
         username: this.model.email,
@@ -43,5 +65,9 @@ export class LoginComponent {
         alert(err.message || 'Login failed');
       }
     }
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 }
