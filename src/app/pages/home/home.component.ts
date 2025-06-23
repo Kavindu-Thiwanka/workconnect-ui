@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { JobService } from '../../services/job.service';
 import { ProfileService } from '../../services/profile.service';
 import { type AuthUser } from '@aws-amplify/auth';
+import { TestimonialsComponent } from '../../components/testimonials/testimonials.component';
+import { FaqComponent } from '../../components/faq/faq.component';
+import { CtaComponent } from '../../components/cta/cta.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink, TestimonialsComponent, FaqComponent, CtaComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })

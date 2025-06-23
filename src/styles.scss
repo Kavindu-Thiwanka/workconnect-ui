@@ -1,70 +1,88 @@
-/* Import the new, clean font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+/* Import modern fonts and design system */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* CSS Variables for a consistent, modern theme */
+/* Modern Design System Variables */
 :root {
   --primary-color: #3B82F6;
   --primary-color-dark: #2563EB;
-  --background-color: #F3F4F6; /* Light gray full-page background */
+  --secondary-color: #6366F1;
+  --background-color: #F9FAFB;
   --surface-color: #ffffff;
-  --text-color: #1F2937;
-  --text-color-light: #6B7280;
-  --border-color: #D1D5DB;
+  --text-color: #1E293B;
+  --text-color-light: #64748B;
+  --border-color: #E2E8F0;
   --error-color: #EF4444;
-  --font-family: 'Inter', sans-serif;
+  --success-color: #10B981;
+  --warning-color: #F59E0B;
+  --font-family-primary: 'Inter', sans-serif;
+  --font-family-secondary: 'Poppins', sans-serif;
+  --radius: 0.5rem;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --transition: all 0.2s ease-in-out;
 }
 
-/* Global Resets and Body Styles */
+/* Global Modern Reset */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-html, body, app-root {
-  max-height: 100vh;
-  height: 100vh;
-  min-height: 100vh;
-  overflow: auto;
-  font-size: 15px;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  font-family: var(--font-family);
+  font-family: var(--font-family-primary);
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Base Typography - adjusted for a cleaner look */
+/* Modern Typography */
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.2;
+  font-family: var(--font-family-secondary);
 }
 
-h1 { font-size: 1.7em; margin-bottom: 0.8rem; }
-h2 { font-size: 1.25em; margin-bottom: 0.6rem; }
-h3 { font-size: 1em; margin-bottom: 0.4rem; }
-p { line-height: 1.5; font-size: 0.97em; }
+h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+h2 { font-size: 2rem; margin-bottom: 1.25rem; }
+h3 { font-size: 1.75rem; margin-bottom: 1rem; }
+h4 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+h5 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+h6 { font-size: 1rem; margin-bottom: 0.25rem; }
 
+p {
+  line-height: 1.75;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
 
+/* Modern Links */
 a {
-  text-decoration: none;
   color: var(--primary-color);
-  transition: color 0.2s ease-in-out;
+  text-decoration: none;
+  transition: var(--transition);
 }
 
 a:hover {
   color: var(--primary-color-dark);
 }
 
-/* Main Content Container for standard pages */
-main.container {
+/* Modern Container */
+.container {
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 0 auto;
   padding: 0 20px;
 }
 
-/* General Form Styling for cards */
+/* Form Styles */
 .form-container, .register-card, .login-card {
   h2 {
     font-size: 1.5em;
@@ -101,14 +119,14 @@ main.container {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 input, select, textarea {
   font-size: 0.97em;
 }
 
-/* General Button Styling */
+/* Button Styles */
 button, .btn {
   display: inline-block;
   border: none;
@@ -132,7 +150,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Utility classes */
+/* Utility Classes */
 .error-text {
   color: var(--error-color);
   font-size: 0.85em;
@@ -151,35 +169,40 @@ button:disabled {
   color: var(--error-color);
 }
 
-main.container,
-.profile-card,
-.dashboard-card,
-.job-detail-card,
-.register-card,
-.login-card {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 48px 32px;
-  box-sizing: border-box;
+/* Card Components */
+.card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
 }
 
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive Design */
 @media (max-width: 900px) {
-  main.container,
-  .profile-card,
-  .dashboard-card,
-  .job-detail-card,
-  .register-card,
-  .login-card {
-    padding: 24px 8px;
-    margin: 24px 0;
+  .container {
+    padding: 0 16px;
+  }
+
+  .card {
+    padding: 1rem;
   }
 }
+
 @media (max-width: 600px) {
-  main.container,
-  .profile-card,
-  .dashboard-card,
-  .job-detail-card,
+  .container {
+    padding: 0 8px;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
   .register-card,
   .login-card {
     padding: 12px 0;
