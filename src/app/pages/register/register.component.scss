@@ -106,15 +106,15 @@
 
 .role-options {
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 
   .role-option {
     flex: 1;
-    padding: 2rem;
-    border-radius: 1rem;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -131,14 +131,14 @@
     }
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
     }
 
     .role-icon {
-      width: 56px;
-      height: 56px;
-      margin-bottom: 1.25rem;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0.75rem;
 
       svg {
         width: 100%;
@@ -147,29 +147,26 @@
     }
 
     h3 {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       font-weight: 600;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
       color: var(--text-color);
     }
 
     p {
       color: var(--text-color-light);
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
     }
 
     .role-badge {
-      position: absolute;
-      bottom: -12px;
-      left: 50%;
-      transform: translateX(-50%);
       background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
       color: white;
-      padding: 0.25rem 1rem;
-      border-radius: 1rem;
-      font-size: 0.875rem;
+      padding: 0.2rem 0.75rem;
+      border-radius: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 500;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
     }
   }
 }
