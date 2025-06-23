@@ -11,5 +11,7 @@
   </main>
 
   <!-- Footer with modern design -->
-  <app-footer class="fade-in"></app-footer>
+  @if (isHomePage) {
+    <app-footer class="fade-in"></app-footer>
+  }
 </div>
