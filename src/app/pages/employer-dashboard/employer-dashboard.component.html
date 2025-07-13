@@ -1,31 +1,31 @@
 <div class="dashboard-container">
-  <h2>Employer Dashboard</h2>
-  <p>Manage your job postings and view applications.</p>
-
-  <div class="dashboard-layout">
-    <div class="job-list-panel">
-      <h3>Your Posted Jobs</h3>
-      <div *ngIf="isLoadingJobs">Loading your jobs...</div>
-      <ul>
-        <li *ngFor="let job of myJobs" (click)="viewApplications(job)" [class.selected]="job === selectedJob">
-          {{ job.title }}
-        </li>
-      </ul>
-      <div *ngIf="myJobs.length === 0 && !isLoadingJobs">You have not posted any jobs yet.</div>
-    </div>
-
-    <div class="application-panel">
-      <h3>Applications for "{{ selectedJob?.title || '...' }}"</h3>
-      <div *ngIf="!selectedJob">Please select a job to view applications.</div>
-      <div *ngIf="isLoadingApps">Loading applications...</div>
-      <div *ngIf="selectedJob && !isLoadingApps">
-        <div *ngIf="applications.length > 0; else noApps">
-          <div *ngFor="let app of applications" class="application-card">
-            <p><strong>Applicant Email:</strong> {{ app.applicant.email }}</p>
-            <p><strong>Applied At:</strong> {{ app.appliedAt | date:'medium' }}</p>
+  <div class="dashboard-card">
+    <h2>Employer Dashboard</h2>
+    <p class="subtitle">Manage your job postings and view applications.</p>
+    <div class="dashboard-layout">
+      <div class="job-list-panel">
+        <h3>Your Posted Jobs</h3>
+        <div *ngIf="isLoadingJobs" class="loading-indicator">Loading your jobs...</div>
+        <ul>
+          <li *ngFor="let job of myJobs" (click)="viewApplications(job)" [class.selected]="job === selectedJob">
+            {{ job.title }}
+          </li>
+        </ul>
+        <div *ngIf="myJobs.length === 0 && !isLoadingJobs" class="no-jobs">You have not posted any jobs yet.</div>
+      </div>
+      <div class="application-panel">
+        <h3>Applications for "{{ selectedJob?.title || '...' }}"</h3>
+        <div *ngIf="!selectedJob" class="info-message">Please select a job to view applications.</div>
+        <div *ngIf="isLoadingApps" class="loading-indicator">Loading applications...</div>
+        <div *ngIf="selectedJob && !isLoadingApps">
+          <div *ngIf="applications.length > 0; else noApps">
+            <div *ngFor="let app of applications" class="application-card">
+              <p><strong>Applicant Email:</strong> {{ app.applicant.email }}</p>
+              <p><strong>Applied At:</strong> {{ app.appliedAt | date:'medium' }}</p>
+            </div>
           </div>
+          <ng-template #noApps><p class="no-apps">No applications received for this job yet.</p></ng-template>
         </div>
-        <ng-template #noApps><p>No applications received for this job yet.</p></ng-template>
       </div>
     </div>
   </div>

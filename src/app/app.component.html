@@ -1,7 +1,17 @@
-<app-header></app-header>
+<!-- Modern Layout -->
+<div class="app-wrapper">
+  <!-- Header with modern design -->
+  <app-header class="fade-in"></app-header>
 
-<main class="container">
-  <router-outlet></router-outlet>
-</main>
+  <!-- Main Content with smooth transitions -->
+  <main class="main-content fade-in">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
 
-<app-footer></app-footer>
+  <!-- Footer with modern design -->
+  @if (isHomePage) {
+    <app-footer class="fade-in"></app-footer>
+  }
+</div>
