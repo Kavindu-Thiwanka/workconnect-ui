@@ -40,4 +40,8 @@ export class JobService {
   getRecommendedJobs(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/recommendations`);
   }
+
+  getAllJobApplications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.applicationApiUrl}/jobs`);
+  }
 }

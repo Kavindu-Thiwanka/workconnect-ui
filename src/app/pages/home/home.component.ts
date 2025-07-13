@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { JobService } from '../../services/job.service';
-import { ProfileService } from '../../services/profile.service';
-import { type AuthUser } from '@aws-amplify/auth';
-import { TestimonialsComponent } from '../../components/testimonials/testimonials.component';
-import { FaqComponent } from '../../components/faq/faq.component';
-import { CtaComponent } from '../../components/cta/cta.component';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {RouterLink} from '@angular/router';
+import {AuthService} from '../../services/auth.service';
+import {JobService} from '../../services/job.service';
+import {ProfileService} from '../../services/profile.service';
+import {type AuthUser} from '@aws-amplify/auth';
+import {TestimonialsComponent} from '../../components/testimonials/testimonials.component';
+import {FaqComponent} from '../../components/faq/faq.component';
+import {CtaComponent} from '../../components/cta/cta.component';
 
 @Component({
   selector: 'app-home',
@@ -22,47 +22,8 @@ export class HomeComponent implements OnInit {
   recommendedJobs: any[] = [];
   isLoading = true;
   error: string | null = null;
-
-  applicationStatus = [
-    {
-      jobTitle: 'Construction Worker',
-      company: 'BuildRight Inc.',
-      status: 'Interview Scheduled',
-      statusType: 'scheduled',
-      dateApplied: '2023-08-15'
-    },
-    {
-      jobTitle: 'Warehouse Associate',
-      company: 'Quick Logistics',
-      status: 'Application Received',
-      statusType: 'received',
-      dateApplied: '2023-08-10'
-    },
-    {
-      jobTitle: 'Delivery Driver',
-      company: 'Swift Transport',
-      status: 'Rejected',
-      statusType: 'rejected',
-      dateApplied: '2023-08-05'
-    }
-  ];
-
-  messages = [
-    {
-      company: 'BuildRight Inc.',
-      logo: 'assets/company1.svg',
-      message: 'Interview scheduled for next week. Please confirm your availability.',
-      time: '2 days ago',
-      unread: true
-    },
-    {
-      company: 'Quick Logistics',
-      logo: 'assets/company2.svg',
-      message: 'Your application has been received. We will review it and get back to you soon.',
-      time: '5 days ago',
-      unread: false
-    }
-  ];
+  applicationStatus: any[] = [];
+  messages: any[] = [];
 
   constructor(
     private authService: AuthService,
@@ -86,9 +47,13 @@ export class HomeComponent implements OnInit {
     this.profileService.getCurrentUserProfile().subscribe({
       next: (profile) => {
         this.userProfile = profile;
-        if (this.userProfile.userRole === 'WORKER') {
-          this.fetchRecommendations();
-        } else {
+        if (this.userProfile.completeProfile && this.userProfile.userRole === 'WORKER') {
+          this.initWorkerHome();
+        } else if (this.userProfile.completeProfile && this.userProfile.userRole === 'EMPLOYER') {
+          this.initEmployerHome()
+          this.isLoading = false;
+        }
+        else {
           this.isLoading = false;
         }
       },
@@ -97,6 +62,11 @@ export class HomeComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  initWorkerHome() {
+    this.fetchRecommendations();
+    this.fetchJobApplications();
   }
 
   fetchRecommendations(): void {
@@ -110,5 +80,22 @@ export class HomeComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  fetchJobApplications() {
+    this.jobService.getAllJobApplications().subscribe({
+      next: (data) => {
+        this.applicationStatus = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.error = err.error;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private initEmployerHome() {
+
   }
 }
