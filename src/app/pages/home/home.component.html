@@ -1,1 +1,119 @@
-<p>home works!</p>
+<div class="home-page">
+
+  <ng-container *ngIf="!currentUser">
+    <section class="hero-section">
+      <h1>Find Your Next Blue-Collar Job, Smarter.</h1>
+      <p class="subtitle">WorkConnect uses AI to match skilled workers with quality employers in Sri Lanka.</p>
+      <div class="cta-buttons">
+        <a routerLink="/jobs" class="btn btn-primary">Find a Job</a>
+        <a routerLink="/register" class="btn btn-secondary">Post a Job</a>
+      </div>
+    </section>
+    <section class="features-section">
+      <div class="feature-card">
+        <div class="icon"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg></div>
+        <h3>Create Your Profile</h3>
+        <p>Showcase your unique skills and experience.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3v4M8 3v4"/></svg></div>
+        <h3>Get AI Matches</h3>
+        <p>Intelligent system recommends the best jobs for you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 17l4 4 4-4M12 12v9"/><rect x="3" y="3" width="18" height="6" rx="2"/></svg></div>
+        <h3>Apply With Ease</h3>
+        <p>Connect directly with employers and track your status.</p>
+      </div>
+    </section>
+    <app-testimonials></app-testimonials>
+    <app-faq></app-faq>
+    <app-cta></app-cta>
+  </ng-container>
+
+  <ng-container *ngIf="currentUser && userProfile && userProfile.userRole === 'WORKER'">
+    <section class="dashboard-header">
+      <h1>Welcome back, {{ userProfile.firstName || 'User' }}!</h1>
+      <p class="subtitle">Here's what's new for you today.</p>
+    </section>
+
+    <section class="recommended-jobs-section">
+      <div class="section-header">
+        <h2>Recommended Jobs</h2>
+        <a class="view-all" routerLink="/jobs">View All</a>
+      </div>
+      <div class="recommended-jobs-grid">
+        <div *ngFor="let job of recommendedJobs; let i = index" class="job-card">
+          <img *ngIf="job.image" [src]="job.image" alt="{{ job.title }}" class="job-image" />
+          <div *ngIf="!job.image" class="job-icon-placeholder"><!-- icon or placeholder --></div>
+          <h3 class="job-title">{{ job.title }}</h3>
+          <p class="job-description">{{ job.description }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="application-status-section">
+      <h2>Application Status</h2>
+      <div class="status-table-wrapper">
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Date Applied</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let app of applicationStatus">
+              <td>{{ app.jobTitle }}</td>
+              <td>{{ app.company }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="app.statusType">{{ app.status }}</span>
+              </td>
+              <td>{{ app.dateApplied }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="messages-section">
+      <div class="section-header">
+        <h2>Messages</h2>
+        <a class="view-all" href="#">View All</a>
+      </div>
+      <div class="messages-list">
+        <div *ngFor="let msg of messages" class="message-card" [ngClass]="{unread: msg.unread}">
+          <img [src]="msg.logo" alt="{{ msg.company }}" class="company-logo" />
+          <div class="message-content">
+            <div class="company-name">{{ msg.company }}</div>
+            <div class="message-text">{{ msg.message }}</div>
+          </div>
+          <div class="message-meta">
+            <span class="message-time">{{ msg.time }}</span>
+            <span *ngIf="msg.unread" class="unread-dot"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-container *ngIf="currentUser && userProfile && userProfile.userRole === 'EMPLOYER'">
+    <section *ngIf="userProfile.userRole === 'EMPLOYER'" class="employer-dashboard">
+      <h3>Your Employer Hub</h3>
+      <div class="action-cards">
+        <a routerLink="/post-job" class="action-card">
+          <div class="icon"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+          <h4>Post a New Job</h4>
+          <p>Find your next great hire by posting a job vacancy.</p>
+        </a>
+        <a routerLink="/dashboard" class="action-card">
+          <div class="icon"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          <h4>View Dashboard</h4>
+          <p>Manage your job postings and review applications.</p>
+        </a>
+      </div>
+    </section>
+  </ng-container>
+</div>

@@ -36,4 +36,12 @@ export class JobService {
   getApplicationsForJob(jobId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.applicationApiUrl}/job/${jobId}`);
   }
+
+  getRecommendedJobs(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/recommendations`);
+  }
+
+  getAllJobApplications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.applicationApiUrl}/jobs`);
+  }
 }

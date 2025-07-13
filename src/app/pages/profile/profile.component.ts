@@ -6,7 +6,6 @@ import { ProfileService } from '../../services/profile.service';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  // --- ADD ReactiveFormsModule HERE ---
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
@@ -22,7 +21,6 @@ export class ProfileComponent implements OnInit {
     this.profileService.getCurrentUserProfile().subscribe({
       next: (data) => {
         this.userProfile = data;
-        // After getting the user data, initialize the form based on their role
         this.initializeForm();
       },
       error: (err) => {
@@ -51,13 +49,12 @@ export class ProfileComponent implements OnInit {
 
   onSubmit(): void {
     if (this.profileForm.invalid) {
-      return; // Don't submit if the form is invalid
+      return;
     }
 
     this.profileService.createProfile(this.profileForm.value).subscribe({
       next: (response) => {
         alert('Profile created successfully!');
-        // Ideally, you would refresh the profile data here
         console.log(response);
       },
       error: (err) => {
