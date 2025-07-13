@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {ReviewListComponent} from '../../components/review-list/review-list.component';
 
 @Component({
   selector: 'app-employer-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReviewListComponent],
   templateUrl: './employer-profile.component.html',
   styleUrl: './employer-profile.component.scss'
 })

@@ -1,0 +1,19 @@
+<h4>Leave a Review</h4>
+<form [formGroup]="reviewForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="rating">Rating:</label>
+    <select formControlName="rating" id="rating">
+      <option value="0" disabled>Select a rating</option>
+      <option value="1">1 Star</option>
+      <option value="2">2 Stars</option>
+      <option value="3">3 Stars</option>
+      <option value="4">4 Stars</option>
+      <option value="5">5 Stars</option>
+    </select>
+  </div>
+  <div>
+    <label for="comment">Comment:</label>
+    <textarea formControlName="comment" id="comment" rows="4"></textarea>
+  </div>
+  <button type="submit" [disabled]="reviewForm.invalid">Submit Review</button>
+</form>
