@@ -1,1 +1,34 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+
+  <div *ngIf="userRole === 'WORKER'">
+    <h2>Recommended Jobs for You</h2>
+    <div class="job-grid" *ngIf="recommendations$ | async as recommendations; else loading">
+      <div *ngIf="recommendations.length > 0; else noRecs">
+        <div class="job-card" *ngFor="let job of recommendations">
+          <h3>{{ job.jobTitle }}</h3>
+          <p class="company">{{ job.employerCompanyName }}</p>
+          <p class="location">{{ job.location }}</p>
+          <p class="salary">${{ job.salary }}</p>
+          <a [routerLink]="['/jobs', job.id]">View Details</a>
+        </div>
+      </div>
+      <ng-template #noRecs>
+        <p>No recommendations available right now. Make sure your profile skills are up to date!</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <div *ngIf="userRole === 'EMPLOYER'">
+    <h2>Employer Dashboard</h2>
+    <p>Welcome! Manage your job postings and applicants.</p>
+    <div class="quick-links">
+      <a routerLink="/employer/jobs" class="dashboard-button">View My Jobs</a>
+      <a routerLink="/jobs/new" class="dashboard-button">Post a New Job</a>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <p>Loading recommendations...</p>
+  </ng-template>
+
+</div>

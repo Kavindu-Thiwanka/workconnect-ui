@@ -28,7 +28,7 @@ export class AuthService {
     localStorage.setItem('refresh_token', tokens.refreshToken);
 
     const decodedToken: any = jwtDecode(tokens.accessToken);
-    this.userRole = decodedToken.role;
+    this.userRole = decodedToken.role.replace('ROLE_', '');
   }
 
   getRole(): string | null {
@@ -36,12 +36,11 @@ export class AuthService {
       const token = localStorage.getItem('access_token');
       if (token) {
         const decodedToken: any = jwtDecode(token);
-        this.userRole = decodedToken.role;
+        this.userRole = decodedToken.role.replace('ROLE_', '');
       }
     }
     return this.userRole;
   }
-
 
   public isLoggedIn(): boolean {
     return !!localStorage.getItem('access_token');

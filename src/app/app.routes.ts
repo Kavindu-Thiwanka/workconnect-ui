@@ -10,6 +10,7 @@ import {JobDetailComponent} from './pages/job-detail/job-detail.component';
 import {PostJobComponent} from './pages/post-job/post-job.component';
 import {JobApplicationsComponent} from './pages/employer/job-applications/job-applications.component';
 import {MyJobsComponent} from './pages/employer/my-jobs/my-jobs.component';
+import {MyApplicationsComponent} from './pages/worker/my-applications/my-applications.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -22,10 +23,11 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'jobs', component: JobListComponent },
-      { path: 'jobs/:jobId', component: JobDetailComponent },
       { path: 'jobs/new', component: PostJobComponent },
+      { path: 'jobs/:jobId', component: JobDetailComponent },
       { path: 'employer/jobs', component: MyJobsComponent },
       { path: 'employer/jobs/:jobId/applications', component: JobApplicationsComponent },
+      { path: 'my-applications', component: MyApplicationsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

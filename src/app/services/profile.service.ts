@@ -22,4 +22,8 @@ export class ProfileService {
   updateEmployerProfile(profileData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/me/employer`, profileData);
   }
+
+  getRecommendations(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/me/recommendations`);
+  }
 }

@@ -1,0 +1,39 @@
+<div class="my-applications-container">
+  <h2>My Job Applications</h2>
+  <div *ngIf="applications$ | async as applications; else loading">
+    <div class="application-card" *ngFor="let app of applications">
+      <h4>{{ app.jobTitle }}</h4>
+      <p><strong>Company:</strong> {{ app.companyName }}</p>
+      <p><strong>Status:</strong> <span class="status-{{app.status | lowercase}}">{{ app.status }}</span></p>
+
+      <div *ngIf="app.status === 'COMPLETED'">
+        <button class="review-button" (click)="toggleReviewForm(app.applicationId)">
+          {{ reviewingApplicationId === app.applicationId ? 'Cancel' : 'Leave a Review' }}
+        </button>
+
+        <div *ngIf="reviewingApplicationId === app.applicationId" class="review-form">
+          <form [formGroup]="reviewForm" (ngSubmit)="onReviewSubmit()">
+            <div class="form-group">
+              <label>Rating:</label>
+              <select formControlName="rating">
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Good</option>
+                <option value="3">3 - Average</option>
+                <option value="2">2 - Poor</option>
+                <option value="1">1 - Very Poor</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="comment">Comment:</label>
+              <textarea id="comment" formControlName="comment"></textarea>
+            </div>
+            <button type="submit" [disabled]="reviewForm.invalid">Submit Review</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #loading>
+    <p>Loading your applications...</p>
+  </ng-template>
+</div>

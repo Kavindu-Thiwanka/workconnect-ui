@@ -6,6 +6,7 @@
     <a routerLink="/jobs">Jobs</a>
     <a *ngIf="userRole === 'EMPLOYER'" routerLink="/employer/jobs">My Jobs</a>
     <a *ngIf="userRole === 'EMPLOYER'" routerLink="/jobs/new">Post a Job</a>
+    <a *ngIf="userRole === 'WORKER'" routerLink="/my-applications">My Applications</a>
   </nav>
   <button (click)="logout()">Logout</button>
 </header>
