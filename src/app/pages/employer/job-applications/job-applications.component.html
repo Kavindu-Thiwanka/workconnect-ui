@@ -1,1 +1,33 @@
-<p>job-applications works!</p>
+<div class="applications-container">
+  <h2>Applicants for Job #{{ jobId }}</h2>
+
+  <div *ngIf="applications$ | async as applications; else loading">
+    <div *ngIf="applications.length > 0; else noApps">
+      <div class="applicant-card" *ngFor="let app of applications">
+        <div class="applicant-info">
+          <h4>{{ app.applicant.firstName }} {{ app.applicant.lastName }}</h4>
+          <p><strong>Skills:</strong> {{ app.applicant.skills || 'Not specified' }}</p>
+          <p><strong>Applied At:</strong> {{ app.appliedAt | date: 'medium' }}</p>
+        </div>
+        <div class="status-manager">
+          <label for="status-{{app.id}}">Status:</label>
+          <select
+            id="status-{{app.id}}"
+            [value]="app.status"
+            (change)="onStatusChange(app.id, $event)">
+            <option *ngFor="let status of applicationStatusOptions" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <ng-template #noApps>
+      <p>There are currently no applications for this job.</p>
+    </ng-template>
+  </div>
+
+  <ng-template #loading>
+    <p>Loading applications...</p>
+  </ng-template>
+</div>
