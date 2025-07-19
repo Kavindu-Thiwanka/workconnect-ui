@@ -5,7 +5,11 @@
     <div *ngIf="applications.length > 0; else noApps">
       <div class="applicant-card" *ngFor="let app of applications">
         <div class="applicant-info">
-          <h4>{{ app.applicant.firstName }} {{ app.applicant.lastName }}</h4>
+          <h4>
+            <a [routerLink]="['/users', app.applicant.workerId, 'profile']">
+              {{ app.applicant.firstName }} {{ app.applicant.lastName }}
+            </a>
+          </h4>
           <p><strong>Skills:</strong> {{ app.applicant.skills || 'Not specified' }}</p>
           <p><strong>Applied At:</strong> {{ app.appliedAt | date: 'medium' }}</p>
         </div>
@@ -31,3 +35,4 @@
     <p>Loading applications...</p>
   </ng-template>
 </div>
+

@@ -11,10 +11,12 @@ import {PostJobComponent} from './pages/post-job/post-job.component';
 import {JobApplicationsComponent} from './pages/employer/job-applications/job-applications.component';
 import {MyJobsComponent} from './pages/employer/my-jobs/my-jobs.component';
 import {MyApplicationsComponent} from './pages/worker/my-applications/my-applications.component';
+import {PublicProfileComponent} from './pages/public-profile/public-profile.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'users/:userId/profile', component: PublicProfileComponent },
   {
     path: '',
     component: MainLayoutComponent,
