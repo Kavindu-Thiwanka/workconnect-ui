@@ -1,52 +1,38 @@
 <div class="profile-container">
-  <div class="profile-card">
-    <h2>My Profile</h2>
-    <div *ngIf="userProfile; else loadingOrError">
-      <div class="user-info">
-        <p><strong>Email:</strong> {{ userProfile.email }}</p>
-        <p><strong>Role:</strong> {{ userProfile.userRole }}</p>
-        <p><strong>Member Since:</strong> {{ userProfile.createdAt | date: 'longDate' }}</p>
+  <h2>Your Profile</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+
+    <div *ngIf="userRole === 'WORKER'">
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" formControlName="firstName">
       </div>
-      <div class="divider"><span>Profile Details</span></div>
-      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="profileForm">
-        <ng-container *ngIf="userProfile.userRole === 'WORKER'">
-          <div class="form-group">
-            <label for="headline">Headline</label>
-            <input id="headline" type="text" formControlName="headline" placeholder="e.g., Experienced Electrician">
-          </div>
-          <div class="form-group">
-            <label for="skills">Skills</label>
-            <input id="skills" type="text" formControlName="skills" placeholder="e.g., Wiring, Plumbing, Carpentry">
-          </div>
-          <div class="form-group">
-            <label for="experience">Experience</label>
-            <textarea id="experience" formControlName="experience" rows="4"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="availability">Availability</label>
-            <input id="availability" type="text" formControlName="availability" placeholder="e.g., Available Immediately">
-          </div>
-        </ng-container>
-        <ng-container *ngIf="userProfile.userRole === 'EMPLOYER'">
-          <div class="form-group">
-            <label for="companyName">Company Name</label>
-            <input id="companyName" type="text" formControlName="companyName">
-          </div>
-          <div class="form-group">
-            <label for="industry">Industry</label>
-            <input id="industry" type="text" formControlName="industry" placeholder="e.g., Construction">
-          </div>
-          <div class="form-group">
-            <label for="description">Company Description</label>
-            <textarea id="description" formControlName="description" rows="4"></textarea>
-          </div>
-        </ng-container>
-        <button type="submit" [disabled]="profileForm.invalid" class="save-button">Save Profile</button>
-      </form>
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" formControlName="lastName">
+      </div>
+      <div class="form-group">
+        <label for="skills">Skills (comma-separated)</label>
+        <input type="text" id="skills" formControlName="skills">
+      </div>
     </div>
-    <ng-template #loadingOrError>
-      <p *ngIf="error; else loading">{{ error }}</p>
-      <ng-template #loading><p>Loading profile...</p></ng-template>
-    </ng-template>
-  </div>
+
+    <div *ngIf="userRole === 'EMPLOYER'">
+      <div class="form-group">
+        <label for="companyName">Company Name</label>
+        <input type="text" id="companyName" formControlName="companyName">
+      </div>
+      <div class="form-group">
+        <label for="companyDescription">Company Description</label>
+        <textarea id="companyDescription" formControlName="companyDescription"></textarea>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="location">Location</label>
+      <input type="text" id="location" formControlName="location">
+    </div>
+
+    <button type="submit">Update Profile</button>
+  </form>
 </div>

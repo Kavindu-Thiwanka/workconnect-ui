@@ -1,43 +1,46 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
-  selectedRole: 'WORKER' | 'EMPLOYER' | null = null;
+  registerForm: FormGroup;
+  errorMessage: string = '';
 
-  model: any = {};
-
-  constructor(private authService: AuthService, private router: Router) { }
-
-  selectRole(role: 'WORKER' | 'EMPLOYER'): void {
-    this.selectedRole = role;
-    this.model.userRole = role;
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      role: ['WORKER', [Validators.required]] // Default role is WORKER
+    });
   }
 
   onSubmit(): void {
-    if (!this.model.email || !this.model.password) {
-      alert('Please fill out all required fields.');
+    if (this.registerForm.invalid) {
       return;
     }
 
-    this.authService.register(this.model).subscribe({
+    this.authService.register(this.registerForm.value).subscribe({
       next: (response) => {
-        console.log('Registration successful', response);
-        alert('Registration successful! Please check your email for a verification code.');
+        console.log('Registration successful!', response);
+        // Navigate to the login page after successful registration
         this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error('Registration failed', err);
-        alert(err.error?.message || 'Registration failed');
+        this.errorMessage = err.error || 'Registration failed. The email may already be in use.';
       }
     });
   }

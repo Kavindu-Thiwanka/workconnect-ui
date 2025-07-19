@@ -1,123 +1,30 @@
-<div class="register-page">
-  <div class="register-container">
-    <div class="register-content">
-      <div class="register-header">
-        <img src="assets/images/logo.svg" alt="WorkConnect Logo" class="register-logo">
-        <h1>Join WorkConnect</h1>
-        <p class="subtitle">Create your account and start connecting today</p>
-      </div>
-
-      <div *ngIf="!selectedRole" class="role-selection">
-        <div class="role-selector">
-          <div class="role-step">
-            <div class="step-circle">1</div>
-            <span>Choose Your Role</span>
-          </div>
-          <div class="role-options">
-            <div (click)="selectRole('WORKER')" class="role-option worker">
-              <div class="role-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-              </div>
-              <h3>Worker</h3>
-              <p>Find your dream job and grow your career</p>
-              <div class="role-badge">Find Jobs</div>
-            </div>
-            <div (click)="selectRole('EMPLOYER')" class="role-option employer">
-              <div class="role-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                </svg>
-              </div>
-              <h3>Employer</h3>
-              <p>Hire skilled talent for your business</p>
-              <div class="role-badge">Hire Talent</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div *ngIf="selectedRole" class="registration-form">
-        <div class="form-header">
-          <div class="role-step">
-            <div class="step-circle">2</div>
-            <span>Create Account</span>
-          </div>
-          <a (click)="selectedRole = null" class="change-role-link">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            Change Role
-          </a>
-        </div>
-
-        <form (ngSubmit)="onSubmit()" autocomplete="on" class="form-container">
-          <div class="form-group">
-            <label for="firstName">First Name</label>
-            <div class="input-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-              <input id="firstName" type="text" [(ngModel)]="model.firstName" name="firstName" placeholder="Enter your first name" required autofocus>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <div class="input-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-              <input id="lastName" type="text" [(ngModel)]="model.lastName" name="lastName" placeholder="Enter your last name" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <div class="input-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-              </svg>
-              <input id="email" type="email" [(ngModel)]="model.email" name="email" placeholder="Enter your email" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="password">Password</label>
-            <div class="input-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16 8a4 4 0 0 1-8 0M12 16a4 4 0 0 0 4 4m0 0h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-              </svg>
-              <input id="password" type="password" [(ngModel)]="model.password" name="password" placeholder="Enter your password" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <div class="input-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16 8a4 4 0 0 1-8 0M12 16a4 4 0 0 0 4 4m0 0h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-              </svg>
-              <input id="confirmPassword" type="password" [(ngModel)]="model.confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-            </div>
-          </div>
-
-          <button type="submit" class="register-button">
-            <span class="button-text">Create Account</span>
-            <span class="button-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </span>
-          </button>
-        </form>
-
-        <div class="signin-link">
-          <span>Already have an account?</span>
-          <a routerLink="/login">Sign in</a>
-        </div>
-      </div>
+<div class="register-container">
+  <h2>Create an Account</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" formControlName="email">
     </div>
-  </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" formControlName="password">
+    </div>
+
+    <div class="form-group role-selector">
+      <label>I am a:</label>
+      <label>
+        <input type="radio" value="WORKER" formControlName="role">
+        Worker
+      </label>
+      <label>
+        <input type="radio" value="EMPLOYER" formControlName="role">
+        Employer
+      </label>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </form>
 </div>

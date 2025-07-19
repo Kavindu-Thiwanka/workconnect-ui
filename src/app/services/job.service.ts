@@ -1,47 +1,41 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JobService {
-  private apiUrl = `${environment.apiUrl}/jobs`;
-  private applicationApiUrl = `${environment.apiUrl}/applications`;
+  private apiUrl = `${environment.apiUrl}/api/jobs`;
 
   constructor(private http: HttpClient) { }
+
+  getOpenJobs(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+
+  getJobById(jobId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${jobId}`);
+  }
+
+  applyForJob(jobId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${jobId}/apply`, {});
+  }
 
   createJob(jobData: any): Observable<any> {
     return this.http.post(this.apiUrl, jobData);
   }
 
-  getAllJobs(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
-  }
-
-  getJobById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
-  }
-
-  applyForJob(jobId: string): Observable<any> {
-    const params = new HttpParams().set('jobId', jobId);
-    return this.http.post(this.applicationApiUrl, null, { params });
-  }
-
-  getMyJobs(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/my-jobs`);
+  getPostedJobs(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/api/employer/jobs`);
   }
 
   getApplicationsForJob(jobId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.applicationApiUrl}/job/${jobId}`);
+    return this.http.get<any[]>(`${environment.apiUrl}/api/employer/jobs/${jobId}/applications`);
   }
 
-  getRecommendedJobs(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/recommendations`);
-  }
-
-  getAllJobApplications(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.applicationApiUrl}/jobs`);
+  updateApplicationStatus(applicationId: number, status: string): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/api/employer/applications/${applicationId}/status`, { status });
   }
 }

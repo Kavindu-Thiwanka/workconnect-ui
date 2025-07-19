@@ -1,39 +1,15 @@
-<div class="job-list-page container">
-  <div class="page-header">
-    <h1>Browse Opportunities</h1>
-    <p>Find the right job for your skills and experience.</p>
+<div class="job-list-container">
+  <h2>Open Jobs</h2>
+  <div class="job-grid" *ngIf="jobs$ | async as jobs; else loading">
+    <div class="job-card" *ngFor="let job of jobs">
+      <h3>{{ job.jobTitle }}</h3>
+      <p class="company">{{ job.employerCompanyName }}</p>
+      <p class="location">{{ job.location }}</p>
+      <p class="salary">${{ job.salary }}</p>
+      <a [routerLink]="['/jobs', job.id]">View Details</a>
+    </div>
   </div>
-
-  <div class="filter-bar">
-    <input type="text" placeholder="Search by title, skill, or keyword...">
-  </div>
-
-  <div *ngIf="isLoading" class="loading-indicator">
+  <ng-template #loading>
     <p>Loading jobs...</p>
-  </div>
-  <div *ngIf="error" class="error-message">
-    <p>{{ error }}</p>
-  </div>
-
-  <div *ngIf="!isLoading && !error" class="job-grid">
-    <div *ngFor="let job of jobs" class="job-card">
-      <div class="card-header">
-        <div class="logo-placeholder"></div>
-        <div class="company-info">
-          <h3 class="job-title">{{ job.title }}</h3>
-          <p class="company-name">{{ job.companyName }}</p>
-        </div>
-      </div>
-      <div class="card-body">
-        <p class="job-description">{{ job.description | slice:0:120 }}...</p>
-      </div>
-      <div class="card-footer">
-        <span class="location-tag">{{ job.location }}</span>
-        <a class="details-button" [routerLink]="['/job', job.id]">View Details</a>
-      </div>
-    </div>
-    <div *ngIf="jobs.length === 0" class="no-jobs">
-      <p>No jobs have been posted yet. Please check back later!</p>
-    </div>
-  </div>
+  </ng-template>
 </div>

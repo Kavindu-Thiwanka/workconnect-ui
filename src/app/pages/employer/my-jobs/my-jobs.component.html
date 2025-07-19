@@ -1,0 +1,14 @@
+<div class="my-jobs-container">
+  <h2>My Job Postings</h2>
+  <div class="job-grid" *ngIf="myJobs$ | async as jobs; else loading">
+    <div class="job-card" *ngFor="let job of jobs">
+      <h3>{{ job.jobTitle }}</h3>
+      <p><strong>Status:</strong> {{ job.status }}</p>
+      <p><strong>Posted:</strong> {{ job.postedAt | date: 'medium' }}</p>
+      <a [routerLink]="['/employer/jobs', job.id, 'applications']">View Applications</a>
+    </div>
+  </div>
+  <ng-template #loading>
+    <p>Loading your jobs...</p>
+  </ng-template>
+</div>

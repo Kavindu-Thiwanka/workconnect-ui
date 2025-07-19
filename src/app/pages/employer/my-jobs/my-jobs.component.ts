@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { JobService } from '../../services/job.service';
+import { JobService } from '../../../services/job.service';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-job-list',
+  selector: 'app-my-jobs',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './job-list.component.html',
-  styleUrls: ['./job-list.component.scss']
+  templateUrl: './my-jobs.component.html',
+  styleUrls: ['./my-jobs.component.scss']
 })
-export class JobListComponent implements OnInit {
-  jobs$!: Observable<any[]>;
+export class MyJobsComponent implements OnInit {
+  myJobs$!: Observable<any[]>;
 
   constructor(private jobService: JobService) {}
 
   ngOnInit(): void {
-    this.jobs$ = this.jobService.getOpenJobs();
+    this.myJobs$ = this.jobService.getPostedJobs();
   }
 }

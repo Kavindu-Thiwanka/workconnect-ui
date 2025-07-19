@@ -1,0 +1,30 @@
+<div class="post-job-container">
+  <h2>Post a New Job</h2>
+  <form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="jobTitle">Job Title</label>
+      <input id="jobTitle" type="text" formControlName="jobTitle">
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Job Type:</label>
+      <label><input type="radio" value="ONE_DAY" formControlName="jobType"> One-Day</label>
+      <label><input type="radio" value="CONTRACT" formControlName="jobType"> Contract</label>
+    </div>
+
+    <div class="form-group">
+      <label for="startDate">{{ jobForm.get('jobType')?.value === 'ONE_DAY' ? 'Job Date' : 'Start Date' }}</label>
+      <input id="startDate" type="date" formControlName="startDate">
+    </div>
+
+    <div class="form-group" *ngIf="jobForm.get('jobType')?.value === 'CONTRACT'">
+      <label for="endDate">End Date</label>
+      <input id="endDate" type="date" formControlName="endDate">
+    </div>
+
+    <button type="submit" [disabled]="jobForm.invalid">Post Job</button>
+  </form>
+</div>

@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-// --- Change this line back to the relative path ---
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-  private profileApiUrl = `${environment.apiUrl}/profiles`;
-  private userApiUrl = `${environment.apiUrl}/users`;
+  private apiUrl = `${environment.apiUrl}/api/profiles`;
 
   constructor(private http: HttpClient) { }
 
-  getCurrentUserProfile() {
-    return this.http.get(`${this.userApiUrl}/me`);
+  getProfile(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`);
   }
 
-  createProfile(profileData: any) {
-    return this.http.post(this.profileApiUrl, profileData);
+  updateWorkerProfile(profileData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/me/worker`, profileData);
+  }
+
+  updateEmployerProfile(profileData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/me/employer`, profileData);
   }
 }

@@ -1,0 +1,15 @@
+<header class="main-header">
+  <h1>WorkConnect</h1>
+  <nav>
+    <a routerLink="/dashboard">Dashboard</a>
+    <a routerLink="/profile">Profile</a>
+    <a routerLink="/jobs">Jobs</a>
+    <a *ngIf="userRole === 'EMPLOYER'" routerLink="/employer/jobs">My Jobs</a>
+    <a *ngIf="userRole === 'EMPLOYER'" routerLink="/jobs/new">Post a Job</a>
+  </nav>
+  <button (click)="logout()">Logout</button>
+</header>
+
+<main class="content-wrapper">
+  <router-outlet></router-outlet>
+</main>
