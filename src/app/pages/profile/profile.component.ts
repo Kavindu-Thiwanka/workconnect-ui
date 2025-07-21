@@ -14,6 +14,8 @@ import { AuthService } from '../../services/auth.service';
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
   userRole: string | null = null;
+  selectedFile: File | null = null;
+  currentImageUrl: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -35,6 +37,31 @@ export class ProfileComponent implements OnInit {
     this.userRole = this.authService.getRole();
     this.profileService.getProfile().subscribe(data => {
       this.profileForm.patchValue(data);
+      this.currentImageUrl = data.profileImageUrl || data.companyLogoUrl;
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      this.selectedFile = fileList[0];
+    }
+  }
+
+  onPictureUpload(): void {
+    if (!this.selectedFile) {
+      return;
+    }
+    this.profileService.uploadProfilePicture(this.selectedFile).subscribe({
+      next: (response) => {
+        alert('Image uploaded successfully!');
+        this.ngOnInit();
+      },
+      error: (err) => {
+        console.error('Image upload failed', err);
+        alert('Image upload failed.');
+      }
     });
   }
 

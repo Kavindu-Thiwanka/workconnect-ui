@@ -14,8 +14,9 @@ import { Observable } from 'rxjs';
 export class JobApplicationsComponent implements OnInit {
   applications$!: Observable<any[]>;
   jobId!: string;
-  // Expose the status options to the template
   applicationStatusOptions = ['PENDING', 'VIEWED', 'ACCEPTED', 'REJECTED', 'COMPLETED'];
+  job$!: Observable<any>;
+  selectedFile: File | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,7 +28,28 @@ export class JobApplicationsComponent implements OnInit {
     if (id) {
       this.jobId = id;
       this.loadApplications();
+      this.job$ = this.jobService.getJobById(this.jobId);
     }
+  }
+
+  onFileSelected(event: Event): void {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      this.selectedFile = fileList[0];
+    }
+  }
+
+  onImageUpload(): void {
+    if (!this.selectedFile) { return; }
+    this.jobService.uploadJobImage(this.jobId, this.selectedFile).subscribe({
+      next: () => {
+        alert('Image uploaded successfully!');
+        this.job$ = this.jobService.getJobById(this.jobId);
+        this.selectedFile = null;
+      },
+      error: (err) => alert('Image upload failed.')
+    });
   }
 
   loadApplications(): void {

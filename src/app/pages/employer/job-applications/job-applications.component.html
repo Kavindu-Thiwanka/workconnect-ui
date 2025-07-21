@@ -1,5 +1,18 @@
-<div class="applications-container">
-  <h2>Applicants for Job #{{ jobId }}</h2>
+<div class="applications-container" *ngIf="job$ | async as job">
+  <h2>Applicants for {{ job.jobTitle }}</h2>
+
+  <section class="image-management">
+    <h3>Job Images</h3>
+    <div class="image-grid">
+      <img *ngFor="let imageUrl of job.imageUrls" [src]="imageUrl" alt="Job Image">
+    </div>
+    <div class="form-group">
+      <label for="job-image">Upload New Image</label>
+      <input id="job-image" type="file" (change)="onFileSelected($event)">
+    </div>
+    <button (click)="onImageUpload()" [disabled]="!selectedFile">Upload Image</button>
+  </section>
+  <hr>
 
   <div *ngIf="applications$ | async as applications; else loading">
     <div *ngIf="applications.length > 0; else noApps">

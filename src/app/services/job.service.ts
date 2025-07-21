@@ -38,4 +38,10 @@ export class JobService {
   updateApplicationStatus(applicationId: number, status: string): Observable<any> {
     return this.http.put(`${environment.apiUrl}/api/employer/applications/${applicationId}/status`, { status });
   }
+
+  uploadJobImage(jobId: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/${jobId}/images`, formData);
+  }
 }

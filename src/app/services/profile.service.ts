@@ -26,4 +26,11 @@ export class ProfileService {
   getRecommendations(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/me/recommendations`);
   }
+
+  uploadProfilePicture(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post(`${this.apiUrl}/me/picture`, formData);
+  }
 }

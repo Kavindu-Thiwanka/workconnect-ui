@@ -1,5 +1,17 @@
 <div class="profile-container">
   <h2>Your Profile</h2>
+
+  <div class="image-upload-section">
+    <h3>Profile Picture</h3>
+    <img [src]="currentImageUrl" *ngIf="currentImageUrl" alt="Profile Picture" class="profile-picture-preview">
+    <div class="form-group">
+      <label for="picture">Upload New Picture</label>
+      <input id="picture" type="file" (change)="onFileSelected($event)">
+    </div>
+    <button (click)="onPictureUpload()" [disabled]="!selectedFile">Upload Picture</button>
+  </div>
+  <hr>
+
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
 
     <div *ngIf="userRole === 'WORKER'">
