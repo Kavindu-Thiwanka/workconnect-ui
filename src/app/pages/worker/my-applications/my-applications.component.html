@@ -1,39 +1,238 @@
 <div class="my-applications-container">
-  <h2>My Job Applications</h2>
-  <div *ngIf="applications$ | async as applications; else loading">
-    <div class="application-card" *ngFor="let app of applications">
-      <h4>{{ app.jobTitle }}</h4>
-      <p><strong>Company:</strong> {{ app.companyName }}</p>
-      <p><strong>Status:</strong> <span class="status-{{app.status | lowercase}}">{{ app.status }}</span></p>
-
-      <div *ngIf="app.status === 'COMPLETED'">
-        <button class="review-button" (click)="toggleReviewForm(app.applicationId)">
-          {{ reviewingApplicationId === app.applicationId ? 'Cancel' : 'Leave a Review' }}
-        </button>
-
-        <div *ngIf="reviewingApplicationId === app.applicationId" class="review-form">
-          <form [formGroup]="reviewForm" (ngSubmit)="onReviewSubmit()">
-            <div class="form-group">
-              <label>Rating:</label>
-              <select formControlName="rating">
-                <option value="5">5 - Excellent</option>
-                <option value="4">4 - Good</option>
-                <option value="3">3 - Average</option>
-                <option value="2">2 - Poor</option>
-                <option value="1">1 - Very Poor</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="comment">Comment:</label>
-              <textarea id="comment" formControlName="comment"></textarea>
-            </div>
-            <button type="submit" [disabled]="reviewForm.invalid">Submit Review</button>
-          </form>
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">My Applications</h1>
+        <p class="page-subtitle">Track your job applications and leave reviews for completed work</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-number">{{ (applications$ | async)?.length || 0 }}</div>
+          <div class="stat-label">Total Applications</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ getApplicationsByStatus('PENDING').length }}</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ getApplicationsByStatus('COMPLETED').length }}</div>
+          <div class="stat-label">Completed</div>
         </div>
       </div>
     </div>
   </div>
-  <ng-template #loading>
-    <p>Loading your applications...</p>
-  </ng-template>
+
+  <div class="applications-content">
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === 'ALL'"
+        (click)="setFilter('ALL')">
+        All Applications
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === 'PENDING'"
+        (click)="setFilter('PENDING')">
+        Pending
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === 'VIEWED'"
+        (click)="setFilter('VIEWED')">
+        Under Review
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === 'ACCEPTED'"
+        (click)="setFilter('ACCEPTED')">
+        Accepted
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === 'COMPLETED'"
+        (click)="setFilter('COMPLETED')">
+        Completed
+      </button>
+    </div>
+
+    <div *ngIf="filteredApplications$ | async as applications; else loading" class="applications-grid">
+      <div *ngIf="applications.length > 0; else noApplications">
+        <div class="application-card modern-card" *ngFor="let app of applications; trackBy: trackByApplicationId">
+          <div class="card-header">
+            <div class="job-info">
+              <h3 class="job-title">{{ app.jobTitle }}</h3>
+              <p class="company-name">
+                <mat-icon>business</mat-icon>
+                {{ app.companyName }}
+              </p>
+            </div>
+            <div class="status-badge" [ngClass]="'status-' + app.status.toLowerCase()">
+              <mat-icon>{{ getStatusIcon(app.status) }}</mat-icon>
+              {{ app.status | titlecase }}
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="application-meta">
+              <div class="meta-item">
+                <mat-icon>schedule</mat-icon>
+                <span>Applied {{ app.appliedAt | date: 'MMM d, y' }}</span>
+              </div>
+              <div class="meta-item" *ngIf="app.location">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ app.location }}</span>
+              </div>
+              <div class="meta-item" *ngIf="app.salary">
+                <mat-icon>attach_money</mat-icon>
+                <span>${{ app.salary | number }}</span>
+              </div>
+            </div>
+
+            <div class="job-description" *ngIf="app.jobDescription">
+              <p>{{ app.jobDescription | slice:0:150 }}{{ app.jobDescription.length > 150 ? '...' : '' }}</p>
+            </div>
+
+            <!-- Progress Timeline -->
+            <div class="progress-timeline">
+              <div class="timeline-step" [class.completed]="isStepCompleted('PENDING', app.status)">
+                <div class="step-icon">
+                  <mat-icon>send</mat-icon>
+                </div>
+                <span>Applied</span>
+              </div>
+              <div class="timeline-connector" [class.completed]="isStepCompleted('VIEWED', app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted('VIEWED', app.status)">
+                <div class="step-icon">
+                  <mat-icon>visibility</mat-icon>
+                </div>
+                <span>Reviewed</span>
+              </div>
+              <div class="timeline-connector" [class.completed]="isStepCompleted('ACCEPTED', app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted('ACCEPTED', app.status)">
+                <div class="step-icon">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+                <span>Accepted</span>
+              </div>
+              <div class="timeline-connector" [class.completed]="isStepCompleted('COMPLETED', app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted('COMPLETED', app.status)">
+                <div class="step-icon">
+                  <mat-icon>done_all</mat-icon>
+                </div>
+                <span>Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button mat-stroked-button [routerLink]="['/app/jobs', app.jobId]" class="view-job-btn">
+              <mat-icon>visibility</mat-icon>
+              View Job
+            </button>
+
+            <button
+              *ngIf="app.status === 'COMPLETED' && !app.hasReview"
+              mat-raised-button
+              color="primary"
+              (click)="toggleReviewForm(app.applicationId)"
+              class="review-btn">
+              <mat-icon>rate_review</mat-icon>
+              {{ reviewingApplicationId === app.applicationId ? 'Cancel Review' : 'Leave Review' }}
+            </button>
+
+            <div *ngIf="app.hasReview" class="review-indicator">
+              <mat-icon>star</mat-icon>
+              <span>Review Submitted</span>
+            </div>
+          </div>
+
+          <!-- Review Form -->
+          <div *ngIf="reviewingApplicationId === app.applicationId" class="review-form-container">
+            <div class="review-form glass">
+              <h4 class="form-title">
+                <mat-icon>rate_review</mat-icon>
+                Rate Your Experience
+              </h4>
+
+              <form [formGroup]="reviewForm" (ngSubmit)="onReviewSubmit()">
+                <div class="form-group">
+                  <label class="form-label">Overall Rating</label>
+                  <div class="rating-input">
+                    <div class="star-rating">
+                      <button
+                        type="button"
+                        *ngFor="let star of [1,2,3,4,5]"
+                        class="star-btn"
+                        [class.active]="star <= reviewForm.get('rating')?.value"
+                        (click)="setRating(star)">
+                        <mat-icon>{{ star <= reviewForm.get('rating')?.value ? 'star' : 'star_border' }}</mat-icon>
+                      </button>
+                    </div>
+                    <span class="rating-text">{{ getRatingText(reviewForm.get('rating')?.value) }}</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="comment" class="form-label">Your Review</label>
+                  <textarea
+                    id="comment"
+                    formControlName="comment"
+                    class="form-textarea"
+                    placeholder="Share your experience working with this employer..."
+                    rows="4">
+                  </textarea>
+                  <div class="char-count">
+                    {{ reviewForm.get('comment')?.value?.length || 0 }}/500
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    mat-stroked-button
+                    (click)="toggleReviewForm(app.applicationId)"
+                    class="cancel-btn">
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="reviewForm.invalid || isSubmittingReview"
+                    class="submit-btn">
+                    <mat-icon *ngIf="isSubmittingReview">hourglass_empty</mat-icon>
+                    <mat-icon *ngIf="!isSubmittingReview">send</mat-icon>
+                    {{ isSubmittingReview ? 'Submitting...' : 'Submit Review' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noApplications>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <h3>{{ getEmptyStateTitle() }}</h3>
+          <p>{{ getEmptyStateMessage() }}</p>
+          <button mat-raised-button color="primary" routerLink="/app/jobs" class="browse-jobs-btn">
+            <mat-icon>search</mat-icon>
+            Browse Jobs
+          </button>
+        </div>
+      </ng-template>
+    </div>
+
+    <ng-template #loading>
+      <div class="loading-state">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading your applications...</p>
+      </div>
+    </ng-template>
+  </div>
 </div>
