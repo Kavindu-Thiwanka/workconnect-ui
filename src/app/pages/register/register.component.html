@@ -1,30 +1,142 @@
 <div class="register-container">
-  <h2>Create an Account</h2>
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" formControlName="email">
-    </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" formControlName="password">
-    </div>
+  <div class="container">
+    <div class="register-content">
+      <!-- Left Side - Branding -->
+      <div class="register-branding animate-fade-in-up">
+        <div class="branding-content">
+          <h1 class="brand-title">
+            Join <span class="gradient-text">WorkConnect</span>
+          </h1>
+          <p class="brand-subtitle">
+            Start your journey to finding the perfect career match or the ideal candidate for your team.
+          </p>
 
-    <div class="form-group role-selector">
-      <label>I am a:</label>
-      <label>
-        <input type="radio" value="WORKER" formControlName="role">
-        Worker
-      </label>
-      <label>
-        <input type="radio" value="EMPLOYER" formControlName="role">
-        Employer
-      </label>
-    </div>
+          <div class="features-list">
+            <div class="feature-item">
+              <mat-icon>check_circle</mat-icon>
+              <span>Access to thousands of opportunities</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>check_circle</mat-icon>
+              <span>AI-powered job matching</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>check_circle</mat-icon>
+              <span>Professional networking tools</span>
+            </div>
+          </div>
 
-    <button type="submit" [disabled]="registerForm.invalid">Register</button>
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
+          <div class="login-prompt">
+            <span>Already have an account?</span>
+            <a routerLink="/login" class="login-link">Sign in here</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side - Registration Form -->
+      <div class="register-form-section animate-fade-in-right">
+        <div class="form-card modern-card">
+          <div class="form-header">
+            <h2 class="form-title">Create Your Account</h2>
+            <p class="form-subtitle">Get started in just a few steps</p>
+          </div>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="modern-form">
+            <!-- Email Field -->
+            <div class="form-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="Enter your email">
+                <mat-icon matPrefix>email</mat-icon>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                  Email is required
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                  Please enter a valid email
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Create a strong password">
+                <mat-icon matPrefix>lock</mat-icon>
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                  Password is required
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                  Password must be at least 8 characters
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="form-field">
+              <div class="role-selection">
+                <label class="section-label">I am joining as a:</label>
+                <mat-radio-group formControlName="role" class="role-group">
+                  <div class="role-option">
+                    <mat-radio-button value="WORKER" class="role-radio">
+                      <div class="role-content">
+                        <div class="role-icon">
+                          <mat-icon>person</mat-icon>
+                        </div>
+                        <div class="role-info">
+                          <h4>Job Seeker</h4>
+                          <p>Looking for opportunities</p>
+                        </div>
+                      </div>
+                    </mat-radio-button>
+                  </div>
+
+                  <div class="role-option">
+                    <mat-radio-button value="EMPLOYER" class="role-radio">
+                      <div class="role-content">
+                        <div class="role-icon">
+                          <mat-icon>business</mat-icon>
+                        </div>
+                        <div class="role-info">
+                          <h4>Employer</h4>
+                          <p>Hiring talented professionals</p>
+                        </div>
+                      </div>
+                    </mat-radio-button>
+                  </div>
+                </mat-radio-group>
+              </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="form-field">
+              <mat-checkbox formControlName="acceptTerms" class="terms-checkbox">
+                I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a>
+              </mat-checkbox>
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="error-message">
+              <mat-icon>error</mat-icon>
+              {{ errorMessage }}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button mat-raised-button color="primary" type="submit"
+                      [disabled]="registerForm.invalid || isLoading"
+                      class="register-btn">
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                <mat-icon *ngIf="!isLoading">person_add</mat-icon>
+                {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-  </form>
+  </div>
 </div>

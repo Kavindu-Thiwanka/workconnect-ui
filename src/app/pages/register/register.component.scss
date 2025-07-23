@@ -1,0 +1,416 @@
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--blue-50) 0%, var(--primary-50) 100%);
+  padding: 2rem 0;
+
+  .register-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    min-height: calc(100vh - 4rem);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      text-align: center;
+    }
+  }
+}
+
+// Left Side - Branding
+.register-branding {
+  .branding-content {
+    max-width: 500px;
+
+    @media (max-width: 1024px) {
+      margin: 0 auto;
+    }
+
+    .brand-title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--gray-800);
+      margin-bottom: 1.5rem;
+
+      @media (max-width: 768px) {
+        font-size: 2.5rem;
+      }
+
+      .gradient-text {
+        background: linear-gradient(135deg, var(--primary-600), var(--blue-600));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
+    .brand-subtitle {
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    .features-list {
+      margin-bottom: 2.5rem;
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+
+        @media (max-width: 1024px) {
+          justify-content: center;
+        }
+
+        mat-icon {
+          color: var(--success);
+          font-size: 1.25rem;
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+
+        span {
+          color: var(--gray-700);
+          font-weight: 500;
+        }
+      }
+    }
+
+    .login-prompt {
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: var(--radius-xl);
+      text-align: center;
+
+      span {
+        color: var(--gray-600);
+        margin-right: 0.5rem;
+      }
+
+      .login-link {
+        color: var(--primary-600);
+        text-decoration: none;
+        font-weight: 600;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Right Side - Form
+.register-form-section {
+  .form-card {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2.5rem;
+
+    @media (max-width: 768px) {
+      padding: 2rem;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+
+      .form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 0.5rem;
+      }
+
+      .form-subtitle {
+        color: var(--gray-600);
+        margin: 0;
+      }
+    }
+
+    .modern-form {
+      .form-field {
+        margin-bottom: 1.5rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        ::ng-deep {
+          .mat-mdc-text-field-wrapper {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+
+            &:hover {
+              .mdc-notched-outline__leading,
+              .mdc-notched-outline__notch,
+              .mdc-notched-outline__trailing {
+                border-color: var(--primary-400);
+              }
+            }
+          }
+
+          .mat-mdc-form-field-focus-overlay {
+            background: var(--blue-50);
+          }
+
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: var(--blue-200);
+          }
+
+          &.mat-focused {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: var(--primary-500);
+              border-width: 2px;
+            }
+          }
+
+          .mat-mdc-form-field-icon-prefix {
+            color: var(--gray-500);
+          }
+        }
+      }
+
+      // Role Selection
+      .role-selection {
+        .section-label {
+          display: block;
+          font-weight: 600;
+          color: var(--gray-800);
+          margin-bottom: 1rem;
+          font-size: 0.875rem;
+        }
+
+        .role-group {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+
+          .role-option {
+            border: 2px solid var(--blue-200);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            transition: all 0.2s ease;
+            background: var(--white);
+
+            &:hover {
+              border-color: var(--primary-300);
+              box-shadow: var(--shadow-sm);
+            }
+
+            .role-radio {
+              width: 100%;
+
+              ::ng-deep {
+                .mdc-radio {
+                  padding: 0;
+                }
+
+                .mdc-form-field {
+                  width: 100%;
+                }
+
+                .mdc-form-field > label {
+                  width: 100%;
+                }
+              }
+
+              .role-content {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                width: 100%;
+
+                .role-icon {
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 50%;
+                  background: var(--blue-100);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+
+                  mat-icon {
+                    color: var(--primary-600);
+                    font-size: 1.5rem;
+                  }
+                }
+
+                .role-info {
+                  flex: 1;
+                  text-align: left;
+
+                  h4 {
+                    margin: 0 0 0.25rem 0;
+                    font-weight: 600;
+                    color: var(--gray-800);
+                  }
+
+                  p {
+                    margin: 0;
+                    color: var(--gray-600);
+                    font-size: 0.875rem;
+                  }
+                }
+              }
+            }
+
+            // Selected state
+            &:has(.mdc-radio--checked) {
+              border-color: var(--primary-500);
+              background: var(--blue-50);
+
+              .role-icon {
+                background: var(--primary-500);
+
+                mat-icon {
+                  color: var(--white);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Terms Checkbox
+      .terms-checkbox {
+        ::ng-deep {
+          .mdc-form-field > label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            line-height: 1.5;
+          }
+        }
+
+        .terms-link {
+          color: var(--primary-600);
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      // Error Message
+      .error-message {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: var(--radius-lg);
+        color: var(--error);
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
+
+        mat-icon {
+          font-size: 1.25rem;
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+      }
+
+      // Form Actions
+      .form-actions {
+        .register-btn {
+          width: 100%;
+          padding: 0.875rem 2rem;
+          font-size: 1rem;
+          font-weight: 600;
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-lg);
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+
+          mat-spinner {
+            margin-right: 0.5rem;
+          }
+
+          mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.8s ease-out 0.2s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .register-container {
+    padding: 1rem 0;
+
+    .register-content {
+      gap: 1.5rem;
+    }
+  }
+
+  .register-branding {
+    .branding-content {
+      .brand-title {
+        font-size: 2rem;
+      }
+
+      .brand-subtitle {
+        font-size: 1.125rem;
+      }
+    }
+  }
+
+  .register-form-section {
+    .form-card {
+      padding: 1.5rem;
+
+      .form-header {
+        .form-title {
+          font-size: 1.75rem;
+        }
+      }
+    }
+  }
+}
