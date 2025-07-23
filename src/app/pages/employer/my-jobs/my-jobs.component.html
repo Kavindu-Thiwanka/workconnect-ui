@@ -15,37 +15,6 @@
         View Analytics
       </button>
     </div>
-
-    <div class="stats-overview">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <mat-icon>work</mat-icon>
-        </div>
-        <div class="stat-number">{{ (myJobs$ | async)?.length || 0 }}</div>
-        <div class="stat-label">Total Jobs</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <mat-icon>visibility</mat-icon>
-        </div>
-        <div class="stat-number">{{ getActiveJobsCount() }}</div>
-        <div class="stat-label">Active Jobs</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <mat-icon>people</mat-icon>
-        </div>
-        <div class="stat-number">{{ getTotalApplicationsCount() }}</div>
-        <div class="stat-label">Total Applications</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <mat-icon>trending_up</mat-icon>
-        </div>
-        <div class="stat-number">{{ getViewsCount() }}</div>
-        <div class="stat-label">Total Views</div>
-      </div>
-    </div>
   </div>
 
   <div class="jobs-content">
@@ -62,11 +31,11 @@
           </mat-select>
         </mat-form-field>
         <div class="view-toggle">
-          <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
-            <mat-icon>grid_view</mat-icon>
-          </button>
           <button mat-icon-button [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
             <mat-icon>view_list</mat-icon>
+          </button>
+          <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+            <mat-icon>grid_view</mat-icon>
           </button>
         </div>
       </div>

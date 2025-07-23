@@ -34,7 +34,7 @@ export class MyJobsComponent implements OnInit {
   myJobs$!: Observable<any[]>;
   filteredJobs: any[] = [];
   statusFilter: string = '';
-  viewMode: 'grid' | 'list' = 'grid';
+  viewMode: 'grid' | 'list' = 'list';
 
   constructor(private jobService: JobService) {}
 
