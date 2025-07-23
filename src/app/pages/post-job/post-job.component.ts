@@ -2,12 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
 import { JobService } from '../../services/job.service';
 
 @Component({
   selector: 'app-post-job',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatRadioModule
+  ],
   templateUrl: './post-job.component.html',
   styleUrls: ['./post-job.component.scss']
 })
@@ -52,7 +65,7 @@ export class PostJobComponent implements OnInit {
       next: (response) => {
         console.log('Job posted successfully!', response);
         // Navigate to the job list page after posting
-        this.router.navigate(['/jobs']);
+        this.router.navigate(['/app/employer/jobs']);
       },
       error: (err) => {
         console.error('Failed to post job', err);

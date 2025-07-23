@@ -1,30 +1,115 @@
 <div class="post-job-container">
-  <h2>Post a New Job</h2>
-  <form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="jobTitle">Job Title</label>
-      <input id="jobTitle" type="text" formControlName="jobTitle">
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Post a New Job</h1>
+      <p class="page-subtitle">Find the perfect candidate for your team</p>
     </div>
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea id="description" formControlName="description"></textarea>
-    </div>
-    <div class="form-group">
-      <label>Job Type:</label>
-      <label><input type="radio" value="ONE_DAY" formControlName="jobType"> One-Day</label>
-      <label><input type="radio" value="CONTRACT" formControlName="jobType"> Contract</label>
-    </div>
+  </div>
 
-    <div class="form-group">
-      <label for="startDate">{{ jobForm.get('jobType')?.value === 'ONE_DAY' ? 'Job Date' : 'Start Date' }}</label>
-      <input id="startDate" type="date" formControlName="startDate">
-    </div>
+  <div class="form-container">
+    <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="modern-form">
+      <div class="form-section">
+        <h3 class="section-title">Job Details</h3>
 
-    <div class="form-group" *ngIf="jobForm.get('jobType')?.value === 'CONTRACT'">
-      <label for="endDate">End Date</label>
-      <input id="endDate" type="date" formControlName="endDate">
-    </div>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Job Title</mat-label>
+            <input matInput formControlName="jobTitle" placeholder="e.g. Senior Software Engineer">
+            <mat-icon matSuffix>work</mat-icon>
+          </mat-form-field>
+        </div>
 
-    <button type="submit" [disabled]="jobForm.invalid">Post Job</button>
-  </form>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Job Description</mat-label>
+            <textarea matInput formControlName="description" rows="4" placeholder="Describe the role, responsibilities, and requirements..."></textarea>
+            <mat-icon matSuffix>description</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Required Skills</mat-label>
+            <input matInput formControlName="requiredSkills" placeholder="e.g. JavaScript, React, Node.js">
+            <mat-icon matSuffix>psychology</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Job Information</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Location</mat-label>
+              <input matInput formControlName="location" placeholder="e.g. New York, NY">
+              <mat-icon matSuffix>location_on</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Salary</mat-label>
+              <input matInput type="number" formControlName="salary" placeholder="50000">
+              <span matPrefix>$</span>
+              <mat-icon matSuffix>attach_money</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label">Job Type</label>
+          <mat-radio-group formControlName="jobType" class="job-type-group">
+            <mat-radio-button value="ONE_DAY" class="job-type-option">
+              <div class="radio-content">
+                <mat-icon>today</mat-icon>
+                <div>
+                  <div class="radio-title">One-Day Job</div>
+                  <div class="radio-subtitle">Single day assignment</div>
+                </div>
+              </div>
+            </mat-radio-button>
+            <mat-radio-button value="CONTRACT" class="job-type-option">
+              <div class="radio-content">
+                <mat-icon>date_range</mat-icon>
+                <div>
+                  <div class="radio-title">Contract</div>
+                  <div class="radio-subtitle">Multi-day project</div>
+                </div>
+              </div>
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ jobForm.get('jobType')?.value === 'ONE_DAY' ? 'Job Date' : 'Start Date' }}</mat-label>
+              <input matInput type="date" formControlName="startDate">
+              <mat-icon matSuffix>event</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-group" *ngIf="jobForm.get('jobType')?.value === 'CONTRACT'">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>End Date</mat-label>
+              <input matInput type="date" formControlName="endDate">
+              <mat-icon matSuffix>event_available</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" mat-stroked-button class="cancel-btn" routerLink="/app/employer/jobs">
+          Cancel
+        </button>
+        <button type="submit" mat-raised-button class="submit-btn" [disabled]="jobForm.invalid">
+          <mat-icon>publish</mat-icon>
+          Post Job
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
