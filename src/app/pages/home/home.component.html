@@ -5,26 +5,26 @@
       <div class="hero-content">
         <div class="hero-text animate-fade-in-up">
           <h1 class="hero-title">
-            Find Your Perfect
-            <span class="gradient-text">Career Match</span>
+            Find Your Next
+            <span class="gradient-text">Trade Job</span>
           </h1>
           <p class="hero-subtitle">
-            Connect talented professionals with amazing opportunities. 
-            Whether you're looking for your next role or the perfect candidate, 
-            WorkConnect makes it happen.
+            Connect skilled tradespeople with quality work opportunities.
+            Whether you're a contractor looking for reliable workers or a tradesperson
+            seeking your next project, TradeConnect makes it happen.
           </p>
-          
+
           <div class="hero-actions">
             <button mat-raised-button color="primary" routerLink="/register" class="cta-btn primary">
-              <mat-icon>person_add</mat-icon>
-              Get Started
+              <mat-icon>work</mat-icon>
+              Find Work
             </button>
             <button mat-stroked-button routerLink="/login" class="cta-btn secondary">
               <mat-icon>login</mat-icon>
               Sign In
             </button>
           </div>
-          
+
           <div class="hero-stats">
             <div class="stat-item" *ngFor="let stat of stats">
               <span class="stat-number">{{ stat.number }}</span>
@@ -32,41 +32,41 @@
             </div>
           </div>
         </div>
-        
+
         <div class="hero-visual animate-fade-in-right">
           <div class="visual-card glass">
             <div class="card-header">
               <div class="user-avatar">
-                <mat-icon>person</mat-icon>
+                <mat-icon>engineering</mat-icon>
               </div>
               <div class="user-info">
-                <h4>Sarah Johnson</h4>
-                <p>Frontend Developer</p>
+                <h4>Mike Rodriguez</h4>
+                <p>Licensed Electrician</p>
               </div>
               <div class="status-badge badge-success">Available</div>
             </div>
             <div class="card-content">
               <div class="skills">
-                <span class="skill-tag">React</span>
-                <span class="skill-tag">TypeScript</span>
-                <span class="skill-tag">Angular</span>
+                <span class="skill-tag">Residential Wiring</span>
+                <span class="skill-tag">Commercial</span>
+                <span class="skill-tag">Licensed</span>
               </div>
               <div class="match-indicator">
                 <mat-icon>star</mat-icon>
-                <span>98% Match</span>
+                <span>Perfect Match</span>
               </div>
             </div>
           </div>
-          
+
           <div class="floating-elements">
             <div class="floating-icon" style="--delay: 0s">
-              <mat-icon>work</mat-icon>
+              <mat-icon>construction</mat-icon>
             </div>
             <div class="floating-icon" style="--delay: 1s">
-              <mat-icon>trending_up</mat-icon>
+              <mat-icon>plumbing</mat-icon>
             </div>
             <div class="floating-icon" style="--delay: 2s">
-              <mat-icon>handshake</mat-icon>
+              <mat-icon>electrical_services</mat-icon>
             </div>
           </div>
         </div>
@@ -78,12 +78,12 @@
   <section class="features-section section">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Why Choose WorkConnect?</h2>
+        <h2 class="section-title">Why Choose TradeConnect?</h2>
         <p class="section-subtitle">
-          Everything you need to succeed in your career journey
+          Everything you need to succeed in the skilled trades
         </p>
       </div>
-      
+
       <div class="features-grid">
         <div class="feature-card modern-card" *ngFor="let feature of features">
           <div class="feature-icon">
@@ -91,6 +91,74 @@
           </div>
           <h3 class="feature-title">{{ feature.title }}</h3>
           <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trade Categories Section -->
+  <section class="trades-section section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Popular Trade Categories</h2>
+        <p class="section-subtitle">
+          Find opportunities in your specialty
+        </p>
+      </div>
+
+      <div class="trades-grid">
+        <div class="trade-card modern-card">
+          <div class="trade-icon">
+            <mat-icon>construction</mat-icon>
+          </div>
+          <h3>Construction</h3>
+          <p>General construction, framing, concrete work</p>
+          <span class="job-count">1,200+ jobs</span>
+        </div>
+
+        <div class="trade-card modern-card">
+          <div class="trade-icon">
+            <mat-icon>plumbing</mat-icon>
+          </div>
+          <h3>Plumbing</h3>
+          <p>Residential & commercial plumbing services</p>
+          <span class="job-count">850+ jobs</span>
+        </div>
+
+        <div class="trade-card modern-card">
+          <div class="trade-icon">
+            <mat-icon>electrical_services</mat-icon>
+          </div>
+          <h3>Electrical</h3>
+          <p>Wiring, installations, electrical repairs</p>
+          <span class="job-count">950+ jobs</span>
+        </div>
+
+        <div class="trade-card modern-card">
+          <div class="trade-icon">
+            <mat-icon>hvac</mat-icon>
+          </div>
+          <h3>HVAC</h3>
+          <p>Heating, ventilation, air conditioning</p>
+          <span class="job-count">650+ jobs</span>
+        </div>
+
+        <div class="trade-card modern-card">
+          <div class="trade-icon">
+            <mat-icon>roofing</mat-icon>
+          </div>
+          <h3>Roofing</h3>
+          <p>Roof installation, repair, maintenance</p>
+          <span class="job-count">420+ jobs</span>
+        </div>
+
+        <div class="trade-card modern-card">
+          <div class="trade-icon">
+            <mat-icon>format_paint</mat-icon>
+          </div>
+          <h3>Painting</h3>
+          <p>Interior & exterior painting services</p>
+          <span class="job-count">380+ jobs</span>
         </div>
       </div>
     </div>
@@ -105,33 +173,92 @@
           Get started in just a few simple steps
         </p>
       </div>
-      
+
       <div class="steps-container">
         <div class="step-item">
           <div class="step-number">1</div>
           <div class="step-content">
             <h3>Create Your Profile</h3>
-            <p>Sign up and build your professional profile in minutes</p>
+            <p>Showcase your skills, certifications, and experience</p>
           </div>
         </div>
-        
+
         <div class="step-connector"></div>
-        
+
         <div class="step-item">
           <div class="step-number">2</div>
           <div class="step-content">
-            <h3>Discover Opportunities</h3>
-            <p>Browse jobs or candidates that match your criteria</p>
+            <h3>Browse Jobs</h3>
+            <p>Find work that matches your trade and location</p>
           </div>
         </div>
-        
+
         <div class="step-connector"></div>
-        
+
         <div class="step-item">
           <div class="step-number">3</div>
           <div class="step-content">
-            <h3>Make Connections</h3>
-            <p>Apply for jobs or reach out to potential hires</p>
+            <h3>Get Hired</h3>
+            <p>Apply for jobs and start working with quality contractors</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">What Our Community Says</h2>
+        <p class="section-subtitle">
+          Real stories from real tradespeople and contractors
+        </p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card modern-card">
+          <div class="testimonial-content">
+            <p>"TradeConnect helped me find consistent work as an electrician. The contractors are professional and pay on time."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="author-info">
+              <h4>Carlos Martinez</h4>
+              <p>Licensed Electrician</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card modern-card">
+          <div class="testimonial-content">
+            <p>"As a contractor, I can quickly find skilled workers for my projects. The quality of tradespeople is excellent."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="author-info">
+              <h4>Sarah Johnson</h4>
+              <p>General Contractor</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card modern-card">
+          <div class="testimonial-content">
+            <p>"I've built my plumbing business through TradeConnect. Great platform for connecting with homeowners and contractors."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="author-info">
+              <h4>David Kim</h4>
+              <p>Master Plumber</p>
+            </div>
           </div>
         </div>
       </div>
@@ -142,16 +269,20 @@
   <section class="cta-section section">
     <div class="container">
       <div class="cta-content glass">
-        <h2 class="cta-title">Ready to Get Started?</h2>
+        <h2 class="cta-title">Ready to Start Working?</h2>
         <p class="cta-subtitle">
-          Join thousands of professionals who have found success with WorkConnect
+          Join thousands of skilled tradespeople who have found success with TradeConnect
         </p>
-        
+
         <div class="cta-actions">
           <button mat-raised-button color="primary" routerLink="/register" class="cta-btn">
-            <mat-icon>rocket_launch</mat-icon>
-            Start Your Journey
+            <mat-icon>construction</mat-icon>
+            Start Finding Work
           </button>
+        </div>
+
+        <div class="cta-note">
+          <p>Free to join • No hidden fees • Get paid faster</p>
         </div>
       </div>
     </div>

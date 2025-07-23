@@ -1,15 +1,183 @@
-<div class="job-list-container">
-  <h2>Open Jobs</h2>
-  <div class="job-grid" *ngIf="jobs$ | async as jobs; else loading">
-    <div class="job-card" *ngFor="let job of jobs">
-      <h3>{{ job.jobTitle }}</h3>
-      <p class="company">{{ job.employerCompanyName }}</p>
-      <p class="location">{{ job.location }}</p>
-      <p class="salary">${{ job.salary }}</p>
-      <a [routerLink]="['/jobs', job.id]">View Details</a>
+<div class="jobs-container">
+  <div class="jobs-header">
+    <div class="header-content">
+      <h1>Find Your Next Job</h1>
+      <p>Discover skilled trade and labor opportunities in your area</p>
+    </div>
+
+    <div class="search-filters glass">
+      <div class="search-bar">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search jobs...</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Construction, plumbing, electrical, etc.">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="filters">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Location</mat-label>
+          <input matInput [(ngModel)]="locationFilter" (input)="onFilter()" placeholder="City, ZIP code">
+          <mat-icon matPrefix>location_on</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Job Type</mat-label>
+          <mat-select [(ngModel)]="jobTypeFilter" (selectionChange)="onFilter()">
+            <mat-option value="">All Types</mat-option>
+            <mat-option value="ONE_DAY">One Day</mat-option>
+            <mat-option value="CONTRACT">Contract</mat-option>
+            <mat-option value="PART_TIME">Part Time</mat-option>
+            <mat-option value="FULL_TIME">Full Time</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Trade</mat-label>
+          <mat-select [(ngModel)]="tradeFilter" (selectionChange)="onFilter()">
+            <mat-option value="">All Trades</mat-option>
+            <mat-option value="CONSTRUCTION">Construction</mat-option>
+            <mat-option value="PLUMBING">Plumbing</mat-option>
+            <mat-option value="ELECTRICAL">Electrical</mat-option>
+            <mat-option value="HVAC">HVAC</mat-option>
+            <mat-option value="LANDSCAPING">Landscaping</mat-option>
+            <mat-option value="PAINTING">Painting</mat-option>
+            <mat-option value="ROOFING">Roofing</mat-option>
+            <mat-option value="CLEANING">Cleaning</mat-option>
+            <mat-option value="MOVING">Moving</mat-option>
+            <mat-option value="GENERAL_LABOR">General Labor</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="clearFilters()" class="clear-btn">
+          <mat-icon>clear</mat-icon>
+          Clear
+        </button>
+      </div>
     </div>
   </div>
+
+  <div class="jobs-content">
+    <div class="results-header">
+      <span class="results-count">{{ filteredJobs.length }} jobs available</span>
+      <div class="view-toggle">
+        <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+          <mat-icon>grid_view</mat-icon>
+        </button>
+        <button mat-icon-button [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
+          <mat-icon>view_list</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="jobs-grid" [class.list-view]="viewMode === 'list'" *ngIf="jobs$ | async as jobs; else loading">
+      <div *ngFor="let job of filteredJobs" class="job-card modern-card" [class.list-card]="viewMode === 'list'">
+        <div class="job-header">
+          <div class="company-info">
+            <div class="company-avatar">
+              {{ job.employerCompanyName?.charAt(0) }}
+            </div>
+            <div class="job-basic-info">
+              <h3 class="job-title">{{ job.jobTitle }}</h3>
+              <p class="company-name">{{ job.employerCompanyName }}</p>
+            </div>
+          </div>
+
+          <div class="job-actions">
+            <button mat-icon-button class="bookmark-btn" (click)="toggleBookmark(job.id)">
+              <mat-icon>{{ job.isBookmarked ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+            </button>
+            <button mat-icon-button [matMenuTriggerFor]="jobMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #jobMenu="matMenu">
+              <button mat-menu-item (click)="shareJob(job)">
+                <mat-icon>share</mat-icon>
+                Share Job
+              </button>
+              <button mat-menu-item (click)="reportJob(job.id)">
+                <mat-icon>flag</mat-icon>
+                Report Job
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+
+        <div class="job-details">
+          <div class="detail-tags">
+            <span class="job-type-tag">{{ getJobTypeDisplay(job.jobType) }}</span>
+            <span class="trade-tag" *ngIf="job.trade">{{ job.trade | titlecase }}</span>
+            <span class="urgency-tag" *ngIf="job.isUrgent">Urgent</span>
+          </div>
+
+          <div class="job-meta">
+            <div class="meta-item">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ job.location }}</span>
+            </div>
+            <div class="meta-item">
+              <mat-icon>attach_money</mat-icon>
+              <span>${{ job.salary | number }}/{{ getPayPeriod(job.jobType) }}</span>
+            </div>
+            <div class="meta-item" *ngIf="job.jobType === 'ONE_DAY'">
+              <mat-icon>event</mat-icon>
+              <span>{{ job.jobDate | date:'MMM d' }}</span>
+            </div>
+            <div class="meta-item" *ngIf="job.jobType === 'CONTRACT'">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ job.startDate | date:'MMM d' }} - {{ job.endDate | date:'MMM d' }}</span>
+            </div>
+            <div class="meta-item" *ngIf="job.experienceRequired">
+              <mat-icon>work</mat-icon>
+              <span>{{ job.experienceRequired }} experience</span>
+            </div>
+          </div>
+
+          <p class="job-description" *ngIf="job.description">{{ job.description | slice:0:150 }}...</p>
+
+          <div class="job-requirements" *ngIf="job.requiredSkills">
+            <span class="requirement-tag" *ngFor="let skill of getSkillsArray(job.requiredSkills).slice(0, 3)">
+              {{ skill }}
+            </span>
+            <span *ngIf="getSkillsArray(job.requiredSkills).length > 3" class="more-requirements">
+              +{{ getSkillsArray(job.requiredSkills).length - 3 }} more
+            </span>
+          </div>
+        </div>
+
+        <div class="job-footer">
+          <div class="applicant-count">
+            <mat-icon>people</mat-icon>
+            <span>{{ job.applicantCount || 0 }} applied</span>
+          </div>
+
+          <div class="job-actions-footer">
+            <button mat-stroked-button [routerLink]="['/jobs', job.id]">
+              View Details
+            </button>
+            <button mat-raised-button color="primary" (click)="applyToJob(job.id)" [disabled]="job.hasApplied">
+              <mat-icon>{{ job.hasApplied ? 'check' : 'send' }}</mat-icon>
+              {{ job.hasApplied ? 'Applied' : 'Apply Now' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredJobs.length === 0 && !isLoading" class="empty-state glass">
+      <mat-icon class="empty-icon">construction</mat-icon>
+      <h3>No jobs found</h3>
+      <p>Try adjusting your search criteria or check back later for new opportunities</p>
+      <button mat-raised-button color="primary" (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
   <ng-template #loading>
-    <p>Loading jobs...</p>
+    <div class="loading-state">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p>Finding work opportunities for you...</p>
+    </div>
   </ng-template>
 </div>

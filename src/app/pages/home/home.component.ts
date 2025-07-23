@@ -19,26 +19,26 @@ import { MatIconModule } from '@angular/material/icon';
 export class HomeComponent {
   features = [
     {
-      icon: 'work',
-      title: 'Find Your Dream Job',
-      description: 'Browse thousands of job opportunities from top companies worldwide'
+      icon: 'construction',
+      title: 'Find Skilled Trade Work',
+      description: 'Browse thousands of construction, plumbing, electrical, and other trade opportunities'
     },
     {
-      icon: 'people',
-      title: 'Connect with Talent',
-      description: 'Employers can find and hire the best candidates for their teams'
+      icon: 'handyman',
+      title: 'Connect with Contractors',
+      description: 'Contractors can find and hire skilled tradespeople and laborers for their projects'
     },
     {
       icon: 'trending_up',
-      title: 'Grow Your Career',
-      description: 'Access career resources and professional development opportunities'
+      title: 'Build Your Career',
+      description: 'Access training resources, certifications, and advance in the skilled trades'
     }
   ];
 
   stats = [
-    { number: '10K+', label: 'Active Jobs' },
-    { number: '50K+', label: 'Professionals' },
-    { number: '500+', label: 'Companies' },
-    { number: '95%', label: 'Success Rate' }
+    { number: '5K+', label: 'Active Jobs' },
+    { number: '25K+', label: 'Skilled Workers' },
+    { number: '800+', label: 'Contractors' },
+    { number: '98%', label: 'Job Completion Rate' }
   ];
 }
