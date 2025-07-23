@@ -1,16 +1,58 @@
-<header class="main-header">
-  <h1>WorkConnect</h1>
-  <nav>
-    <a routerLink="/dashboard">Dashboard</a>
-    <a routerLink="/profile">Profile</a>
-    <a routerLink="/jobs">Jobs</a>
-    <a *ngIf="userRole === 'EMPLOYER'" routerLink="/employer/jobs">My Jobs</a>
-    <a *ngIf="userRole === 'EMPLOYER'" routerLink="/jobs/new">Post a Job</a>
-    <a *ngIf="userRole === 'WORKER'" routerLink="/my-applications">My Applications</a>
-  </nav>
-  <button (click)="logout()">Logout</button>
-</header>
+<div class="app-layout">
+  <!-- Modern Header -->
+  <header class="modern-header glass">
+    <div class="container">
+      <div class="header-content">
+        <div class="brand">
+          <h1 class="brand-title">WorkConnect</h1>
+          <span class="brand-subtitle">Find Your Future</span>
+        </div>
 
-<main class="content-wrapper">
-  <router-outlet></router-outlet>
-</main>
+        <nav class="main-nav">
+          <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+            <mat-icon>dashboard</mat-icon>
+            Dashboard
+          </a>
+          <a routerLink="/profile" routerLinkActive="active" class="nav-link">
+            <mat-icon>person</mat-icon>
+            Profile
+          </a>
+          <a routerLink="/jobs" routerLinkActive="active" class="nav-link">
+            <mat-icon>work</mat-icon>
+            Jobs
+          </a>
+          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/employer/jobs" routerLinkActive="active" class="nav-link">
+            <mat-icon>business</mat-icon>
+            My Jobs
+          </a>
+          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/jobs/new" class="nav-link btn-primary">
+            <mat-icon>add</mat-icon>
+            Post Job
+          </a>
+          <a *ngIf="userRole === 'WORKER'" routerLink="/my-applications" routerLinkActive="active" class="nav-link">
+            <mat-icon>assignment</mat-icon>
+            Applications
+          </a>
+        </nav>
+
+        <div class="header-actions">
+          <button mat-icon-button class="notification-btn">
+            <mat-icon>notifications</mat-icon>
+            <span class="notification-badge">3</span>
+          </button>
+          <button mat-button (click)="logout()" class="logout-btn">
+            <mat-icon>logout</mat-icon>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Modern Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper animate-fade-in-up">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

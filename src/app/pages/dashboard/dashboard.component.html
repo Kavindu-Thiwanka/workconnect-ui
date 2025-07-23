@@ -1,34 +1,371 @@
 <div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <section class="dashboard-header">
+    <div class="container">
+      <div class="header-content animate-fade-in-up">
+        <div class="welcome-section">
+          <h1 class="welcome-title">
+            Welcome back!
+            <span class="wave">👋</span>
+          </h1>
+          <p class="welcome-subtitle" *ngIf="userRole === 'WORKER'">
+            Ready to find your next opportunity?
+          </p>
+          <p class="welcome-subtitle" *ngIf="userRole === 'EMPLOYER'">
+            Manage your jobs and find the perfect candidates
+          </p>
+        </div>
 
-  <div *ngIf="userRole === 'WORKER'">
-    <h2>Recommended Jobs for You</h2>
-    <div class="job-grid" *ngIf="recommendations$ | async as recommendations; else loading">
-      <div *ngIf="recommendations.length > 0; else noRecs">
-        <div class="job-card" *ngFor="let job of recommendations">
-          <h3>{{ job.jobTitle }}</h3>
-          <p class="company">{{ job.employerCompanyName }}</p>
-          <p class="location">{{ job.location }}</p>
-          <p class="salary">${{ job.salary }}</p>
-          <a [routerLink]="['/jobs', job.id]">View Details</a>
+        <div class="quick-stats" *ngIf="userRole === 'WORKER'">
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>work</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">12</span>
+              <span class="stat-label">Applications</span>
+            </div>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>visibility</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">48</span>
+              <span class="stat-label">Profile Views</span>
+            </div>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>star</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">5</span>
+              <span class="stat-label">Interviews</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-stats" *ngIf="userRole === 'EMPLOYER'">
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>business</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">8</span>
+              <span class="stat-label">Active Jobs</span>
+            </div>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">156</span>
+              <span class="stat-label">Applications</span>
+            </div>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">24</span>
+              <span class="stat-label">New This Week</span>
+            </div>
+          </div>
         </div>
       </div>
-      <ng-template #noRecs>
-        <p>No recommendations available right now. Make sure your profile skills are up to date!</p>
-      </ng-template>
     </div>
-  </div>
+  </section>
 
-  <div *ngIf="userRole === 'EMPLOYER'">
-    <h2>Employer Dashboard</h2>
-    <p>Welcome! Manage your job postings and applicants.</p>
-    <div class="quick-links">
-      <a routerLink="/employer/jobs" class="dashboard-button">View My Jobs</a>
-      <a routerLink="/jobs/new" class="dashboard-button">Post a New Job</a>
+  <!-- Worker Dashboard -->
+  <section *ngIf="userRole === 'WORKER'" class="worker-dashboard section">
+    <div class="container">
+      <div class="dashboard-grid">
+        <!-- Recommended Jobs -->
+        <div class="dashboard-card modern-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>recommend</mat-icon>
+              Recommended for You
+            </h2>
+            <button mat-button class="view-all-btn" routerLink="/jobs">
+              View All
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+
+          <div class="card-content">
+            <div *ngIf="recommendations$ | async as recommendations; else loadingRecs" class="recommendations-list">
+              <div *ngIf="recommendations.length > 0; else noRecs">
+                <div class="job-recommendation" *ngFor="let job of recommendations.slice(0, 3)">
+                  <div class="job-info">
+                    <div class="company-avatar">
+                      {{ job.employerCompanyName?.charAt(0) }}
+                    </div>
+                    <div class="job-details">
+                      <h4 class="job-title">{{ job.jobTitle }}</h4>
+                      <p class="company-name">{{ job.employerCompanyName }}</p>
+                      <div class="job-meta">
+                        <span class="location">
+                          <mat-icon>location_on</mat-icon>
+                          {{ job.location }}
+                        </span>
+                        <span class="salary">${{ job.salary | number }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="job-actions">
+                    <button mat-stroked-button [routerLink]="['/jobs', job.id]" class="view-btn">
+                      View
+                    </button>
+                    <button mat-raised-button color="primary" class="apply-btn">
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <ng-template #noRecs>
+                <div class="empty-state">
+                  <mat-icon class="empty-icon">work_off</mat-icon>
+                  <h4>No recommendations yet</h4>
+                  <p>Complete your profile to get personalized job recommendations</p>
+                  <button mat-raised-button color="primary" routerLink="/profile" class="btn-modern">
+                    Update Profile
+                  </button>
+                </div>
+              </ng-template>
+            </div>
+
+            <ng-template #loadingRecs>
+              <div class="loading-state">
+                <mat-spinner diameter="40"></mat-spinner>
+                <p>Finding perfect matches for you...</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="dashboard-card modern-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>assignment</mat-icon>
+              Recent Applications
+            </h2>
+            <button mat-button class="view-all-btn" routerLink="/my-applications">
+              View All
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+
+          <div class="card-content">
+            <div class="applications-list">
+              <div class="application-item" *ngFor="let app of [1,2,3]">
+                <div class="application-info">
+                  <h4 class="job-title">Senior Frontend Developer</h4>
+                  <p class="company-name">TechCorp Inc.</p>
+                  <span class="application-date">Applied 2 days ago</span>
+                </div>
+                <div class="application-status">
+                  <span class="status-badge badge-warning">Under Review</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Completion -->
+        <div class="dashboard-card modern-card profile-completion">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>person</mat-icon>
+              Profile Strength
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div class="progress-section">
+              <div class="progress-info">
+                <span class="progress-label">Profile Completion</span>
+                <span class="progress-percentage">75%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 75%"></div>
+              </div>
+            </div>
+
+            <div class="improvement-tips">
+              <h4>Boost your profile:</h4>
+              <ul class="tips-list">
+                <li>
+                  <mat-icon>add_circle_outline</mat-icon>
+                  Add a professional photo
+                </li>
+                <li>
+                  <mat-icon>add_circle_outline</mat-icon>
+                  Complete skills section
+                </li>
+                <li>
+                  <mat-icon>add_circle_outline</mat-icon>
+                  Add work experience
+                </li>
+              </ul>
+              <button mat-raised-button color="primary" routerLink="/profile" class="btn-modern">
+                Complete Profile
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-card modern-card quick-actions">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>flash_on</mat-icon>
+              Quick Actions
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div class="actions-grid">
+              <button mat-raised-button class="action-btn" routerLink="/jobs">
+                <mat-icon>search</mat-icon>
+                Browse Jobs
+              </button>
+              <button mat-raised-button class="action-btn" routerLink="/profile">
+                <mat-icon>edit</mat-icon>
+                Edit Profile
+              </button>
+              <button mat-raised-button class="action-btn" routerLink="/my-applications">
+                <mat-icon>assignment</mat-icon>
+                My Applications
+              </button>
+              <button mat-raised-button class="action-btn">
+                <mat-icon>help</mat-icon>
+                Get Help
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <ng-template #loading>
-    <p>Loading recommendations...</p>
-  </ng-template>
+  <!-- Employer Dashboard -->
+  <section *ngIf="userRole === 'EMPLOYER'" class="employer-dashboard section">
+    <div class="container">
+      <div class="dashboard-grid">
+        <!-- Active Jobs -->
+        <div class="dashboard-card modern-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>business</mat-icon>
+              Active Job Postings
+            </h2>
+            <button mat-button class="view-all-btn" routerLink="/employer/jobs">
+              Manage All
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
 
+          <div class="card-content">
+            <div class="jobs-list">
+              <div class="job-item" *ngFor="let job of [1,2,3]">
+                <div class="job-info">
+                  <h4 class="job-title">Senior React Developer</h4>
+                  <div class="job-meta">
+                    <span class="applications-count">
+                      <mat-icon>people</mat-icon>
+                      24 applications
+                    </span>
+                    <span class="posted-date">Posted 5 days ago</span>
+                  </div>
+                </div>
+                <div class="job-actions">
+                  <button mat-stroked-button class="view-btn">
+                    View Applications
+                  </button>
+                  <button mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="dashboard-card modern-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>inbox</mat-icon>
+              Recent Applications
+            </h2>
+            <button mat-button class="view-all-btn">
+              View All
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+
+          <div class="card-content">
+            <div class="applications-list">
+              <div class="application-item" *ngFor="let app of [1,2,3]">
+                <div class="applicant-info">
+                  <div class="applicant-avatar">JD</div>
+                  <div class="applicant-details">
+                    <h4 class="applicant-name">John Doe</h4>
+                    <p class="applied-position">Applied for Senior Developer</p>
+                    <span class="application-time">2 hours ago</span>
+                  </div>
+                </div>
+                <div class="application-actions">
+                  <button mat-stroked-button class="review-btn">
+                    Review
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-card modern-card employer-actions">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>flash_on</mat-icon>
+              Quick Actions
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div class="actions-grid">
+              <button mat-raised-button color="primary" routerLink="/jobs/new" class="action-btn primary">
+                <mat-icon>add</mat-icon>
+                Post New Job
+              </button>
+              <button mat-raised-button class="action-btn" routerLink="/employer/jobs">
+                <mat-icon>business</mat-icon>
+                Manage Jobs
+              </button>
+              <button mat-raised-button class="action-btn">
+                <mat-icon>analytics</mat-icon>
+                View Analytics
+              </button>
+              <button mat-raised-button class="action-btn" routerLink="/profile">
+                <mat-icon>edit</mat-icon>
+                Company Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
