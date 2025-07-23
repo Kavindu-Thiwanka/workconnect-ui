@@ -17,7 +17,7 @@
             <mat-icon>person</mat-icon>
             Profile
           </a>
-          <a routerLink="/app/jobs" routerLinkActive="active" class="nav-link">
+          <a *ngIf="userRole === 'WORKER'" routerLink="/app/jobs" routerLinkActive="active" class="nav-link">
             <mat-icon>work</mat-icon>
             Jobs
           </a>
