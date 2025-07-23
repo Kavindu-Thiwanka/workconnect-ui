@@ -9,27 +9,27 @@
         </div>
 
         <nav class="main-nav">
-          <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+          <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-link">
             <mat-icon>dashboard</mat-icon>
             Dashboard
           </a>
-          <a routerLink="/profile" routerLinkActive="active" class="nav-link">
+          <a routerLink="/app/profile" routerLinkActive="active" class="nav-link">
             <mat-icon>person</mat-icon>
             Profile
           </a>
-          <a routerLink="/jobs" routerLinkActive="active" class="nav-link">
+          <a routerLink="/app/jobs" routerLinkActive="active" class="nav-link">
             <mat-icon>work</mat-icon>
             Jobs
           </a>
-          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/employer/jobs" routerLinkActive="active" class="nav-link">
+          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/app/employer/jobs" routerLinkActive="active" class="nav-link">
             <mat-icon>business</mat-icon>
             My Jobs
           </a>
-          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/jobs/new" class="nav-link btn-primary">
+          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/app/jobs/new" class="nav-link btn-primary">
             <mat-icon>add</mat-icon>
             Post Job
           </a>
-          <a *ngIf="userRole === 'WORKER'" routerLink="/my-applications" routerLinkActive="active" class="nav-link">
+          <a *ngIf="userRole === 'WORKER'" routerLink="/app/my-applications" routerLinkActive="active" class="nav-link">
             <mat-icon>assignment</mat-icon>
             Applications
           </a>

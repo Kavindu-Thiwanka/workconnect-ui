@@ -1,0 +1,159 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text animate-fade-in-up">
+          <h1 class="hero-title">
+            Find Your Perfect
+            <span class="gradient-text">Career Match</span>
+          </h1>
+          <p class="hero-subtitle">
+            Connect talented professionals with amazing opportunities. 
+            Whether you're looking for your next role or the perfect candidate, 
+            WorkConnect makes it happen.
+          </p>
+          
+          <div class="hero-actions">
+            <button mat-raised-button color="primary" routerLink="/register" class="cta-btn primary">
+              <mat-icon>person_add</mat-icon>
+              Get Started
+            </button>
+            <button mat-stroked-button routerLink="/login" class="cta-btn secondary">
+              <mat-icon>login</mat-icon>
+              Sign In
+            </button>
+          </div>
+          
+          <div class="hero-stats">
+            <div class="stat-item" *ngFor="let stat of stats">
+              <span class="stat-number">{{ stat.number }}</span>
+              <span class="stat-label">{{ stat.label }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="hero-visual animate-fade-in-right">
+          <div class="visual-card glass">
+            <div class="card-header">
+              <div class="user-avatar">
+                <mat-icon>person</mat-icon>
+              </div>
+              <div class="user-info">
+                <h4>Sarah Johnson</h4>
+                <p>Frontend Developer</p>
+              </div>
+              <div class="status-badge badge-success">Available</div>
+            </div>
+            <div class="card-content">
+              <div class="skills">
+                <span class="skill-tag">React</span>
+                <span class="skill-tag">TypeScript</span>
+                <span class="skill-tag">Angular</span>
+              </div>
+              <div class="match-indicator">
+                <mat-icon>star</mat-icon>
+                <span>98% Match</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="floating-elements">
+            <div class="floating-icon" style="--delay: 0s">
+              <mat-icon>work</mat-icon>
+            </div>
+            <div class="floating-icon" style="--delay: 1s">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="floating-icon" style="--delay: 2s">
+              <mat-icon>handshake</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Why Choose WorkConnect?</h2>
+        <p class="section-subtitle">
+          Everything you need to succeed in your career journey
+        </p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card modern-card" *ngFor="let feature of features">
+          <div class="feature-icon">
+            <mat-icon>{{ feature.icon }}</mat-icon>
+          </div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">
+          Get started in just a few simple steps
+        </p>
+      </div>
+      
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Create Your Profile</h3>
+            <p>Sign up and build your professional profile in minutes</p>
+          </div>
+        </div>
+        
+        <div class="step-connector"></div>
+        
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Discover Opportunities</h3>
+            <p>Browse jobs or candidates that match your criteria</p>
+          </div>
+        </div>
+        
+        <div class="step-connector"></div>
+        
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Make Connections</h3>
+            <p>Apply for jobs or reach out to potential hires</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section section">
+    <div class="container">
+      <div class="cta-content glass">
+        <h2 class="cta-title">Ready to Get Started?</h2>
+        <p class="cta-subtitle">
+          Join thousands of professionals who have found success with WorkConnect
+        </p>
+        
+        <div class="cta-actions">
+          <button mat-raised-button color="primary" routerLink="/register" class="cta-btn">
+            <mat-icon>rocket_launch</mat-icon>
+            Start Your Journey
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

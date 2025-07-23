@@ -42,7 +42,7 @@ export class LoginComponent {
       next: (response) => {
         this.authService.storeTokens(response);
         console.log('Login Successful!');
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/app/dashboard']);
       },
       error: (err) => {
         this.errorMessage = 'Login failed. Please check your credentials.';

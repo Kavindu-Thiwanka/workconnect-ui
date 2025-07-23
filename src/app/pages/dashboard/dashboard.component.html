@@ -94,7 +94,7 @@
               <mat-icon>recommend</mat-icon>
               Recommended for You
             </h2>
-            <button mat-button class="view-all-btn" routerLink="/jobs">
+            <button mat-button class="view-all-btn" routerLink="/app/jobs">
               View All
               <mat-icon>arrow_forward</mat-icon>
             </button>
@@ -121,7 +121,7 @@
                     </div>
                   </div>
                   <div class="job-actions">
-                    <button mat-stroked-button [routerLink]="['/jobs', job.id]" class="view-btn">
+                    <button mat-stroked-button [routerLink]="['/app/jobs', job.id]" class="view-btn">
                       View
                     </button>
                     <button mat-raised-button color="primary" class="apply-btn">
@@ -136,7 +136,7 @@
                   <mat-icon class="empty-icon">work_off</mat-icon>
                   <h4>No recommendations yet</h4>
                   <p>Complete your profile to get personalized job recommendations</p>
-                  <button mat-raised-button color="primary" routerLink="/profile" class="btn-modern">
+                  <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
                     Update Profile
                   </button>
                 </div>
@@ -159,7 +159,7 @@
               <mat-icon>assignment</mat-icon>
               Recent Applications
             </h2>
-            <button mat-button class="view-all-btn" routerLink="/my-applications">
+            <button mat-button class="view-all-btn" routerLink="/app/my-applications">
               View All
               <mat-icon>arrow_forward</mat-icon>
             </button>
@@ -217,7 +217,7 @@
                   Add work experience
                 </li>
               </ul>
-              <button mat-raised-button color="primary" routerLink="/profile" class="btn-modern">
+              <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
                 Complete Profile
               </button>
             </div>
@@ -235,15 +235,15 @@
 
           <div class="card-content">
             <div class="actions-grid">
-              <button mat-raised-button class="action-btn" routerLink="/jobs">
+              <button mat-raised-button class="action-btn" routerLink="/app/jobs">
                 <mat-icon>search</mat-icon>
                 Browse Jobs
               </button>
-              <button mat-raised-button class="action-btn" routerLink="/profile">
+              <button mat-raised-button class="action-btn" routerLink="/app/profile">
                 <mat-icon>edit</mat-icon>
                 Edit Profile
               </button>
-              <button mat-raised-button class="action-btn" routerLink="/my-applications">
+              <button mat-raised-button class="action-btn" routerLink="/app/my-applications">
                 <mat-icon>assignment</mat-icon>
                 My Applications
               </button>
@@ -269,7 +269,7 @@
               <mat-icon>business</mat-icon>
               Active Job Postings
             </h2>
-            <button mat-button class="view-all-btn" routerLink="/employer/jobs">
+            <button mat-button class="view-all-btn" routerLink="/app/employer/jobs">
               Manage All
               <mat-icon>arrow_forward</mat-icon>
             </button>
@@ -346,11 +346,11 @@
 
           <div class="card-content">
             <div class="actions-grid">
-              <button mat-raised-button color="primary" routerLink="/jobs/new" class="action-btn primary">
+              <button mat-raised-button color="primary" routerLink="/app/jobs/new" class="action-btn primary">
                 <mat-icon>add</mat-icon>
                 Post New Job
               </button>
-              <button mat-raised-button class="action-btn" routerLink="/employer/jobs">
+              <button mat-raised-button class="action-btn" routerLink="/app/employer/jobs">
                 <mat-icon>business</mat-icon>
                 Manage Jobs
               </button>
@@ -358,7 +358,7 @@
                 <mat-icon>analytics</mat-icon>
                 View Analytics
               </button>
-              <button mat-raised-button class="action-btn" routerLink="/profile">
+              <button mat-raised-button class="action-btn" routerLink="/app/profile">
                 <mat-icon>edit</mat-icon>
                 Company Profile
               </button>

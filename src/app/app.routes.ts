@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { HomeComponent } from './pages/home/home.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { authGuard } from './guards/auth.guard';
@@ -14,11 +15,13 @@ import {MyApplicationsComponent} from './pages/worker/my-applications/my-applica
 import {PublicProfileComponent} from './pages/public-profile/public-profile.component';
 
 export const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'users/:userId/profile', component: PublicProfileComponent },
   {
-    path: '',
+    path: 'app',
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
@@ -33,5 +36,5 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: '' }
 ];
