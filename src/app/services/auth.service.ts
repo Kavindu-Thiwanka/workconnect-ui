@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, forwardRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, finalize, throwError } from 'rxjs';
+import { Observable, tap, finalize, throwError, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
@@ -84,16 +84,44 @@ export class AuthService {
 
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
-      // If no refresh token, logout and signal an error
-      this.logout();
+      // If no refresh token, signal an error without logging out here
+      // Let the interceptor handle the logout
       return throwError(() => new Error('No refresh token available'));
     }
 
+    console.log('Attempting token refresh...');
+
     // Create the refresh token request
     this.refreshTokenRequest = this.http.post(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
-      tap((tokens: any) => {
-        // When the new token is received, store it
-        this.storeAccessToken(tokens.accessToken);
+      tap((response: any) => {
+        console.log('Token refresh successful:', response);
+
+        // Handle different response structures
+        const newAccessToken = response.accessToken || response.access_token || response.token;
+        const newRefreshToken = response.refreshToken || response.refresh_token;
+
+        if (!newAccessToken) {
+          throw new Error('Invalid refresh response: missing access token');
+        }
+
+        // Store the new access token
+        this.storeAccessToken(newAccessToken);
+
+        // Update refresh token if provided
+        if (newRefreshToken) {
+          localStorage.setItem('refresh_token', newRefreshToken);
+        }
+
+        console.log('Tokens updated successfully');
+      }),
+      catchError((error: any) => {
+        console.error('Token refresh failed:', error);
+
+        // Clear the refresh token request
+        this.refreshTokenRequest = null;
+
+        // Don't logout here - let the error interceptor handle it
+        return throwError(() => error);
       }),
       finalize(() => {
         // When the request is complete (success or error), reset the request holder
@@ -148,17 +176,55 @@ export class AuthService {
       const decodedToken: any = jwtDecode(token);
       const currentTime = Date.now() / 1000;
 
-      if (decodedToken.exp < currentTime) {
-        // Token is expired, clean up
-        this.logout();
+      // Add a small buffer (30 seconds) to account for clock skew
+      const bufferTime = 30;
+
+      if (decodedToken.exp < (currentTime + bufferTime)) {
+        // Token is expired or about to expire
+        // Don't logout here - let the interceptor handle refresh
         return false;
       }
 
       return true;
     } catch (error) {
-      // Invalid token, clean up
-      this.logout();
+      // Invalid token
+      console.error('Invalid token detected:', error);
       return false;
+    }
+  }
+
+  /**
+   * Check if token is expired without triggering logout
+   */
+  public isTokenExpired(): boolean {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      return true;
+    }
+
+    try {
+      const decodedToken: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      return decodedToken.exp < currentTime;
+    } catch (error) {
+      return true;
+    }
+  }
+
+  /**
+   * Get token expiration time
+   */
+  public getTokenExpiration(): Date | null {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decodedToken: any = jwtDecode(token);
+      return new Date(decodedToken.exp * 1000);
+    } catch (error) {
+      return null;
     }
   }
 
@@ -189,6 +255,7 @@ export class AuthService {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('returnUrl');
     this.userRole = null;
+    this.refreshTokenRequest = null; // Clear any pending refresh requests
     this.errorService.showInfo('Logged Out', 'You have been successfully logged out.');
     this.router.navigate(['/']);
   }

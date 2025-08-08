@@ -120,20 +120,24 @@ function handleAuthenticationError(
 ) {
   const errorResponse = error.error;
 
-  // Handle token expiration
-  if (errorResponse?.errorCode === ErrorCode.TOKEN_EXPIRED) {
-    // Clear tokens and redirect to login
-    authService.logout();
-    router.navigate(['/login'], {
-      queryParams: { returnUrl: router.url, reason: 'session-expired' }
-    });
+  // Skip handling 401 errors and TOKEN_EXPIRED here - let auth interceptor handle them
+  if (error.status === 401 || errorResponse?.errorCode === ErrorCode.TOKEN_EXPIRED) {
+    // Only handle if this is a refresh endpoint failure (auth interceptor already tried)
+    if (context.url.includes('/refresh')) {
+      console.log('Refresh endpoint failed, logging out user');
+      authService.logout();
+      router.navigate(['/login'], {
+        queryParams: { returnUrl: router.url, reason: 'session-expired' }
+      });
 
-    errorService.showWarning(
-      'Session Expired',
-      'Your session has expired. Please log in again.',
-      0 // Don't auto-dismiss
-    );
+      errorService.showWarning(
+        'Session Expired',
+        'Your session has expired. Please log in again.',
+        0 // Don't auto-dismiss
+      );
+    }
 
+    // For other 401 errors, let auth interceptor handle them
     return throwError(() => error);
   }
 
