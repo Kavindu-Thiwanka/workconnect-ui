@@ -32,6 +32,13 @@ export class ErrorService {
    * Handle error response from backend
    */
   handleError(error: any, context?: ErrorContext): void {
+    console.error('Error occurred:', error, context);
+
+    // Don't handle success responses (200-299) as errors
+    if (error.status >= 200 && error.status < 300) {
+      console.warn('ErrorService called with success status:', error.status, 'for URL:', context?.url);
+      return; // Exit early for success responses
+    }
 
     if (this.isErrorResponse(error?.error)) {
       this.handleBackendError(error.error, context);

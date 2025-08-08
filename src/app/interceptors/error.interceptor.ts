@@ -34,6 +34,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return request$.pipe(
     catchError((error: HttpErrorResponse) => {
+      // Skip processing if this is actually a success response (should have been handled by success interceptor)
+      if (error.status >= 200 && error.status < 300) {
+        console.warn('Error interceptor received success response:', error.status, 'for', req.url);
+        return throwError(() => error); // Let it pass through without additional error handling
+      }
+
       const context = createErrorContext(req);
 
       // Handle specific error types

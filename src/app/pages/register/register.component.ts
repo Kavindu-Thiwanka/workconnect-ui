@@ -66,16 +66,22 @@ export class RegisterComponent {
 
     this.authService.register(formData).pipe(
       catchError(error => {
-        // Handle validation errors specifically for registration form
-        if (error.error?.fieldErrors) {
-          this.formErrorService.applyErrorsToForm(this.registerForm, error.error);
+        console.error('Registration error in component:', error);
+
+        // Only handle actual errors (not success responses)
+        if (error.status >= 400) {
+          // Handle validation errors specifically for registration form
+          if (error.error?.fieldErrors) {
+            this.formErrorService.applyErrorsToForm(this.registerForm, error.error);
+          }
         }
         return of(null); // Return null to complete the observable
       })
     ).subscribe({
       next: (response) => {
+        console.log('Registration response in component:', response);
         if (response) {
-          // Registration successful - success message handled by AuthService
+          // Registration successful - navigate to login with success message
           this.router.navigate(['/login'], {
             queryParams: { message: 'Registration successful! Please log in.' }
           });

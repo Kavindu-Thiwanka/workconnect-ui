@@ -40,8 +40,8 @@ export class AuthService {
       this.http.post(`${this.apiUrl}/register`, userInfo)
     ).pipe(
       tap((response) => {
-        // Registration successful - show success notification
-        this.errorService.showSuccess('Registration Successful!', 'Your account has been created. Please log in.');
+        // Registration successful - notification will be shown on login page
+        console.log('Registration successful:', response);
       })
     );
   }
