@@ -31,18 +31,31 @@
             <div class="image-upload-section">
               <div class="current-image">
                 <div class="image-container">
+                  <!-- Show preview image if file is selected -->
+                  <img
+                    [src]="previewImageUrl"
+                    *ngIf="previewImageUrl"
+                    alt="Selected Image Preview"
+                    class="profile-picture-preview preview-image"
+                  >
+                  <!-- Show current profile image if no preview -->
                   <img
                     [src]="currentImageUrl"
-                    *ngIf="currentImageUrl"
-                    alt="Profile Picture"
+                    *ngIf="currentImageUrl && !previewImageUrl"
+                    alt="Current Profile Picture"
                     class="profile-picture-preview"
                   >
-                  <div *ngIf="!currentImageUrl" class="placeholder-avatar">
+                  <!-- Show placeholder if no image -->
+                  <div *ngIf="!currentImageUrl && !previewImageUrl" class="placeholder-avatar">
                     <mat-icon>person</mat-icon>
                   </div>
                 </div>
                 <div class="image-overlay">
                   <mat-icon>camera_alt</mat-icon>
+                </div>
+                <!-- Preview indicator -->
+                <div *ngIf="previewImageUrl" class="preview-indicator">
+                  <span class="preview-text">Preview</span>
                 </div>
               </div>
 
@@ -61,16 +74,36 @@
                   </label>
                 </div>
 
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="onPictureUpload()"
-                  [disabled]="!selectedFile"
-                  class="upload-btn"
-                >
-                  <mat-icon>cloud_upload</mat-icon>
-                  Upload Picture
-                </button>
+                <!-- Selected file info -->
+                <div *ngIf="selectedFile" class="selected-file-info">
+                  <div class="file-details">
+                    <mat-icon>image</mat-icon>
+                    <span class="file-name">{{ selectedFile.name }}</span>
+                    <span class="file-size">({{ formatFileSize(selectedFile.size) }})</span>
+                  </div>
+                  <button
+                    mat-icon-button
+                    (click)="clearFileSelection()"
+                    class="clear-btn"
+                    title="Clear selection"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+
+                <div class="action-buttons">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="onPictureUpload()"
+                    [disabled]="!selectedFile || isUploading"
+                    class="upload-btn"
+                  >
+                    <mat-icon *ngIf="!isUploading">cloud_upload</mat-icon>
+                    <mat-spinner *ngIf="isUploading" diameter="20"></mat-spinner>
+                    {{ isUploading ? 'Uploading...' : 'Upload Picture' }}
+                  </button>
+                </div>
               </div>
 
               <div class="upload-tips">

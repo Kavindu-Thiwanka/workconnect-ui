@@ -112,6 +112,11 @@
           width: 100%;
           height: 100%;
           object-fit: cover;
+
+          &.preview-image {
+            border: 3px solid var(--primary-500);
+            box-shadow: 0 0 0 2px var(--primary-100);
+          }
         }
 
         .placeholder-avatar {
@@ -150,6 +155,26 @@
           font-size: 1rem;
           width: 1rem;
           height: 1rem;
+        }
+      }
+
+      .preview-indicator {
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary-500);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-md);
+
+        .preview-text {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
         }
       }
     }
@@ -194,6 +219,60 @@
             height: 1.25rem;
           }
         }
+      }
+
+      .selected-file-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        background: var(--green-50);
+        border: 1px solid var(--green-200);
+        border-radius: var(--radius-md);
+        margin: 0.5rem 0;
+
+        .file-details {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex: 1;
+
+          mat-icon {
+            color: var(--green-600);
+            font-size: 1.125rem;
+            width: 1.125rem;
+            height: 1.125rem;
+          }
+
+          .file-name {
+            font-weight: 500;
+            color: var(--gray-800);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .file-size {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+          }
+        }
+
+        .clear-btn {
+          color: var(--gray-500);
+
+          &:hover {
+            color: var(--red-500);
+            background: var(--red-50);
+          }
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
       }
 
       .upload-btn {
