@@ -125,6 +125,30 @@
                 </div>
 
                 <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Phone Number</mat-label>
+                  <input matInput formControlName="phoneNumber" placeholder="Enter your phone number">
+                  <mat-icon matSuffix>phone</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Bio</mat-label>
+                  <textarea matInput formControlName="bio" rows="3" placeholder="Tell us about yourself"></textarea>
+                  <mat-icon matSuffix>description</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Experience</mat-label>
+                  <textarea matInput formControlName="experience" rows="3" placeholder="Describe your work experience"></textarea>
+                  <mat-icon matSuffix>work</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Education</mat-label>
+                  <textarea matInput formControlName="education" rows="3" placeholder="Describe your educational background"></textarea>
+                  <mat-icon matSuffix>school</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
                   <mat-label>Skills</mat-label>
                   <input matInput formControlName="skills" placeholder="e.g. JavaScript, React, Node.js">
                   <mat-icon matSuffix>code</mat-icon>

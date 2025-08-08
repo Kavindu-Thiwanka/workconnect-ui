@@ -41,11 +41,15 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       firstName: [''],
       lastName: [''],
+      phoneNumber: [''],
+      location: [''],
+      bio: [''],
+      experience: [''],
+      education: [''],
+      availability: [''],
       skills: [''],
       companyName: [''],
-      companyDescription: [''],
-      location: [''],
-      availability: ['']
+      companyDescription: ['']
     });
   }
 
@@ -87,12 +91,47 @@ export class ProfileComponent implements OnInit {
     }
 
     if (this.userRole === 'WORKER') {
-      this.profileService.updateWorkerProfile(this.profileForm.value).subscribe(() => {
-        alert('Profile updated successfully!');
+      const formData = { ...this.profileForm.value };
+
+      // Convert skills string to array for backend
+      if (formData.skills && typeof formData.skills === 'string') {
+        formData.skills = formData.skills.split(',').map((skill: string) => skill.trim()).filter((skill: string) => skill);
+      }
+
+      // Remove employer-specific fields
+      delete formData.companyName;
+      delete formData.companyDescription;
+
+      this.profileService.updateWorkerProfile(formData).subscribe({
+        next: () => {
+          alert('Profile updated successfully!');
+        },
+        error: (error) => {
+          console.error('Profile update failed:', error);
+          alert('Profile update failed. Please try again.');
+        }
       });
     } else if (this.userRole === 'EMPLOYER') {
-      this.profileService.updateEmployerProfile(this.profileForm.value).subscribe(() => {
-        alert('Profile updated successfully!');
+      const formData = { ...this.profileForm.value };
+
+      // Remove worker-specific fields
+      delete formData.phoneNumber;
+      delete formData.bio;
+      delete formData.experience;
+      delete formData.education;
+      delete formData.availability;
+      delete formData.skills;
+      delete formData.firstName;
+      delete formData.lastName;
+
+      this.profileService.updateEmployerProfile(formData).subscribe({
+        next: () => {
+          alert('Profile updated successfully!');
+        },
+        error: (error) => {
+          console.error('Profile update failed:', error);
+          alert('Profile update failed. Please try again.');
+        }
       });
     }
   }
