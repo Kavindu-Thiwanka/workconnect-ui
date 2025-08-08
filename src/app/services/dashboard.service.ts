@@ -1,0 +1,141 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { LoadingService } from './loading.service';
+import {
+  WorkerDashboardStats,
+  EmployerDashboardStats,
+  Job,
+  JobApplication
+} from '../models/api-models';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DashboardService {
+  private apiUrl = `${environment.apiUrl}/api/dashboard`;
+
+  constructor(
+    private http: HttpClient,
+    private loadingService: LoadingService
+  ) {}
+
+  /**
+   * Get worker dashboard statistics and data
+   */
+  getWorkerDashboard(): Observable<WorkerDashboardStats> {
+    return this.loadingService.wrapWithLoading('worker-dashboard',
+      this.http.get<WorkerDashboardStats>(`${this.apiUrl}/worker`)
+    );
+  }
+
+  /**
+   * Get employer dashboard statistics and data
+   */
+  getEmployerDashboard(): Observable<EmployerDashboardStats> {
+    return this.loadingService.wrapWithLoading('employer-dashboard',
+      this.http.get<EmployerDashboardStats>(`${this.apiUrl}/employer`)
+    );
+  }
+
+  /**
+   * Get recommended jobs for worker
+   */
+  getRecommendedJobs(limit: number = 6): Observable<Job[]> {
+    return this.loadingService.wrapWithLoading('recommended-jobs',
+      this.http.get<{recommendations: Job[]}>(`${this.apiUrl}/worker/recommendations`, {
+        params: { limit: limit.toString() }
+      }).pipe(
+        map(response => response.recommendations)
+      )
+    );
+  }
+
+  /**
+   * Get recent applications for worker
+   */
+  getRecentApplications(limit: number = 5): Observable<JobApplication[]> {
+    return this.loadingService.wrapWithLoading('recent-applications',
+      this.http.get<{applications: JobApplication[]}>(`${this.apiUrl}/worker/applications/recent`, {
+        params: { limit: limit.toString() }
+      }).pipe(
+        map(response => response.applications)
+      )
+    );
+  }
+
+  /**
+   * Get active job postings for employer
+   */
+  getActiveJobPostings(limit: number = 5): Observable<Job[]> {
+    return this.loadingService.wrapWithLoading('active-jobs',
+      this.http.get<{jobs: Job[]}>(`${this.apiUrl}/employer/jobs/active`, {
+        params: { limit: limit.toString() }
+      }).pipe(
+        map(response => response.jobs)
+      )
+    );
+  }
+
+  /**
+   * Get recent applications for employer's jobs
+   */
+  getRecentApplicationsForEmployer(limit: number = 5): Observable<JobApplication[]> {
+    return this.loadingService.wrapWithLoading('employer-recent-applications',
+      this.http.get<{applications: JobApplication[]}>(`${this.apiUrl}/employer/applications/recent`, {
+        params: { limit: limit.toString() }
+      }).pipe(
+        map(response => response.applications)
+      )
+    );
+  }
+
+  /**
+   * Get worker profile completion percentage and tips
+   */
+  getProfileCompletion(): Observable<{percentage: number, tips: string[]}> {
+    return this.loadingService.wrapWithLoading('profile-completion',
+      this.http.get<{percentage: number, tips: string[]}>(`${this.apiUrl}/worker/profile-completion`)
+    );
+  }
+
+  /**
+   * Get worker statistics
+   */
+  getWorkerStats(): Observable<{
+    totalApplications: number;
+    pendingApplications: number;
+    interviewsScheduled: number;
+    profileViews: number;
+  }> {
+    return this.loadingService.wrapWithLoading('worker-stats',
+      this.http.get<{
+        totalApplications: number;
+        pendingApplications: number;
+        interviewsScheduled: number;
+        profileViews: number;
+      }>(`${this.apiUrl}/worker/stats`)
+    );
+  }
+
+  /**
+   * Get employer statistics
+   */
+  getEmployerStats(): Observable<{
+    activeJobs: number;
+    totalApplications: number;
+    newApplicationsThisWeek: number;
+    totalViews: number;
+  }> {
+    return this.loadingService.wrapWithLoading('employer-stats',
+      this.http.get<{
+        activeJobs: number;
+        totalApplications: number;
+        newApplicationsThisWeek: number;
+        totalViews: number;
+      }>(`${this.apiUrl}/employer/stats`)
+    );
+  }
+}
