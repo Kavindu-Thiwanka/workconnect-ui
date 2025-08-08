@@ -10,6 +10,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormErrorService } from '../../services/form-error.service';
+import { LoadingService } from '../../services/loading.service';
+import { ErrorService } from '../../services/error.service';
+import { FormErrorComponent } from '../../components/form-error/form-error.component';
+import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -24,23 +29,24 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    FormErrorComponent
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  errorMessage: string = '';
-  successMessage: string = '';
-  isLoading: boolean = false;
   hidePassword: boolean = true;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private formErrorService: FormErrorService,
+    private errorService: ErrorService,
+    public loadingService: LoadingService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -53,40 +59,52 @@ export class LoginComponent implements OnInit {
     // Check for success message from registration
     this.route.queryParams.subscribe(params => {
       if (params['message']) {
-        this.successMessage = params['message'];
+        this.errorService.showSuccess('Registration Successful', params['message']);
+      }
+      if (params['reason'] === 'session-expired') {
+        this.errorService.showWarning('Session Expired', 'Your session has expired. Please log in again.');
       }
     });
   }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      this.markFormGroupTouched();
+      this.formErrorService.markAllFieldsAsTouched(this.loginForm);
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.authService.login(this.loginForm.value).subscribe({
+    this.authService.login(this.loginForm.value).pipe(
+      catchError(error => {
+        // Handle validation errors specifically for login form
+        if (error.error?.fieldErrors) {
+          this.formErrorService.applyErrorsToForm(this.loginForm, error.error);
+        }
+        return of(null); // Return null to complete the observable
+      })
+    ).subscribe({
       next: (response) => {
-        this.authService.storeTokens(response);
-        console.log('Login Successful!');
-        this.isLoading = false;
-        this.router.navigate(['/app/dashboard']);
-      },
-      error: (err) => {
-        console.error('Login failed', err);
-        this.isLoading = false;
-        this.errorMessage = 'Login failed. Please check your credentials.';
+        if (response) {
+          // Login successful - navigation and success message handled by AuthService
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/app/dashboard';
+          this.router.navigate([returnUrl]);
+        }
       }
     });
   }
 
-  private markFormGroupTouched(): void {
-    Object.keys(this.loginForm.controls).forEach(key => {
-      const control = this.loginForm.get(key);
-      control?.markAsTouched();
-    });
+  // Helper methods for form error handling
+  hasError(fieldName: string): boolean {
+    const control = this.loginForm.get(fieldName);
+    return control ? this.formErrorService.hasError(control) : false;
+  }
+
+  getErrorMessage(fieldName: string): string | null {
+    const control = this.loginForm.get(fieldName);
+    return control ? this.formErrorService.getErrorMessage(control, fieldName) : null;
+  }
+
+  // Check if login is in progress
+  isLoginLoading(): boolean {
+    return this.loadingService.isLoading('login') as any; // Type assertion for now
   }
 }

@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { ErrorCode } from '../models/error-response.model';
 
 const addTokenToRequest = (req: HttpRequest<unknown>, token: string) => {
   return req.clone({
@@ -23,18 +24,23 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      // Only handle token refresh for 401 errors or TOKEN_EXPIRED
+      const shouldRefreshToken = error.status === 401 ||
+        (error.error?.errorCode === ErrorCode.TOKEN_EXPIRED);
+
+      if (shouldRefreshToken && !req.url.includes('/refresh') && !req.url.includes('/login')) {
         return authService.refreshToken().pipe(
           switchMap((response: any) => {
             return next(addTokenToRequest(req, response.accessToken));
           }),
           catchError((refreshError) => {
-            authService.logout();
-            return throwError(() => refreshError);
+            // Don't logout here - let the error interceptor handle it
+            return throwError(() => error);
           })
         );
       }
-      // For other errors, just re-throw the error
+
+      // For all other errors, let the error interceptor handle them
       return throwError(() => error);
     })
   );

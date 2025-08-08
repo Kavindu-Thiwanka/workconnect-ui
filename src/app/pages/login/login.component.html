@@ -48,13 +48,11 @@
                 <mat-label>Email Address</mat-label>
                 <input matInput type="email" formControlName="email" placeholder="Enter your email">
                 <mat-icon matPrefix>email</mat-icon>
-                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                  Email is required
-                </mat-error>
-                <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-                  Please enter a valid email
+                <mat-error *ngIf="hasError('email')">
+                  {{ getErrorMessage('email') }}
                 </mat-error>
               </mat-form-field>
+              <app-form-error [control]="loginForm.get('email')!" fieldName="email"></app-form-error>
             </div>
 
             <!-- Password Field -->
@@ -66,10 +64,11 @@
                 <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
                   <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
-                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-                  Password is required
+                <mat-error *ngIf="hasError('password')">
+                  {{ getErrorMessage('password') }}
                 </mat-error>
               </mat-form-field>
+              <app-form-error [control]="loginForm.get('password')!" fieldName="password"></app-form-error>
             </div>
 
             <!-- Remember Me & Forgot Password -->
@@ -80,26 +79,14 @@
               <a routerLink="/forgot-password" class="forgot-password">Forgot password?</a>
             </div>
 
-            <!-- Error Message -->
-            <div *ngIf="errorMessage" class="error-message">
-              <mat-icon>error</mat-icon>
-              {{ errorMessage }}
-            </div>
-
-            <!-- Success Message -->
-            <div *ngIf="successMessage" class="success-message">
-              <mat-icon>check_circle</mat-icon>
-              {{ successMessage }}
-            </div>
-
             <!-- Submit Button -->
             <div class="form-actions">
               <button mat-raised-button color="primary" type="submit"
-                      [disabled]="loginForm.invalid || isLoading"
+                      [disabled]="loginForm.invalid || (loadingService.isLoading('login') | async)"
                       class="login-btn">
-                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
-                <mat-icon *ngIf="!isLoading">login</mat-icon>
-                {{ isLoading ? 'Signing In...' : 'Sign In' }}
+                <mat-spinner *ngIf="loadingService.isLoading('login') | async" diameter="20"></mat-spinner>
+                <mat-icon *ngIf="!(loadingService.isLoading('login') | async)">login</mat-icon>
+                {{ (loadingService.isLoading('login') | async) ? 'Signing In...' : 'Sign In' }}
               </button>
             </div>
           </form>

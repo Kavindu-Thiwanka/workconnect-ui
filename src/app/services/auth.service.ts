@@ -4,6 +4,8 @@ import { Observable, tap, finalize, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { ErrorService } from './error.service';
+import { LoadingService } from './loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,17 +19,31 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router // Inject the Router for navigation
+    private router: Router,
+    private errorService: ErrorService,
+    private loadingService: LoadingService
   ) {}
 
   login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => this.storeTokens(response))
+    return this.loadingService.wrapWithLoading('login',
+      this.http.post(`${this.apiUrl}/login`, credentials)
+    ).pipe(
+      tap(response => {
+        this.storeTokens(response);
+        this.errorService.showSuccess('Welcome!', 'You have successfully logged in.');
+      })
     );
   }
 
   register(userInfo: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userInfo);
+    return this.loadingService.wrapWithLoading('register',
+      this.http.post(`${this.apiUrl}/register`, userInfo)
+    ).pipe(
+      tap((response) => {
+        // Registration successful - show success notification
+        this.errorService.showSuccess('Registration Successful!', 'Your account has been created. Please log in.');
+      })
+    );
   }
 
   refreshToken(): Observable<any> {
@@ -99,6 +115,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     this.userRole = null;
+    this.errorService.showInfo('Logged Out', 'You have been successfully logged out.');
     this.router.navigate(['/login']);
   }
 }

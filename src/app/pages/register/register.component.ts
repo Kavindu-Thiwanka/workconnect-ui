@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { FormErrorService } from '../../services/form-error.service';
+import { LoadingService } from '../../services/loading.service';
+import { FormErrorComponent } from '../../components/form-error/form-error.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -26,21 +30,22 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatIconModule,
     MatRadioModule,
     MatCheckboxModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    FormErrorComponent
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   registerForm: FormGroup;
-  errorMessage: string = '';
-  isLoading: boolean = false;
   hidePassword: boolean = true;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private formErrorService: FormErrorService,
+    public loadingService: LoadingService
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -52,36 +57,41 @@ export class RegisterComponent {
 
   onSubmit(): void {
     if (this.registerForm.invalid) {
-      this.markFormGroupTouched();
+      this.formErrorService.markAllFieldsAsTouched(this.registerForm);
       return;
     }
-
-    this.isLoading = true;
-    this.errorMessage = '';
 
     const formData = { ...this.registerForm.value };
     delete formData.acceptTerms; // Remove acceptTerms from the data sent to backend
 
-    this.authService.register(formData).subscribe({
+    this.authService.register(formData).pipe(
+      catchError(error => {
+        // Handle validation errors specifically for registration form
+        if (error.error?.fieldErrors) {
+          this.formErrorService.applyErrorsToForm(this.registerForm, error.error);
+        }
+        return of(null); // Return null to complete the observable
+      })
+    ).subscribe({
       next: (response) => {
-        console.log('Registration successful!', response);
-        this.isLoading = false;
-        this.router.navigate(['/login'], {
-          queryParams: { message: 'Registration successful! Please log in.' }
-        });
-      },
-      error: (err) => {
-        console.error('Registration failed', err);
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Registration failed. The email may already be in use.';
+        if (response) {
+          // Registration successful - success message handled by AuthService
+          this.router.navigate(['/login'], {
+            queryParams: { message: 'Registration successful! Please log in.' }
+          });
+        }
       }
     });
   }
 
-  private markFormGroupTouched(): void {
-    Object.keys(this.registerForm.controls).forEach(key => {
-      const control = this.registerForm.get(key);
-      control?.markAsTouched();
-    });
+  // Helper methods for form error handling
+  hasError(fieldName: string): boolean {
+    const control = this.registerForm.get(fieldName);
+    return control ? this.formErrorService.hasError(control) : false;
+  }
+
+  getErrorMessage(fieldName: string): string | null {
+    const control = this.registerForm.get(fieldName);
+    return control ? this.formErrorService.getErrorMessage(control, fieldName) : null;
   }
 }
