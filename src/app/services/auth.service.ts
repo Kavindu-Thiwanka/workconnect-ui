@@ -31,8 +31,38 @@ export class AuthService {
       tap(response => {
         this.storeTokens(response);
         this.errorService.showSuccess('Welcome!', 'You have successfully logged in.');
+        this.redirectAfterLogin();
       })
     );
+  }
+
+  /**
+   * Redirect user to appropriate page after login based on their role
+   */
+  private redirectAfterLogin(): void {
+    const userRole = this.getRole();
+
+    // Check if there's a return URL
+    const returnUrl = localStorage.getItem('returnUrl');
+    if (returnUrl) {
+      localStorage.removeItem('returnUrl');
+      this.router.navigate([returnUrl]);
+      return;
+    }
+
+    // Default redirection based on role
+    if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
+      this.router.navigate(['/app/dashboard']);
+    } else {
+      this.router.navigate(['/app']);
+    }
+  }
+
+  /**
+   * Store return URL for post-login redirection
+   */
+  setReturnUrl(url: string): void {
+    localStorage.setItem('returnUrl', url);
   }
 
   register(userInfo: any): Observable<any> {
@@ -108,14 +138,58 @@ export class AuthService {
   }
 
   public isLoggedIn(): boolean {
-    return !!localStorage.getItem('access_token');
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      return false;
+    }
+
+    // Check if token is expired
+    try {
+      const decodedToken: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decodedToken.exp < currentTime) {
+        // Token is expired, clean up
+        this.logout();
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      // Invalid token, clean up
+      this.logout();
+      return false;
+    }
+  }
+
+  /**
+   * Check if user has a specific role
+   */
+  hasRole(role: string): boolean {
+    const userRole = this.getRole();
+    return userRole === role;
+  }
+
+  /**
+   * Check if user is a worker
+   */
+  isWorker(): boolean {
+    return this.hasRole('WORKER');
+  }
+
+  /**
+   * Check if user is an employer
+   */
+  isEmployer(): boolean {
+    return this.hasRole('EMPLOYER');
   }
 
   logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('returnUrl');
     this.userRole = null;
     this.errorService.showInfo('Logged Out', 'You have been successfully logged out.');
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 }

@@ -56,13 +56,18 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check for success message from registration
+    // Check for success message from registration and handle return URLs
     this.route.queryParams.subscribe(params => {
       if (params['message']) {
         this.errorService.showSuccess('Registration Successful', params['message']);
       }
       if (params['reason'] === 'session-expired') {
         this.errorService.showWarning('Session Expired', 'Your session has expired. Please log in again.');
+      }
+
+      // Store return URL if provided
+      if (params['returnUrl']) {
+        this.authService.setReturnUrl(params['returnUrl']);
       }
     });
   }

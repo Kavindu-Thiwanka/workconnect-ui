@@ -5,6 +5,8 @@ import { HomeComponent } from './pages/home/home.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { authGuard } from './guards/auth.guard';
+import { publicGuard } from './guards/public.guard';
+import { rootRedirectGuard } from './guards/root-redirect.guard';
 import {ProfileComponent} from './pages/profile/profile.component';
 import {JobListComponent} from './pages/job-list/job-list.component';
 import {JobDetailComponent} from './pages/job-detail/job-detail.component';
@@ -15,11 +17,37 @@ import {MyApplicationsComponent} from './pages/worker/my-applications/my-applica
 import {PublicProfileComponent} from './pages/public-profile/public-profile.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'users/:userId/profile', component: PublicProfileComponent },
+  // Root route with authentication-based redirection
+  {
+    path: '',
+    component: HomeComponent,
+    canActivate: [rootRedirectGuard]
+  },
+
+  // Public routes (only accessible to unauthenticated users)
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [publicGuard]
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [publicGuard]
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
+    canActivate: [publicGuard]
+  },
+
+  // Public profile (accessible to all users)
+  {
+    path: 'users/:userId/profile',
+    component: PublicProfileComponent
+  },
+
+  // Protected application routes
   {
     path: 'app',
     component: MainLayoutComponent,
@@ -36,5 +64,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
+
+  // Fallback route
   { path: '**', redirectTo: '' }
 ];

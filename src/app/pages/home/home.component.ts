@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,16 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  isAuthenticated = false;
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    // This should only be called for unauthenticated users due to the guard
+    // but we'll double-check for safety
+    this.isAuthenticated = this.authService.isLoggedIn();
+  }
   features = [
     {
       icon: 'construction',
