@@ -9,7 +9,13 @@
       <div class="search-bar">
         <mat-form-field appearance="outline" class="search-field">
           <mat-label>Search jobs...</mat-label>
-          <input matInput [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Construction, plumbing, electrical, etc.">
+          <input
+            matInput
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+            (keyup.enter)="onSearch()"
+            placeholder="Construction, plumbing, electrical, etc."
+            aria-label="Search for jobs">
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
       </div>
@@ -86,8 +92,8 @@
       </div>
     </div>
 
-    <div class="jobs-grid" [class.list-view]="viewMode === 'list'" *ngIf="jobs$ | async as jobs; else loading">
-      <div *ngFor="let job of filteredJobs" class="job-card modern-card" [class.list-card]="viewMode === 'list'">
+    <div class="jobs-grid" [class.list-view]="viewMode === 'list'" *ngIf="!isLoading; else loading">
+      <div *ngFor="let job of filteredJobs; trackBy: trackByJobId" class="job-card modern-card" [class.list-card]="viewMode === 'list'">
         <div class="job-header">
           <div class="company-info">
             <div class="company-avatar">

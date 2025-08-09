@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { JobService } from '../../services/job.service';
-import { Observable, map, combineLatest, BehaviorSubject } from 'rxjs';
+import { Observable, map, combineLatest, BehaviorSubject, catchError, of, startWith } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -45,10 +45,22 @@ export class JobListComponent implements OnInit {
   private jobTypeSubject = new BehaviorSubject<string>('');
   private tradeSubject = new BehaviorSubject<string>('');
 
-  constructor(private jobService: JobService) {}
+  constructor(private jobService: JobService) {
+    // Initialize subjects with current values
+    this.searchSubject.next(this.searchTerm);
+    this.locationSubject.next(this.locationFilter);
+    this.jobTypeSubject.next(this.jobTypeFilter);
+    this.tradeSubject.next(this.tradeFilter);
+  }
 
   ngOnInit(): void {
-    this.jobs$ = this.jobService.getOpenJobs();
+    this.jobs$ = this.jobService.getOpenJobs().pipe(
+      catchError(error => {
+        console.error('Error fetching jobs:', error);
+        return of([]); // Return empty array on error
+      }),
+      startWith([]) // Start with empty array while loading
+    );
 
     // Subscribe to jobs and apply filters
     combineLatest([
@@ -59,29 +71,59 @@ export class JobListComponent implements OnInit {
       this.tradeSubject
     ]).pipe(
       map(([jobs, search, location, jobType, trade]) => {
+        console.log('Applying filters:', { search, location, jobType, trade, jobsCount: jobs?.length });
         return this.applyFilters(jobs, search, location, jobType, trade);
+      }),
+      catchError(error => {
+        console.error('Error in filter pipeline:', error);
+        return of([]); // Return empty array on error
       })
-    ).subscribe(filteredJobs => {
-      this.filteredJobs = filteredJobs;
-      this.isLoading = false;
+    ).subscribe({
+      next: (filteredJobs) => {
+        console.log('Filtered jobs result:', filteredJobs?.length);
+        this.filteredJobs = filteredJobs || [];
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error in subscription:', error);
+        this.filteredJobs = [];
+        this.isLoading = false;
+      }
     });
   }
 
   onSearch(): void {
+    console.log('Search triggered:', this.searchTerm);
     this.searchSubject.next(this.searchTerm);
   }
 
   onFilter(): void {
+    console.log('Filter triggered:', {
+      location: this.locationFilter,
+      jobType: this.jobTypeFilter,
+      trade: this.tradeFilter
+    });
+    this.locationSubject.next(this.locationFilter);
+    this.jobTypeSubject.next(this.jobTypeFilter);
+    this.tradeSubject.next(this.tradeFilter);
+  }
+
+  // Combined method to trigger all filters at once
+  triggerAllFilters(): void {
+    this.searchSubject.next(this.searchTerm);
     this.locationSubject.next(this.locationFilter);
     this.jobTypeSubject.next(this.jobTypeFilter);
     this.tradeSubject.next(this.tradeFilter);
   }
 
   clearFilters(): void {
+    console.log('Clearing all filters');
     this.searchTerm = '';
     this.locationFilter = '';
     this.jobTypeFilter = '';
     this.tradeFilter = '';
+
+    // Trigger all subjects to clear filters
     this.searchSubject.next('');
     this.locationSubject.next('');
     this.jobTypeSubject.next('');
@@ -155,22 +197,67 @@ export class JobListComponent implements OnInit {
     return skills ? skills.split(',').map(s => s.trim()) : [];
   }
 
+  trackByJobId(index: number, job: any): any {
+    return job ? job.id : index;
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.searchTerm || this.locationFilter || this.jobTypeFilter || this.tradeFilter);
+  }
+
+  getFilterSummary(): string {
+    const filters = [];
+    if (this.searchTerm) filters.push(`search: "${this.searchTerm}"`);
+    if (this.locationFilter) filters.push(`location: "${this.locationFilter}"`);
+    if (this.jobTypeFilter) filters.push(`type: "${this.getJobTypeDisplay(this.jobTypeFilter)}"`);
+    if (this.tradeFilter) filters.push(`trade: "${this.tradeFilter}"`);
+    return filters.join(', ');
+  }
+
   private applyFilters(jobs: any[], search: string, location: string, jobType: string, trade: string): any[] {
-    return jobs.filter(job => {
-      const matchesSearch = !search ||
-        job.jobTitle?.toLowerCase().includes(search.toLowerCase()) ||
-        job.employerCompanyName?.toLowerCase().includes(search.toLowerCase()) ||
-        job.description?.toLowerCase().includes(search.toLowerCase()) ||
-        job.trade?.toLowerCase().includes(search.toLowerCase());
+    if (!jobs || !Array.isArray(jobs)) {
+      console.warn('Invalid jobs array provided to applyFilters');
+      return [];
+    }
 
-      const matchesLocation = !location ||
-        job.location?.toLowerCase().includes(location.toLowerCase());
+    const filteredJobs = jobs.filter(job => {
+      if (!job) return false;
 
-      const matchesJobType = !jobType || job.jobType === jobType;
+      // Search filter - check multiple fields
+      const searchTerm = search?.trim().toLowerCase() || '';
+      const matchesSearch = !searchTerm || [
+        job.jobTitle,
+        job.employerCompanyName,
+        job.description,
+        job.trade,
+        job.skills
+      ].some(field =>
+        field && field.toString().toLowerCase().includes(searchTerm)
+      );
 
-      const matchesTrade = !trade || job.trade === trade;
+      // Location filter - flexible matching
+      const locationTerm = location?.trim().toLowerCase() || '';
+      const matchesLocation = !locationTerm ||
+        (job.location && job.location.toLowerCase().includes(locationTerm));
 
-      return matchesSearch && matchesLocation && matchesJobType && matchesTrade;
+      // Job type filter - exact match
+      const matchesJobType = !jobType ||
+        (job.jobType && job.jobType === jobType);
+
+      // Trade filter - exact match
+      const matchesTrade = !trade ||
+        (job.trade && job.trade === trade);
+
+      const matches = matchesSearch && matchesLocation && matchesJobType && matchesTrade;
+
+      if (search || location || jobType || trade) {
+        console.log(`Job ${job.id}: search=${matchesSearch}, location=${matchesLocation}, type=${matchesJobType}, trade=${matchesTrade}, overall=${matches}`);
+      }
+
+      return matches;
     });
+
+    console.log(`Filtered ${filteredJobs.length} jobs from ${jobs.length} total`);
+    return filteredJobs;
   }
 }
