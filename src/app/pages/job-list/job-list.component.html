@@ -14,16 +14,24 @@
         </mat-form-field>
       </div>
 
-      <div class="filters">
+      <div class="filters" role="search" aria-label="Job search filters">
         <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Location</mat-label>
-          <input matInput [(ngModel)]="locationFilter" (input)="onFilter()" placeholder="City, ZIP code">
+          <input
+            matInput
+            [(ngModel)]="locationFilter"
+            (input)="onFilter()"
+            placeholder="City, ZIP code"
+            aria-label="Filter by location">
           <mat-icon matPrefix>location_on</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Job Type</mat-label>
-          <mat-select [(ngModel)]="jobTypeFilter" (selectionChange)="onFilter()">
+          <mat-select
+            [(ngModel)]="jobTypeFilter"
+            (selectionChange)="onFilter()"
+            aria-label="Filter by job type">
             <mat-option value="">All Types</mat-option>
             <mat-option value="ONE_DAY">One Day</mat-option>
             <mat-option value="CONTRACT">Contract</mat-option>
@@ -34,7 +42,10 @@
 
         <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Trade</mat-label>
-          <mat-select [(ngModel)]="tradeFilter" (selectionChange)="onFilter()">
+          <mat-select
+            [(ngModel)]="tradeFilter"
+            (selectionChange)="onFilter()"
+            aria-label="Filter by trade category">
             <mat-option value="">All Trades</mat-option>
             <mat-option value="CONSTRUCTION">Construction</mat-option>
             <mat-option value="PLUMBING">Plumbing</mat-option>
@@ -49,7 +60,12 @@
           </mat-select>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" (click)="clearFilters()" class="clear-btn">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="clearFilters()"
+          class="clear-btn"
+          aria-label="Clear all search filters">
           <mat-icon>clear</mat-icon>
           Clear
         </button>

@@ -38,17 +38,88 @@
     padding: 2rem;
     margin: 0 auto;
     max-width: 1200px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 
     .search-bar {
       margin-bottom: 1.5rem;
 
       .search-field {
         width: 100%;
+        min-height: 56px;
 
         ::ng-deep {
+          .mat-mdc-form-field {
+            width: 100%;
+            height: 100%;
+          }
+
           .mat-mdc-text-field-wrapper {
             background: var(--white);
             border-radius: var(--radius-lg);
+            min-height: 56px;
+            display: flex;
+            align-items: stretch; // Changed to stretch to accommodate floating labels
+          }
+
+          .mat-mdc-form-field-flex {
+            width: 100%;
+            min-height: 56px;
+            align-items: stretch; // Changed to stretch to accommodate floating labels
+            position: relative;
+          }
+
+          .mat-mdc-form-field-infix {
+            width: 100%;
+            min-height: 40px;
+            padding: 14px 0 14px 0; // Proper padding for floating labels
+            border-top: 0;
+          }
+
+          .mat-mdc-input-element {
+            padding: 0 12px;
+            font-size: 16px;
+            line-height: 1.5;
+          }
+
+          // Remove custom floating label positioning to allow default behavior
+          .mat-mdc-floating-label {
+            // Let Angular Material handle the floating animation
+          }
+
+          // Ensure proper label spacing when floated
+          .mdc-notched-outline__notch {
+            padding-left: 8px;
+            padding-right: 8px;
+          }
+
+          .mat-mdc-form-field-icon-prefix {
+            align-self: center;
+            margin-right: 8px;
+          }
+
+          // Focus and hover states
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: var(--blue-200);
+            transition: border-color 0.2s ease;
+          }
+
+          &.mat-focused {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: var(--primary-500);
+              border-width: 2px;
+            }
+          }
+
+          &:hover:not(.mat-focused) {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: var(--primary-300);
+            }
           }
         }
       }
@@ -56,34 +127,152 @@
 
     .filters {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr auto;
+      grid-template-columns: 1fr 1fr 1fr auto;
       gap: 1rem;
-      align-items: end;
+      align-items: stretch; // Changed from 'end' to 'stretch' for better alignment
 
-      @media (max-width: 1024px) {
+      @media (max-width: 1200px) {
         grid-template-columns: 1fr 1fr auto;
+        gap: 0.75rem;
+      }
+
+      @media (max-width: 900px) {
+        grid-template-columns: 1fr auto;
+        gap: 0.75rem;
+
+        .filter-field:nth-child(3) {
+          grid-column: 1 / -2; // Trade filter spans across available space
+        }
       }
 
       @media (max-width: 768px) {
         grid-template-columns: 1fr;
+        gap: 1rem;
       }
 
       .filter-field {
+        width: 100%;
+        min-height: 56px; // Ensure consistent minimum height
+        display: flex;
+        align-items: stretch;
+
         ::ng-deep {
+          .mat-mdc-form-field {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+          }
+
           .mat-mdc-text-field-wrapper {
             background: var(--white);
             border-radius: var(--radius-lg);
+            width: 100%;
+            min-height: 56px;
+            display: flex;
+            align-items: stretch; // Changed to stretch to accommodate floating labels
+          }
+
+          .mat-mdc-form-field-flex {
+            width: 100%;
+            min-height: 56px;
+            align-items: stretch; // Changed to stretch to accommodate floating labels
+            position: relative;
+          }
+
+          .mat-mdc-form-field-infix {
+            width: 100%;
+            min-height: 40px;
+            padding: 14px 0 14px 0; // Proper padding for floating labels
+            border-top: 0;
+          }
+
+          // Input field styling
+          .mat-mdc-input-element {
+            padding: 0 12px;
+            font-size: 16px;
+            line-height: 1.5;
+          }
+
+          // Select field styling
+          .mat-mdc-select {
+            font-size: 16px;
+            line-height: 1.5;
+          }
+
+          .mat-mdc-select-trigger {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            min-height: 24px;
+          }
+
+          // Proper floating label behavior - remove custom positioning
+          .mat-mdc-floating-label {
+            // Remove custom positioning to allow Angular Material's default behavior
+            // The framework handles the floating animation automatically
+          }
+
+          // Ensure proper label spacing when floated
+          .mdc-notched-outline__notch {
+            padding-left: 8px;
+            padding-right: 8px;
+          }
+
+          // Icon positioning
+          .mat-mdc-form-field-icon-prefix,
+          .mat-mdc-form-field-icon-suffix {
+            align-self: center;
+          }
+
+          // Focus and hover states
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: var(--blue-200);
+            transition: border-color 0.2s ease;
+          }
+
+          &.mat-focused {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: var(--primary-500);
+              border-width: 2px;
+            }
+          }
+
+          &:hover:not(.mat-focused) {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: var(--primary-300);
+            }
           }
         }
       }
 
       .clear-btn {
-        height: 56px;
+        height: 56px; // Match form field height
+        min-height: 56px;
         border-radius: var(--radius-lg);
         font-weight: 600;
+        padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
 
         mat-icon {
           margin-right: 0.5rem;
+          font-size: 1.125rem;
+          width: 1.125rem;
+          height: 1.125rem;
+        }
+
+        @media (max-width: 768px) {
+          width: 100%;
+          justify-content: center;
         }
       }
     }
@@ -436,6 +625,118 @@
   }
 }
 
+// Additional form field improvements
+.search-filters {
+  // Ensure all form fields have consistent styling
+  ::ng-deep {
+    .mat-mdc-form-field {
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none; // Hide subscript to maintain consistent height
+      }
+
+      // Ensure proper floating label behavior
+      &.mat-mdc-form-field {
+        .mat-mdc-floating-label {
+          font-size: 16px;
+          color: var(--gray-600);
+          transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+          pointer-events: none;
+        }
+
+        // When focused or has value, label should be smaller and positioned above
+        &.mat-focused .mat-mdc-floating-label,
+        &.mat-form-field-should-float .mat-mdc-floating-label {
+          font-size: 12px;
+          color: var(--primary-600);
+          font-weight: 500;
+        }
+
+        // Error state
+        &.mat-form-field-invalid .mat-mdc-floating-label {
+          color: var(--error);
+        }
+
+        // Disabled state
+        &.mat-form-field-disabled .mat-mdc-floating-label {
+          color: var(--gray-400);
+        }
+
+        // Ensure proper outline notch behavior
+        .mdc-notched-outline {
+          .mdc-notched-outline__notch {
+            border-right: none;
+            border-left: none;
+          }
+        }
+
+        // When label is floating, ensure notch is properly sized
+        &.mat-form-field-should-float .mdc-notched-outline__notch {
+          border-top: none;
+        }
+
+        // Ensure the label doesn't interfere with placeholder
+        .mat-mdc-input-element::placeholder {
+          transition: opacity 0.2s ease;
+        }
+
+        // Hide placeholder when label is not floating
+        &:not(.mat-form-field-should-float) .mat-mdc-input-element::placeholder {
+          opacity: 0;
+        }
+
+        // Show placeholder when label is floating
+        &.mat-form-field-should-float .mat-mdc-input-element::placeholder {
+          opacity: 1;
+        }
+      }
+    }
+
+    // Ensure consistent icon sizing
+    .mat-mdc-form-field-icon-prefix,
+    .mat-mdc-form-field-icon-suffix {
+      mat-icon {
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        color: var(--gray-500);
+      }
+    }
+
+    // Consistent placeholder styling
+    .mat-mdc-input-element::placeholder {
+      color: var(--gray-400);
+      opacity: 1;
+    }
+
+    // Select arrow styling
+    .mat-mdc-select-arrow {
+      color: var(--gray-500);
+    }
+
+    // Ensure select panels have proper styling
+    .mat-mdc-select-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+    }
+
+    // Option styling
+    .mat-mdc-option {
+      font-size: 16px;
+      line-height: 1.5;
+
+      &:hover {
+        background-color: var(--blue-50);
+      }
+
+      &.mat-mdc-option-active {
+        background-color: var(--primary-50);
+        color: var(--primary-700);
+      }
+    }
+  }
+}
+
 // Responsive Design
 @media (max-width: 768px) {
   .jobs-container {
@@ -447,9 +748,51 @@
       padding: 1.5rem;
       margin: 0 1rem;
 
+      .search-bar {
+        margin-bottom: 1rem;
+
+        .search-field {
+          ::ng-deep {
+            .mat-mdc-form-field-infix {
+              padding: 14px 0; // Maintain proper padding for floating labels
+            }
+
+            .mat-mdc-input-element {
+              padding: 0 8px;
+              font-size: 16px; // Prevent zoom on iOS
+            }
+          }
+        }
+      }
+
       .filters {
+        gap: 1rem;
+
+        .filter-field {
+          ::ng-deep {
+            .mat-mdc-form-field-infix {
+              padding: 14px 0; // Maintain proper padding for floating labels
+            }
+
+            .mat-mdc-input-element,
+            .mat-mdc-select-trigger {
+              padding: 0 8px;
+              font-size: 16px; // Prevent zoom on iOS
+            }
+          }
+        }
+
         .clear-btn {
           width: 100%;
+          height: 48px;
+          min-height: 48px;
+          font-size: 0.875rem;
+
+          mat-icon {
+            font-size: 1rem;
+            width: 1rem;
+            height: 1rem;
+          }
         }
       }
     }
