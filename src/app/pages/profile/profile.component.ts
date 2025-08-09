@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ProfileService } from '../../services/profile.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
@@ -23,6 +24,7 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     TitleCasePipe
   ],
   templateUrl: './profile.component.html',
@@ -35,6 +37,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   currentImageUrl: string | null = null;
   previewImageUrl: string | null = null;
   isUploading = false;
+  profileCompletionPercentage = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -63,6 +66,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.profileService.getProfile().subscribe(data => {
       this.profileForm.patchValue(data);
       this.currentImageUrl = data.profileImageUrl || data.companyLogoUrl;
+      this.calculateProfileCompletion();
+    });
+
+    // Subscribe to form changes to update completion percentage in real-time
+    this.profileForm.valueChanges.subscribe(() => {
+      this.calculateProfileCompletion();
     });
   }
 
@@ -141,6 +150,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         // Clear file selection and preview
         this.clearFileSelection();
 
+        // Recalculate profile completion
+        this.calculateProfileCompletion();
+
         alert('Profile picture uploaded successfully!');
       },
       error: (err) => {
@@ -184,6 +196,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       this.profileService.updateWorkerProfile(formData).subscribe({
         next: () => {
+          this.calculateProfileCompletion();
           alert('Profile updated successfully!');
         },
         error: (error) => {
@@ -206,6 +219,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       this.profileService.updateEmployerProfile(formData).subscribe({
         next: () => {
+          this.calculateProfileCompletion();
           alert('Profile updated successfully!');
         },
         error: (error) => {
@@ -233,7 +247,64 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  calculateProfileCompletion(): void {
+    const formValues = this.profileForm.value;
+    let totalFields = 0;
+    let completedFields = 0;
 
+    if (this.userRole === 'WORKER') {
+      // Required fields for workers
+      const workerFields = [
+        'firstName',
+        'lastName',
+        'phoneNumber',
+        'location',
+        'bio',
+        'experience',
+        'education',
+        'skills',
+        'availability'
+      ];
+
+      totalFields = workerFields.length + (this.currentImageUrl ? 1 : 0); // Include profile picture
+
+      workerFields.forEach(field => {
+        const value = formValues[field];
+        if (value && value.toString().trim() !== '') {
+          completedFields++;
+        }
+      });
+
+      // Add profile picture to completed fields if exists
+      if (this.currentImageUrl) {
+        completedFields++;
+      }
+
+    } else if (this.userRole === 'EMPLOYER') {
+      // Required fields for employers
+      const employerFields = [
+        'companyName',
+        'companyDescription',
+        'location'
+      ];
+
+      totalFields = employerFields.length + (this.currentImageUrl ? 1 : 0); // Include company logo
+
+      employerFields.forEach(field => {
+        const value = formValues[field];
+        if (value && value.toString().trim() !== '') {
+          completedFields++;
+        }
+      });
+
+      // Add company logo to completed fields if exists
+      if (this.currentImageUrl) {
+        completedFields++;
+      }
+    }
+
+    this.profileCompletionPercentage = totalFields > 0 ? Math.round((completedFields / totalFields) * 100) : 0;
+  }
 
   ngOnDestroy(): void {
     // Clean up preview URL to prevent memory leaks

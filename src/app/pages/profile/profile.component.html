@@ -128,8 +128,15 @@
               <mat-icon>edit</mat-icon>
               Profile Information
             </h2>
-            <div class="completion-badge">
-              <span class="badge badge-primary">75% Complete</span>
+            <div class="completion-section">
+              <div class="completion-info">
+                <span class="completion-text">{{ profileCompletionPercentage }}% Complete</span>
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="profileCompletionPercentage"
+                  class="completion-bar">
+                </mat-progress-bar>
+              </div>
             </div>
           </div>
 
