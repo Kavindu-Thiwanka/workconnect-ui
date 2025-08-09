@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   profileForm: FormGroup;
   userRole: string | null = null;
   selectedFile: File | null = null;
+  isFileSelected: boolean = false;
   currentImageUrl: string | null = null;
   previewImageUrl: string | null = null;
   isUploading = false;
@@ -63,16 +64,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userRole = this.authService.getRole();
 
+    // Initial calculation with empty form
+    this.calculateProfileCompletion();
+
     this.profileService.getProfile().subscribe(data => {
       this.profileForm.patchValue(data);
       this.currentImageUrl = data.profileImageUrl || data.companyLogoUrl;
-      this.calculateProfileCompletion();
+      // Recalculate after loading profile data
+      setTimeout(() => this.calculateProfileCompletion(), 100);
     });
 
     // Subscribe to form changes to update completion percentage in real-time
     this.profileForm.valueChanges.subscribe(() => {
       this.calculateProfileCompletion();
     });
+
+    this.isFileSelected = false;
   }
 
   onFileSelected(event: Event): void {
@@ -98,6 +105,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       // Set the selected file
       this.selectedFile = file;
+      this.isFileSelected = true;
 
       // Generate preview URL
       this.generatePreviewUrl(file);
@@ -118,6 +126,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   clearFileSelection(): void {
     this.selectedFile = null;
+    this.isFileSelected = false;
 
     // Clean up preview URL
     if (this.previewImageUrl) {
@@ -133,7 +142,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   onPictureUpload(): void {
-    if (!this.selectedFile) {
+    if (!this.selectedFile || !this.isFileSelected) {
       alert('Please select a file first');
       return;
     }
@@ -266,7 +275,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         'availability'
       ];
 
-      totalFields = workerFields.length + (this.currentImageUrl ? 1 : 0); // Include profile picture
+      totalFields = workerFields.length + 1;
 
       workerFields.forEach(field => {
         const value = formValues[field];
@@ -288,7 +297,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         'location'
       ];
 
-      totalFields = employerFields.length + (this.currentImageUrl ? 1 : 0); // Include company logo
+      totalFields = employerFields.length + 1; // Always include company logo in total
 
       employerFields.forEach(field => {
         const value = formValues[field];
@@ -304,6 +313,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     this.profileCompletionPercentage = totalFields > 0 ? Math.round((completedFields / totalFields) * 100) : 0;
+
+    // Update CSS custom property for fallback styling
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.setProperty('--progress-width', `${this.profileCompletionPercentage}%`);
+    }
+
+    // Debug logging to help troubleshoot
+    console.log('Profile Completion Debug:', {
+      userRole: this.userRole,
+      totalFields,
+      completedFields,
+      percentage: this.profileCompletionPercentage,
+      formValues,
+      currentImageUrl: this.currentImageUrl
+    });
   }
 
   ngOnDestroy(): void {

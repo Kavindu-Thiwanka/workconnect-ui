@@ -96,8 +96,8 @@
                     mat-raised-button
                     color="primary"
                     (click)="onPictureUpload()"
-                    [disabled]="!selectedFile || isUploading"
                     class="upload-btn"
+                    [attr.disabled]="isFileSelected ? null : true"
                   >
                     <mat-icon *ngIf="!isUploading">cloud_upload</mat-icon>
                     <mat-spinner *ngIf="isUploading" diameter="20"></mat-spinner>
@@ -134,7 +134,11 @@
                 <mat-progress-bar
                   mode="determinate"
                   [value]="profileCompletionPercentage"
-                  class="completion-bar">
+                  [attr.aria-valuenow]="profileCompletionPercentage"
+                  [attr.aria-valuemin]="0"
+                  [attr.aria-valuemax]="100"
+                  class="completion-bar"
+                  role="progressbar">
                 </mat-progress-bar>
               </div>
             </div>
