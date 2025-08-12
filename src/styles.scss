@@ -268,3 +268,19 @@ body {
   color: var(--gray-700);
   border: 1px solid var(--blue-200);
 }
+
+/* Snackbar Styles */
+.error-snackbar {
+  background-color: var(--error-500) !important;
+  color: var(--white) !important;
+}
+
+.success-snackbar {
+  background-color: var(--success-500) !important;
+  color: var(--white) !important;
+}
+
+.warning-snackbar {
+  background-color: var(--warning-500) !important;
+  color: var(--white) !important;
+}

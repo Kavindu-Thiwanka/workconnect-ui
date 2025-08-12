@@ -403,4 +403,18 @@ export class ErrorService {
     // In production, you might want to send this to a logging service
     // this.sendToLoggingService(logData);
   }
+
+  // Simple methods for backward compatibility
+  showError(title: string, message?: string): void {
+    const errorMessage = message ? `${title}: ${message}` : title;
+    this.addNotification({
+      type: NotificationType.ERROR,
+      title: 'Error',
+      message: errorMessage,
+      duration: 5000,
+      dismissible: true
+    });
+  }
+
+
 }

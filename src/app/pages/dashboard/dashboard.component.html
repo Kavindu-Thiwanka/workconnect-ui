@@ -311,28 +311,59 @@
           </div>
 
           <div class="card-content">
-            <div class="jobs-list">
-              <div class="job-item" *ngFor="let job of [1,2,3]">
+            <div class="jobs-list" *ngIf="activeJobs.length > 0; else noActiveJobs">
+              <div class="job-item" *ngFor="let job of activeJobs; trackBy: trackByJobId" (click)="onJobClick(job.id)">
                 <div class="job-info">
-                  <h4 class="job-title">Senior React Developer</h4>
+                  <h4 class="job-title">{{ job.title }}</h4>
                   <div class="job-meta">
                     <span class="applications-count">
                       <mat-icon>people</mat-icon>
-                      24 applications
+                      {{ job.applicationCount || 0 }} applications
                     </span>
-                    <span class="posted-date">Posted 5 days ago</span>
+                    <span class="posted-date">Posted {{ getDaysAgo(job.createdAt) }}</span>
+                  </div>
+                  <div class="job-details">
+                    <span class="job-location">
+                      <mat-icon>location_on</mat-icon>
+                      {{ job.location }}
+                    </span>
+                    <span class="job-salary" *ngIf="job.salary">
+                      <mat-icon>attach_money</mat-icon>
+                      ${{ job.salary | number }}
+                    </span>
                   </div>
                 </div>
                 <div class="job-actions">
-                  <button mat-stroked-button class="view-btn">
+                  <button mat-stroked-button class="view-btn" (click)="onViewApplications(job.id); $event.stopPropagation()">
                     View Applications
                   </button>
-                  <button mat-icon-button>
+                  <button mat-icon-button [matMenuTriggerFor]="jobMenu" (click)="$event.stopPropagation()">
                     <mat-icon>more_vert</mat-icon>
                   </button>
+                  <mat-menu #jobMenu="matMenu">
+                    <button mat-menu-item (click)="onEditJob(job.id)">
+                      <mat-icon>edit</mat-icon>
+                      Edit Job
+                    </button>
+                    <button mat-menu-item (click)="onViewJob(job.id)">
+                      <mat-icon>visibility</mat-icon>
+                      View Details
+                    </button>
+                  </mat-menu>
                 </div>
               </div>
             </div>
+
+            <ng-template #noActiveJobs>
+              <div class="empty-state">
+                <mat-icon>work_off</mat-icon>
+                <h3>No Active Jobs</h3>
+                <p>You don't have any active job postings at the moment.</p>
+                <button mat-raised-button color="primary" (click)="onPostNewJob()">
+                  Post Your First Job
+                </button>
+              </div>
+            </ng-template>
           </div>
         </div>
 
@@ -350,23 +381,54 @@
           </div>
 
           <div class="card-content">
-            <div class="applications-list">
-              <div class="application-item" *ngFor="let app of [1,2,3]">
+            <div class="applications-list" *ngIf="recentEmployerApplications.length > 0; else noRecentApplications">
+              <div class="application-item" *ngFor="let app of recentEmployerApplications; trackBy: trackByApplicationId" (click)="onApplicationClick(app.id)">
                 <div class="applicant-info">
-                  <div class="applicant-avatar">JD</div>
+                  <div class="applicant-avatar">
+                    {{ getApplicantInitials(app.worker) }}
+                  </div>
                   <div class="applicant-details">
-                    <h4 class="applicant-name">John Doe</h4>
-                    <p class="applied-position">Applied for Senior Developer</p>
-                    <span class="application-time">2 hours ago</span>
+                    <h4 class="applicant-name">{{ getApplicantName(app.worker) }}</h4>
+                    <p class="applied-position">Applied for {{ app.job?.title || 'Unknown Position' }}</p>
+                    <span class="application-time">{{ getTimeAgo(app.appliedAt) }}</span>
+                    <div class="application-status">
+                      <span class="status-badge" [class]="'status-' + app.status.toLowerCase()">
+                        {{ formatApplicationStatus(app.status) }}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div class="application-actions">
-                  <button mat-stroked-button class="review-btn">
+                  <button mat-stroked-button class="review-btn" (click)="onReviewApplication(app.id); $event.stopPropagation()">
                     Review
                   </button>
+                  <button mat-icon-button [matMenuTriggerFor]="appMenu" (click)="$event.stopPropagation()">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #appMenu="matMenu">
+                    <button mat-menu-item (click)="onViewApplicantProfile(app.workerId)">
+                      <mat-icon>person</mat-icon>
+                      View Profile
+                    </button>
+                    <button mat-menu-item (click)="onUpdateApplicationStatus(app.id)">
+                      <mat-icon>update</mat-icon>
+                      Update Status
+                    </button>
+                  </mat-menu>
                 </div>
               </div>
             </div>
+
+            <ng-template #noRecentApplications>
+              <div class="empty-state">
+                <mat-icon>inbox</mat-icon>
+                <h3>No Recent Applications</h3>
+                <p>No new applications have been received recently.</p>
+                <button mat-stroked-button (click)="onViewAllApplications()">
+                  View All Applications
+                </button>
+              </div>
+            </ng-template>
           </div>
         </div>
 

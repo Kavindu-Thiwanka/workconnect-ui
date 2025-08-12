@@ -1,12 +1,12 @@
-<div class="post-job-container">
+<div class="edit-job-container">
   <div class="page-header">
     <div class="header-content">
-      <h1 class="page-title">{{ isDuplicating ? 'Duplicate Job Posting' : 'Post a New Job' }}</h1>
-      <p class="page-subtitle">{{ isDuplicating ? 'Create a new job based on an existing posting' : 'Find the perfect candidate for your team' }}</p>
+      <h1 class="page-title">Edit Job Posting</h1>
+      <p class="page-subtitle">Update your job details to attract the right candidates</p>
     </div>
   </div>
 
-  <div class="form-container">
+  <div class="form-container" *ngIf="!isLoading; else loadingTemplate">
     <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="modern-form">
       <div class="form-section">
         <h3 class="section-title">Job Details</h3>
@@ -16,6 +16,9 @@
             <mat-label>Job Title</mat-label>
             <input matInput formControlName="jobTitle" placeholder="e.g. Senior Software Engineer">
             <mat-icon matSuffix>work</mat-icon>
+            <mat-error *ngIf="jobForm.get('jobTitle')?.hasError('required') && jobForm.get('jobTitle')?.touched">
+              {{ getErrorMessage('jobTitle') }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -24,6 +27,9 @@
             <mat-label>Job Description</mat-label>
             <textarea matInput formControlName="description" rows="4" placeholder="Describe the role, responsibilities, and requirements..."></textarea>
             <mat-icon matSuffix>description</mat-icon>
+            <mat-error *ngIf="jobForm.get('description')?.hasError('required') && jobForm.get('description')?.touched">
+              {{ getErrorMessage('description') }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -45,6 +51,9 @@
               <mat-label>Location</mat-label>
               <input matInput formControlName="location" placeholder="e.g. New York, NY">
               <mat-icon matSuffix>location_on</mat-icon>
+              <mat-error *ngIf="jobForm.get('location')?.hasError('required') && jobForm.get('location')?.touched">
+                {{ getErrorMessage('location') }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -54,6 +63,12 @@
               <input matInput type="number" formControlName="salary" placeholder="50000">
               <span matPrefix>$</span>
               <mat-icon matSuffix>attach_money</mat-icon>
+              <mat-error *ngIf="jobForm.get('salary')?.hasError('required') && jobForm.get('salary')?.touched">
+                {{ getErrorMessage('salary') }}
+              </mat-error>
+              <mat-error *ngIf="jobForm.get('salary')?.hasError('min') && jobForm.get('salary')?.touched">
+                {{ getErrorMessage('salary') }}
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -88,6 +103,9 @@
               <mat-label>{{ jobForm.get('jobType')?.value === 'ONE_DAY' ? 'Job Date' : 'Start Date' }}</mat-label>
               <input matInput type="date" formControlName="startDate">
               <mat-icon matSuffix>event</mat-icon>
+              <mat-error *ngIf="jobForm.get('startDate')?.hasError('required') && jobForm.get('startDate')?.touched">
+                {{ getErrorMessage('startDate') }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -96,20 +114,32 @@
               <mat-label>End Date</mat-label>
               <input matInput type="date" formControlName="endDate">
               <mat-icon matSuffix>event_available</mat-icon>
+              <mat-error *ngIf="jobForm.get('endDate')?.hasError('required') && jobForm.get('endDate')?.touched">
+                {{ getErrorMessage('endDate') }}
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" mat-stroked-button class="cancel-btn" routerLink="/app/employer/jobs">
+        <button type="button" mat-stroked-button class="cancel-btn" (click)="onCancel()" [disabled]="isSubmitting">
+          <mat-icon>close</mat-icon>
           Cancel
         </button>
-        <button type="submit" mat-raised-button class="submit-btn" [disabled]="jobForm.invalid">
-          <mat-icon>{{ isDuplicating ? 'content_copy' : 'publish' }}</mat-icon>
-          {{ isDuplicating ? 'Create Duplicate' : 'Post Job' }}
+        <button type="submit" mat-raised-button class="submit-btn" [disabled]="jobForm.invalid || isSubmitting">
+          <mat-icon *ngIf="!isSubmitting">save</mat-icon>
+          <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+          {{ isSubmitting ? 'Updating...' : 'Update Job' }}
         </button>
       </div>
     </form>
   </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading job data...</p>
+    </div>
+  </ng-template>
 </div>

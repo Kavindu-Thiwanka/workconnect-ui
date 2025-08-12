@@ -88,36 +88,59 @@
           <div class="job-footer">
             <span class="posted-date">Posted {{ job.postedAt | date: 'MMM d, y' }}</span>
             <div class="job-actions">
-              <button mat-raised-button [routerLink]="['/app/employer/jobs', job.id, 'applications']" class="view-applications-btn">
-                <mat-icon>people</mat-icon>
-                View Applications
-              </button>
-              <button mat-stroked-button [routerLink]="['/app/jobs', job.id, 'edit']" class="edit-btn">
-                <mat-icon>edit</mat-icon>
-                Edit
-              </button>
-              <button mat-icon-button [matMenuTriggerFor]="jobMenu" class="more-actions-btn">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #jobMenu="matMenu">
-                <button mat-menu-item (click)="duplicateJob(job)">
-                  <mat-icon>content_copy</mat-icon>
-                  Duplicate Job
+              <div class="status-control">
+                <mat-form-field appearance="outline" class="status-field">
+                  <mat-label>Status</mat-label>
+                  <mat-select [value]="job.status" (selectionChange)="onStatusChange(job.id, $event.value)" [disabled]="isUpdatingStatus">
+                    <mat-option value="OPEN">
+                      <mat-icon class="status-icon open">radio_button_checked</mat-icon>
+                      Open
+                    </mat-option>
+                    <mat-option value="CLOSED">
+                      <mat-icon class="status-icon closed">pause_circle</mat-icon>
+                      Closed
+                    </mat-option>
+                    <mat-option value="FILLED">
+                      <mat-icon class="status-icon filled">check_circle</mat-icon>
+                      Filled
+                    </mat-option>
+                    <mat-option value="EXPIRED">
+                      <mat-icon class="status-icon expired">cancel</mat-icon>
+                      Expired
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="action-buttons">
+                <button mat-raised-button [routerLink]="['/app/employer/jobs', job.id, 'applications']" class="view-applications-btn">
+                  <mat-icon>people</mat-icon>
+                  <span>Applications ({{ job.applicationCount || 0 }})</span>
                 </button>
-                <button mat-menu-item (click)="toggleJobStatus(job)">
-                  <mat-icon>{{ job.status === 'ACTIVE' ? 'pause' : 'play_arrow' }}</mat-icon>
-                  {{ job.status === 'ACTIVE' ? 'Close Job' : 'Reopen Job' }}
+                <button mat-stroked-button (click)="editJob(job)" class="edit-btn">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
                 </button>
-                <button mat-menu-item (click)="shareJob(job)">
-                  <mat-icon>share</mat-icon>
-                  Share Job
+                <button mat-icon-button [matMenuTriggerFor]="jobMenu" class="more-actions-btn">
+                  <mat-icon>more_vert</mat-icon>
                 </button>
-                <mat-divider></mat-divider>
-                <button mat-menu-item (click)="deleteJob(job.id)" class="delete-action">
-                  <mat-icon>delete</mat-icon>
-                  Delete Job
-                </button>
-              </mat-menu>
+                <mat-menu #jobMenu="matMenu">
+                  <button mat-menu-item (click)="duplicateJob(job)">
+                    <mat-icon>content_copy</mat-icon>
+                    Duplicate Job
+                  </button>
+                  <button mat-menu-item (click)="shareJob(job)">
+                    <mat-icon>share</mat-icon>
+                    Share Job
+                  </button>
+                  <mat-divider></mat-divider>
+                  <button mat-menu-item (click)="confirmDeleteJob(job)" class="delete-action" [disabled]="job.applicationCount > 0">
+                    <mat-icon>delete</mat-icon>
+                    Delete Job
+                    <span *ngIf="job.applicationCount > 0" class="disabled-reason">(Has applications)</span>
+                  </button>
+                </mat-menu>
+              </div>
             </div>
           </div>
         </div>

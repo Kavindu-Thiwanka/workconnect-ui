@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -8,8 +8,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
+import { LoadingService } from '../../../services/loading.service';
+import { ErrorService } from '../../../services/error.service';
 import { Observable, map } from 'rxjs';
 
 @Component({
@@ -25,6 +30,8 @@ import { Observable, map } from 'rxjs';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatDividerModule,
+    MatDialogModule,
+    MatSnackBarModule,
     FormsModule
   ],
   templateUrl: './my-jobs.component.html',
@@ -35,14 +42,19 @@ export class MyJobsComponent implements OnInit {
   filteredJobs: any[] = [];
   statusFilter: string = '';
   viewMode: 'grid' | 'list' = 'list';
+  isUpdatingStatus: boolean = false;
 
-  constructor(private jobService: JobService) {}
+  constructor(
+    private jobService: JobService,
+    private router: Router,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private loadingService: LoadingService,
+    private errorService: ErrorService
+  ) {}
 
   ngOnInit(): void {
-    this.myJobs$ = this.jobService.getPostedJobs();
-    this.myJobs$.subscribe(jobs => {
-      this.filteredJobs = jobs;
-    });
+    this.loadJobs();
   }
 
   onFilterChange(): void {
@@ -86,34 +98,79 @@ export class MyJobsComponent implements OnInit {
     return this.filteredJobs.reduce((total, job) => total + (job.viewCount || 0), 0);
   }
 
-  duplicateJob(job: any): void {
-    console.log('Duplicate job:', job.id);
-    // Implement job duplication logic
+  onStatusChange(jobId: number, newStatus: string): void {
+    this.isUpdatingStatus = true;
+    this.jobService.updateJobStatus(jobId.toString(), newStatus).subscribe({
+      next: () => {
+        this.errorService.showSuccess('Success', 'Job status updated successfully');
+        this.loadJobs(); // Refresh the job list
+        this.isUpdatingStatus = false;
+      },
+      error: (error) => {
+        this.errorService.showError('Failed to update job status', error.message);
+        this.isUpdatingStatus = false;
+      }
+    });
   }
 
-  toggleJobStatus(job: any): void {
-    const newStatus = job.status === 'ACTIVE' ? 'CLOSED' : 'ACTIVE';
-    console.log('Toggle job status:', job.id, 'to', newStatus);
-    // Implement status toggle logic
+  editJob(job: any): void {
+    this.router.navigate(['/app/jobs', job.id, 'edit']);
+  }
+
+  confirmDeleteJob(job: any): void {
+    if (job.applicationCount > 0) {
+      this.errorService.showWarning('Cannot Delete Job', 'Cannot delete job with existing applications');
+      return;
+    }
+
+    const confirmed = confirm(`Are you sure you want to delete "${job.jobTitle}"? This action cannot be undone.`);
+    if (confirmed) {
+      this.deleteJob(job.id);
+    }
+  }
+
+  private deleteJob(jobId: number): void {
+    this.jobService.deleteJob(jobId.toString()).subscribe({
+      next: () => {
+        this.errorService.showSuccess('Success', 'Job deleted successfully');
+        this.loadJobs(); // Refresh the job list
+      },
+      error: (error) => {
+        this.errorService.showError('Failed to delete job', error.message);
+      }
+    });
+  }
+
+  private loadJobs(): void {
+    this.myJobs$ = this.jobService.getPostedJobs();
+    this.myJobs$.subscribe(jobs => {
+      this.filteredJobs = this.statusFilter
+        ? jobs.filter(job => (job.status || 'OPEN') === this.statusFilter)
+        : jobs;
+    });
+  }
+
+  duplicateJob(job: any): void {
+    // Navigate to create job with pre-filled data
+    this.router.navigate(['/app/jobs/new'], {
+      queryParams: { duplicate: job.id }
+    });
   }
 
   shareJob(job: any): void {
+    const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
     if (navigator.share) {
       navigator.share({
         title: job.jobTitle,
         text: `Check out this job opportunity: ${job.jobTitle}`,
-        url: window.location.origin + `/jobs/${job.id}`
+        url: jobUrl
       });
     } else {
-      navigator.clipboard.writeText(window.location.origin + `/jobs/${job.id}`);
-      console.log('Job link copied to clipboard');
-    }
-  }
-
-  deleteJob(jobId: number): void {
-    if (confirm('Are you sure you want to delete this job posting? This action cannot be undone.')) {
-      console.log('Delete job:', jobId);
-      // Implement job deletion logic
+      navigator.clipboard.writeText(jobUrl).then(() => {
+        this.errorService.showSuccess('Success', 'Job URL copied to clipboard');
+      }).catch(() => {
+        this.errorService.showError('Failed to copy URL');
+      });
     }
   }
 }

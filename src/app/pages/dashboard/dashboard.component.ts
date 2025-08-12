@@ -1,17 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatMenuModule } from '@angular/material/menu';
 import { Subject, takeUntil, forkJoin, catchError, of } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { LoadingService } from '../../services/loading.service';
+import { ErrorService } from '../../services/error.service';
 import {
   WorkerDashboardStats,
   EmployerDashboardStats,
@@ -32,7 +34,8 @@ import {
     MatProgressSpinnerModule,
     MatCardModule,
     MatProgressBarModule,
-    MatChipsModule
+    MatChipsModule,
+    MatMenuModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -60,7 +63,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private profileService: ProfileService,
     private dashboardService: DashboardService,
-    public loadingService: LoadingService
+    public loadingService: LoadingService,
+    private errorService: ErrorService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -84,65 +89,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private loadWorkerDashboard(): void {
     this.isLoading = true;
 
-    forkJoin({
-      profile: this.profileService.getWorkerProfile().pipe(
-        catchError(error => {
-          console.error('Error loading worker profile:', error);
-          return of(null);
-        })
-      ),
-      stats: this.dashboardService.getWorkerStats().pipe(
-        catchError(error => {
-          console.error('Error loading worker stats:', error);
-          return of({
-            totalApplications: 0,
-            pendingApplications: 0,
-            interviewsScheduled: 0,
-            profileViews: 0
-          });
-        })
-      ),
-      recentApplications: this.dashboardService.getRecentApplications(5).pipe(
-        catchError(error => {
-          console.error('Error loading recent applications:', error);
-          return of([]);
-        })
-      ),
-      recommendedJobs: this.dashboardService.getRecommendedJobs(6).pipe(
-        catchError(error => {
-          console.error('Error loading recommended jobs:', error);
-          return of([]);
-        })
-      ),
-      profileCompletion: this.dashboardService.getProfileCompletion().pipe(
-        catchError(error => {
-          console.error('Error loading profile completion:', error);
-          return of({ percentage: 0, tips: [] });
-        })
-      )
-    }).pipe(
-      takeUntil(this.destroy$)
+    // Use the comprehensive dashboard endpoint
+    this.dashboardService.getWorkerDashboard().pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        this.errorService.showError('Failed to load dashboard', 'Unable to load your dashboard data. Please try again.');
+        this.isLoading = false;
+        return of(null);
+      })
     ).subscribe({
-      next: (data) => {
-        this.workerProfile = data.profile;
-        this.workerStats = {
-          totalApplications: data.stats.totalApplications,
-          pendingApplications: data.stats.pendingApplications,
-          interviewsScheduled: data.stats.interviewsScheduled,
-          profileViews: data.stats.profileViews,
-          profileCompletionPercentage: data.profileCompletion.percentage,
-          recentApplications: data.recentApplications,
-          recommendedJobs: data.recommendedJobs,
-          profileCompletionTips: data.profileCompletion.tips
-        };
-        this.recentApplications = data.recentApplications;
-        this.recommendedJobs = data.recommendedJobs;
-        this.profileCompletion = data.profileCompletion;
+      next: (dashboard) => {
+        if (dashboard) {
+          this.workerStats = dashboard;
+          this.recentApplications = dashboard.recentApplications || [];
+          this.recommendedJobs = dashboard.recommendedJobs || [];
+          this.profileCompletion = {
+            percentage: dashboard.profileCompletionPercentage || 0,
+            tips: dashboard.profileCompletionTips || []
+          };
+        }
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading worker dashboard:', error);
+        this.errorService.showError('Failed to load dashboard', 'Unable to load your dashboard data. Please try again.');
         this.isLoading = false;
+      }
+    });
+
+    // Load worker profile separately as it might be needed for other purposes
+    this.profileService.getWorkerProfile().pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        console.error('Error loading worker profile:', error);
+        return of(null);
+      })
+    ).subscribe({
+      next: (profile) => {
+        this.workerProfile = profile;
       }
     });
   }
@@ -150,56 +133,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private loadEmployerDashboard(): void {
     this.isLoading = true;
 
-    forkJoin({
-      profile: this.profileService.getEmployerProfile().pipe(
-        catchError(error => {
-          console.error('Error loading employer profile:', error);
-          return of(null);
-        })
-      ),
-      stats: this.dashboardService.getEmployerStats().pipe(
-        catchError(error => {
-          console.error('Error loading employer stats:', error);
-          return of({
-            activeJobs: 0,
-            totalApplications: 0,
-            newApplicationsThisWeek: 0,
-            totalViews: 0
-          });
-        })
-      ),
-      activeJobs: this.dashboardService.getActiveJobPostings(5).pipe(
-        catchError(error => {
-          console.error('Error loading active jobs:', error);
-          return of([]);
-        })
-      ),
-      recentApplications: this.dashboardService.getRecentApplicationsForEmployer(5).pipe(
-        catchError(error => {
-          console.error('Error loading recent applications:', error);
-          return of([]);
-        })
-      )
-    }).pipe(
-      takeUntil(this.destroy$)
+    // Use the comprehensive dashboard endpoint
+    this.dashboardService.getEmployerDashboard().pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        this.errorService.showError('Failed to load dashboard', 'Unable to load your dashboard data. Please try again.');
+        this.isLoading = false;
+        return of(null);
+      })
     ).subscribe({
-      next: (data) => {
-        this.employerProfile = data.profile;
-        this.employerStats = {
-          activeJobs: data.stats.activeJobs,
-          totalApplications: data.stats.totalApplications,
-          newApplicationsThisWeek: data.stats.newApplicationsThisWeek,
-          totalViews: data.stats.totalViews,
-          recentApplications: data.recentApplications,
-          activeJobPostings: data.activeJobs
-        };
-        this.activeJobs = data.activeJobs;
-        this.recentEmployerApplications = data.recentApplications;
+      next: (dashboard) => {
+        if (dashboard) {
+          this.employerStats = dashboard;
+          this.activeJobs = dashboard.activeJobPostings || [];
+          this.recentEmployerApplications = dashboard.recentApplications || [];
+        }
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading employer dashboard:', error);
+        this.errorService.showError('Failed to load dashboard', 'Unable to load your dashboard data. Please try again.');
         this.isLoading = false;
+      }
+    });
+
+    // Load employer profile separately as it might be needed for other purposes
+    this.profileService.getEmployerProfile().pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        console.error('Error loading employer profile:', error);
+        return of(null);
+      })
+    ).subscribe({
+      next: (profile) => {
+        this.employerProfile = profile;
       }
     });
   }
@@ -243,10 +209,148 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onJobClick(jobId: number): void {
-    // Navigate to job details
+    this.router.navigate(['/app/jobs', jobId]);
   }
 
   onApplicationClick(applicationId: number): void {
-    // Navigate to application details
+    if (this.userRole === 'EMPLOYER') {
+      this.router.navigate(['/app/employer/applications', applicationId]);
+    } else {
+      this.router.navigate(['/app/my-applications']);
+    }
+  }
+
+  onViewAllJobs(): void {
+    if (this.userRole === 'EMPLOYER') {
+      this.router.navigate(['/app/employer/jobs']);
+    } else {
+      this.router.navigate(['/app/jobs']);
+    }
+  }
+
+  onViewAllApplications(): void {
+    if (this.userRole === 'EMPLOYER') {
+      this.router.navigate(['/app/employer/applications']);
+    } else {
+      this.router.navigate(['/app/my-applications']);
+    }
+  }
+
+  onPostNewJob(): void {
+    this.router.navigate(['/app/jobs/new']);
+  }
+
+  onEditProfile(): void {
+    this.router.navigate(['/app/profile']);
+  }
+
+  refreshDashboard(): void {
+    this.loadDashboardData();
+  }
+
+  // Method to handle real-time updates when data changes
+  onDataUpdate(): void {
+    // This can be called when jobs are created, applications are submitted, etc.
+    this.refreshDashboard();
+  }
+
+  // Helper methods for template
+  trackByJobId(index: number, job: any): any {
+    return job.id;
+  }
+
+  trackByApplicationId(index: number, application: any): any {
+    return application.id;
+  }
+
+  getDaysAgo(dateString: string): string {
+    if (!dateString) return 'Unknown date';
+
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - date.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return '1 day ago';
+      if (diffDays < 7) return `${diffDays} days ago`;
+      if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+      return `${Math.ceil(diffDays / 30)} months ago`;
+    } catch (error) {
+      return 'Unknown date';
+    }
+  }
+
+  getTimeAgo(dateString: string): string {
+    if (!dateString) return 'Unknown time';
+
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - date.getTime());
+      const diffMinutes = Math.floor(diffTime / (1000 * 60));
+      const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffMinutes < 1) return 'Just now';
+      if (diffMinutes < 60) return `${diffMinutes} minutes ago`;
+      if (diffHours < 24) return `${diffHours} hours ago`;
+      if (diffDays === 1) return '1 day ago';
+      return `${diffDays} days ago`;
+    } catch (error) {
+      return 'Unknown time';
+    }
+  }
+
+  getApplicantInitials(worker: any): string {
+    if (!worker) return 'NA';
+    const firstName = worker.firstName || '';
+    const lastName = worker.lastName || '';
+    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'NA';
+  }
+
+  getApplicantName(worker: any): string {
+    if (!worker) return 'Unknown Applicant';
+    const firstName = worker.firstName || '';
+    const lastName = worker.lastName || '';
+    return `${firstName} ${lastName}`.trim() || 'Unknown Applicant';
+  }
+
+  formatApplicationStatus(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'PENDING': 'Pending Review',
+      'VIEWED': 'Viewed',
+      'ACCEPTED': 'Accepted',
+      'REJECTED': 'Rejected',
+      'COMPLETED': 'Completed'
+    };
+    return statusMap[status] || status;
+  }
+
+  // Action methods for employer dashboard
+  onViewApplications(jobId: number): void {
+    this.router.navigate(['/app/employer/jobs', jobId, 'applications']);
+  }
+
+  onEditJob(jobId: number): void {
+    this.router.navigate(['/app/jobs', jobId, 'edit']);
+  }
+
+  onViewJob(jobId: number): void {
+    this.router.navigate(['/app/jobs', jobId]);
+  }
+
+  onReviewApplication(applicationId: number): void {
+    this.router.navigate(['/app/employer/applications', applicationId]);
+  }
+
+  onViewApplicantProfile(workerId: number): void {
+    this.router.navigate(['/app/profile', workerId]);
+  }
+
+  onUpdateApplicationStatus(applicationId: number): void {
+    // This could open a dialog or navigate to a status update page
+    this.router.navigate(['/app/employer/applications', applicationId]);
   }
 }
