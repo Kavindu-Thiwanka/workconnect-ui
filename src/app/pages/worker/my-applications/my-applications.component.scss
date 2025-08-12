@@ -567,6 +567,32 @@
   }
 }
 
+// Enhanced styles for modernized component
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .spinning {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.job-title {
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary-600);
+    text-decoration: underline;
+  }
+}
+
 // Responsive Design
 @media (max-width: 768px) {
   .my-applications-container {

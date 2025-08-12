@@ -5,17 +5,26 @@
         <h1 class="page-title">My Applications</h1>
         <p class="page-subtitle">Track your job applications and leave reviews for completed work</p>
       </div>
-      <div class="header-stats">
+      <div class="header-actions">
+        <button mat-icon-button (click)="refreshApplications()" [disabled]="isLoading" title="Refresh">
+          <mat-icon [class.spinning]="isLoading">refresh</mat-icon>
+        </button>
+      </div>
+      <div class="header-stats" *ngIf="applicationStats$ | async as stats">
         <div class="stat-card">
-          <div class="stat-number">{{ (applications$ | async)?.length || 0 }}</div>
+          <div class="stat-number">{{ stats.totalApplications }}</div>
           <div class="stat-label">Total Applications</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">{{ getApplicationsByStatus('PENDING').length }}</div>
+          <div class="stat-number">{{ stats.pendingApplications }}</div>
           <div class="stat-label">Pending</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">{{ getApplicationsByStatus('COMPLETED').length }}</div>
+          <div class="stat-number">{{ stats.acceptedApplications }}</div>
+          <div class="stat-label">Accepted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.completedApplications }}</div>
           <div class="stat-label">Completed</div>
         </div>
       </div>
@@ -33,27 +42,33 @@
       </button>
       <button
         class="tab-button"
-        [class.active]="activeFilter === 'PENDING'"
-        (click)="setFilter('PENDING')">
+        [class.active]="activeFilter === ApplicationStatus.PENDING"
+        (click)="setFilter(ApplicationStatus.PENDING)">
         Pending
       </button>
       <button
         class="tab-button"
-        [class.active]="activeFilter === 'VIEWED'"
-        (click)="setFilter('VIEWED')">
+        [class.active]="activeFilter === ApplicationStatus.VIEWED"
+        (click)="setFilter(ApplicationStatus.VIEWED)">
         Under Review
       </button>
       <button
         class="tab-button"
-        [class.active]="activeFilter === 'ACCEPTED'"
-        (click)="setFilter('ACCEPTED')">
+        [class.active]="activeFilter === ApplicationStatus.ACCEPTED"
+        (click)="setFilter(ApplicationStatus.ACCEPTED)">
         Accepted
       </button>
       <button
         class="tab-button"
-        [class.active]="activeFilter === 'COMPLETED'"
-        (click)="setFilter('COMPLETED')">
+        [class.active]="activeFilter === ApplicationStatus.COMPLETED"
+        (click)="setFilter(ApplicationStatus.COMPLETED)">
         Completed
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === ApplicationStatus.REJECTED"
+        (click)="setFilter(ApplicationStatus.REJECTED)">
+        Rejected
       </button>
     </div>
 
@@ -62,15 +77,15 @@
         <div class="application-card modern-card" *ngFor="let app of applications; trackBy: trackByApplicationId">
           <div class="card-header">
             <div class="job-info">
-              <h3 class="job-title">{{ app.jobTitle }}</h3>
+              <h3 class="job-title" (click)="onViewJobDetails(app.jobId)">{{ getJobTitle(app) }}</h3>
               <p class="company-name">
                 <mat-icon>business</mat-icon>
-                {{ app.companyName }}
+                {{ getCompanyName(app) }}
               </p>
             </div>
-            <div class="status-badge" [ngClass]="'status-' + app.status.toLowerCase()">
+            <div class="status-badge" [ngClass]="getStatusColorClass(app.status)">
               <mat-icon>{{ getStatusIcon(app.status) }}</mat-icon>
-              {{ app.status | titlecase }}
+              {{ formatStatus(app.status) }}
             </div>
           </div>
 
@@ -78,46 +93,46 @@
             <div class="application-meta">
               <div class="meta-item">
                 <mat-icon>schedule</mat-icon>
-                <span>Applied {{ app.appliedAt | date: 'MMM d, y' }}</span>
+                <span>Applied {{ getTimeAgo(app.appliedAt) }}</span>
               </div>
-              <div class="meta-item" *ngIf="app.location">
+              <div class="meta-item">
                 <mat-icon>location_on</mat-icon>
-                <span>{{ app.location }}</span>
+                <span>{{ getJobLocation(app) }}</span>
               </div>
-              <div class="meta-item" *ngIf="app.salary">
+              <div class="meta-item">
                 <mat-icon>attach_money</mat-icon>
-                <span>${{ app.salary | number }}</span>
+                <span>{{ getJobSalary(app) }}</span>
               </div>
             </div>
 
-            <div class="job-description" *ngIf="app.jobDescription">
-              <p>{{ app.jobDescription | slice:0:150 }}{{ app.jobDescription.length > 150 ? '...' : '' }}</p>
+            <div class="job-description" *ngIf="app.job?.description">
+              <p>{{ getJobDescription(app) }}</p>
             </div>
 
             <!-- Progress Timeline -->
             <div class="progress-timeline">
-              <div class="timeline-step" [class.completed]="isStepCompleted('PENDING', app.status)">
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.PENDING, app.status)">
                 <div class="step-icon">
                   <mat-icon>send</mat-icon>
                 </div>
                 <span>Applied</span>
               </div>
-              <div class="timeline-connector" [class.completed]="isStepCompleted('VIEWED', app.status)"></div>
-              <div class="timeline-step" [class.completed]="isStepCompleted('VIEWED', app.status)">
+              <div class="timeline-connector" [class.completed]="isStepCompleted(ApplicationStatus.VIEWED, app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.VIEWED, app.status)">
                 <div class="step-icon">
                   <mat-icon>visibility</mat-icon>
                 </div>
                 <span>Reviewed</span>
               </div>
-              <div class="timeline-connector" [class.completed]="isStepCompleted('ACCEPTED', app.status)"></div>
-              <div class="timeline-step" [class.completed]="isStepCompleted('ACCEPTED', app.status)">
+              <div class="timeline-connector" [class.completed]="isStepCompleted(ApplicationStatus.ACCEPTED, app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.ACCEPTED, app.status)">
                 <div class="step-icon">
                   <mat-icon>check_circle</mat-icon>
                 </div>
                 <span>Accepted</span>
               </div>
-              <div class="timeline-connector" [class.completed]="isStepCompleted('COMPLETED', app.status)"></div>
-              <div class="timeline-step" [class.completed]="isStepCompleted('COMPLETED', app.status)">
+              <div class="timeline-connector" [class.completed]="isStepCompleted(ApplicationStatus.COMPLETED, app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.COMPLETED, app.status)">
                 <div class="step-icon">
                   <mat-icon>done_all</mat-icon>
                 </div>
@@ -127,29 +142,29 @@
           </div>
 
           <div class="card-actions">
-            <button mat-stroked-button [routerLink]="['/app/jobs', app.jobId]" class="view-job-btn">
+            <button mat-stroked-button (click)="onViewJobDetails(app.jobId)" class="view-job-btn">
               <mat-icon>visibility</mat-icon>
               View Job
             </button>
 
             <button
-              *ngIf="app.status === 'COMPLETED' && !app.hasReview"
+              *ngIf="canReview(app)"
               mat-raised-button
               color="primary"
-              (click)="toggleReviewForm(app.applicationId)"
+              (click)="toggleReviewForm(app.id)"
               class="review-btn">
               <mat-icon>rate_review</mat-icon>
-              {{ reviewingApplicationId === app.applicationId ? 'Cancel Review' : 'Leave Review' }}
+              {{ reviewingApplicationId === app.id ? 'Cancel Review' : 'Leave Review' }}
             </button>
 
-            <div *ngIf="app.hasReview" class="review-indicator">
+            <div *ngIf="app.review" class="review-indicator">
               <mat-icon>star</mat-icon>
-              <span>Review Submitted</span>
+              <span>Review Submitted ({{ app.review.rating }}/5)</span>
             </div>
           </div>
 
           <!-- Review Form -->
-          <div *ngIf="reviewingApplicationId === app.applicationId" class="review-form-container">
+          <div *ngIf="reviewingApplicationId === app.id" class="review-form-container">
             <div class="review-form glass">
               <h4 class="form-title">
                 <mat-icon>rate_review</mat-icon>
@@ -192,7 +207,7 @@
                   <button
                     type="button"
                     mat-stroked-button
-                    (click)="toggleReviewForm(app.applicationId)"
+                    (click)="toggleReviewForm(app.id)"
                     class="cancel-btn">
                     Cancel
                   </button>
@@ -220,7 +235,7 @@
           </div>
           <h3>{{ getEmptyStateTitle() }}</h3>
           <p>{{ getEmptyStateMessage() }}</p>
-          <button mat-raised-button color="primary" routerLink="/app/jobs" class="browse-jobs-btn">
+          <button mat-raised-button color="primary" (click)="onBrowseJobs()" class="browse-jobs-btn">
             <mat-icon>search</mat-icon>
             Browse Jobs
           </button>
