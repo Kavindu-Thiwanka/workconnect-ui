@@ -99,7 +99,7 @@
                 {{ getApplicantInitials(app) }}
               </div>
               <div class="applicant-details">
-                <h3 class="applicant-name" (click)="onViewApplicantProfile(app.workerId)">
+                <h3 class="applicant-name" (click)="onViewApplicantProfile(app.workerId || app.worker?.id)">
                   {{ getApplicantName(app) }}
                 </h3>
                 <p class="applicant-email">{{ app.worker?.email }}</p>
@@ -145,7 +145,7 @@
           </div>
 
           <div class="card-actions">
-            <button mat-stroked-button (click)="onViewApplicantProfile(app.workerId)" class="view-profile-btn">
+            <button mat-stroked-button (click)="onViewApplicantProfile(app.workerId || app.worker?.id)" class="view-profile-btn">
               <mat-icon>person</mat-icon>
               View Profile
             </button>
@@ -153,7 +153,7 @@
             <!-- Status Update Dropdown -->
             <mat-form-field appearance="outline" class="status-select">
               <mat-label>Update Status</mat-label>
-              <mat-select [value]="app.status" (selectionChange)="onStatusChange(app.id, $event.value)">
+              <mat-select [value]="app.status" (selectionChange)="onStatusChange(app.applicationId || app.id || 0, $event.value)">
                 <mat-option *ngFor="let status of applicationStatusOptions" [value]="status">
                   <div class="status-option">
                     <mat-icon>{{ getStatusIcon(status) }}</mat-icon>
@@ -167,7 +167,7 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #appMenu="matMenu">
-              <button mat-menu-item (click)="onViewApplicantProfile(app.workerId)">
+              <button mat-menu-item (click)="onViewApplicantProfile(app.workerId || app.worker?.id)">
                 <mat-icon>person</mat-icon>
                 View Full Profile
               </button>

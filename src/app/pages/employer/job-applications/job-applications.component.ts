@@ -175,7 +175,7 @@ export class JobApplicationsComponent implements OnInit, OnDestroy {
 
   // Helper methods for template
   trackByApplicationId(index: number, application: JobApplication): number {
-    return application.id;
+    return application.applicationId || application.id || index;
   }
 
   getStatusIcon(status: ApplicationStatus): string {
@@ -204,7 +204,7 @@ export class JobApplicationsComponent implements OnInit, OnDestroy {
     return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'NA';
   }
 
-  getTimeAgo(dateString: string): string {
+  getTimeAgo(dateString: string | undefined): string {
     if (!dateString) return 'Unknown time';
 
     try {
@@ -224,8 +224,10 @@ export class JobApplicationsComponent implements OnInit, OnDestroy {
   }
 
   // Navigation methods
-  onViewApplicantProfile(workerId: number): void {
-    this.router.navigate(['/app/profile', workerId]);
+  onViewApplicantProfile(workerId: number | undefined): void {
+    if (workerId) {
+      this.router.navigate(['/app/profile', workerId]);
+    }
   }
 
   onBackToJobs(): void {

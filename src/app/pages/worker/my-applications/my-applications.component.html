@@ -151,10 +151,10 @@
               *ngIf="canReview(app)"
               mat-raised-button
               color="primary"
-              (click)="toggleReviewForm(app.id)"
+              (click)="toggleReviewForm(getApplicationId(app))"
               class="review-btn">
               <mat-icon>rate_review</mat-icon>
-              {{ reviewingApplicationId === app.id ? 'Cancel Review' : 'Leave Review' }}
+              {{ reviewingApplicationId === getApplicationId(app) ? 'Cancel Review' : 'Leave Review' }}
             </button>
 
             <div *ngIf="app.review" class="review-indicator">
@@ -164,7 +164,7 @@
           </div>
 
           <!-- Review Form -->
-          <div *ngIf="reviewingApplicationId === app.id" class="review-form-container">
+          <div *ngIf="reviewingApplicationId === getApplicationId(app)" class="review-form-container">
             <div class="review-form glass">
               <h4 class="form-title">
                 <mat-icon>rate_review</mat-icon>
@@ -207,7 +207,7 @@
                   <button
                     type="button"
                     mat-stroked-button
-                    (click)="toggleReviewForm(app.id)"
+                    (click)="toggleReviewForm(getApplicationId(app))"
                     class="cancel-btn">
                     Cancel
                   </button>

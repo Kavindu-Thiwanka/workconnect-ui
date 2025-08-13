@@ -201,7 +201,7 @@ export class MyApplicationsComponent implements OnInit, OnDestroy {
   }
 
   trackByApplicationId(index: number, application: JobApplication): number {
-    return application.id;
+    return application.applicationId || application.id || index;
   }
 
   onReviewSubmit(): void {
@@ -244,7 +244,7 @@ export class MyApplicationsComponent implements OnInit, OnDestroy {
   }
 
   // Helper methods for template
-  getTimeAgo(dateString: string): string {
+  getTimeAgo(dateString: string | undefined): string {
     if (!dateString) return 'Unknown time';
 
     try {
@@ -264,11 +264,13 @@ export class MyApplicationsComponent implements OnInit, OnDestroy {
   }
 
   getJobTitle(application: JobApplication): string {
-    return application.job?.title || 'Unknown Position';
+    // Use direct field from backend or fallback to nested structure
+    return application.jobTitle || application.job?.title || 'Unknown Position';
   }
 
   getCompanyName(application: JobApplication): string {
-    return application.job?.employer?.companyName || 'Unknown Company';
+    // Use direct field from backend or fallback to nested structure
+    return application.companyName || application.job?.employer?.companyName || 'Unknown Company';
   }
 
   getJobLocation(application: JobApplication): string {
@@ -284,5 +286,10 @@ export class MyApplicationsComponent implements OnInit, OnDestroy {
     const description = application.job?.description || '';
     if (description.length <= 150) return description;
     return description.slice(0, 150) + '...';
+  }
+
+  // Helper method to get the application ID for tracking
+  getApplicationId(application: JobApplication): number {
+    return application.applicationId || application.id || 0;
   }
 }

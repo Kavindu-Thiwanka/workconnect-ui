@@ -7,12 +7,18 @@ import { LoadingService } from './loading.service';
 import { ErrorService } from './error.service';
 
 // Interfaces for Job Applications
+// Updated to match backend WorkerApplicationDto
 export interface JobApplication {
-  id: number;
+  applicationId: number;  // Changed from 'id' to match backend
   jobId: number;
-  workerId: number;
   status: ApplicationStatus;
-  appliedAt: string;
+  jobTitle: string;       // Direct field instead of nested job.title
+  companyName: string;    // Direct field instead of nested job.employer.companyName
+  appliedAt?: string;     // Optional since backend might not include it
+
+  // Legacy fields for backward compatibility
+  id?: number;            // Computed from applicationId
+  workerId?: number;
   updatedAt?: string;
   coverLetter?: string;
   job?: {
