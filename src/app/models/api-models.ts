@@ -42,7 +42,46 @@ export interface EmployerProfile {
   updatedAt: string;
 }
 
-// Job Models
+// Job Models - Updated to match backend DTOs
+export interface JobDetail {
+  id: number;
+  jobTitle: string;
+  description: string;
+  requiredSkills: string;
+  location: string;
+  salary?: number;
+  jobType: 'ONE_DAY' | 'CONTRACT';
+  employerCompanyName: string;
+  postedAt: string;
+  applicationCount?: number;
+
+  // Fields specific to job types
+  jobDate?: string; // For ONE_DAY jobs
+  startDate?: string; // For CONTRACT jobs
+  endDate?: string; // For CONTRACT jobs
+
+  imageUrls?: string[];
+}
+
+export interface JobListing {
+  id: number;
+  jobTitle: string;
+  description: string;
+  location: string;
+  salary?: number;
+  jobType: 'ONE_DAY' | 'CONTRACT';
+  requiredSkills: string;
+  status: 'OPEN' | 'CLOSED' | 'FILLED' | 'EXPIRED';
+  employerCompanyName: string;
+  postedAt: string;
+  applicationCount?: number;
+  viewCount?: number;
+  startDate?: string;
+  endDate?: string;
+  jobDate?: string;
+}
+
+// Legacy Job interface for backward compatibility
 export interface Job {
   id: number;
   title: string;
@@ -68,13 +107,19 @@ export interface JobApplication {
   id: number;
   jobId: number;
   workerId: number;
-  status: 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'INTERVIEWED' | 'OFFERED' | 'HIRED' | 'REJECTED';
+  status: 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'INTERVIEWED' | 'OFFERED' | 'HIRED' | 'REJECTED' | 'COMPLETED';
   coverLetter?: string;
   resumeUrl?: string;
   appliedAt: string;
   updatedAt: string;
   job?: Job;
   worker?: WorkerProfile;
+}
+
+export interface ApplicationStatusResponse {
+  hasApplied: boolean;
+  status?: 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'INTERVIEWED' | 'OFFERED' | 'HIRED' | 'REJECTED' | 'COMPLETED';
+  appliedAt?: string;
 }
 
 // Dashboard Models

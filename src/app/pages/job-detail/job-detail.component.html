@@ -1,40 +1,258 @@
-<div class="job-detail-container" *ngIf="job$ | async as job; else loading">
-  <h2>{{ job.jobTitle }}</h2>
-  <p class="company">{{ job.employerCompanyName }}</p>
+<!-- Loading State -->
+@if (isLoading()) {
+  <div class="loading-container" role="status" aria-label="Loading job details">
+    <mat-card class="loading-card">
+      <mat-card-content>
+        <div class="loading-content">
+          <mat-spinner diameter="40" aria-label="Loading"></mat-spinner>
+          <p class="loading-text">Loading job details...</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}
 
-  <div class="details">
-    <p><strong>Location:</strong> {{ job.location }}</p>
-    <p><strong>Salary:</strong> ${{ job.salary }}</p>
-    <p><strong>Job Type:</strong> {{ job.jobType }}</p>
+<!-- Error State -->
+@else if (error()) {
+  <div class="error-container" role="alert">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon" aria-hidden="true">error</mat-icon>
+          <h2 class="error-title">Unable to Load Job Details</h2>
+          <p class="error-message">{{ error() }}</p>
+          <div class="error-actions">
+            <button mat-raised-button color="primary" (click)="loadJobDetails()" aria-label="Retry loading job details">
+              <mat-icon>refresh</mat-icon>
+              Try Again
+            </button>
+            <button mat-button (click)="goBack()" aria-label="Go back to job listings">
+              <mat-icon>arrow_back</mat-icon>
+              Back to Jobs
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}
 
-    <p *ngIf="job.jobType === 'ONE_DAY'"><strong>Date:</strong> {{ job.jobDate }}</p>
-    <div *ngIf="job.jobType === 'CONTRACT'">
-      <p><strong>Start Date:</strong> {{ job.startDate }}</p>
-      <p><strong>End Date:</strong> {{ job.endDate }}</p>
+<!-- Job Details Content -->
+@else if (job()) {
+  <div class="job-detail-container">
+    <!-- Header Section -->
+    <div class="job-header">
+      <button mat-icon-button (click)="goBack()" class="back-button" aria-label="Go back to job listings">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <div class="header-content">
+        <div class="title-section">
+          <h1 class="job-title">{{ job()!.jobTitle }}</h1>
+          <p class="company-name">{{ job()!.employerCompanyName }}</p>
+          <p class="posted-date">Posted {{ formattedPostedDate() }}</p>
+        </div>
+
+        <div class="header-actions">
+          <button mat-icon-button (click)="shareJob()" matTooltip="Share this job" aria-label="Share job">
+            <mat-icon>share</mat-icon>
+          </button>
+        </div>
+      </div>
     </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Main Content -->
+    <div class="job-content">
+      <!-- Job Overview Card -->
+      <mat-card class="overview-card">
+        <mat-card-header>
+          <mat-card-title>Job Overview</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="overview-grid">
+            <div class="overview-item">
+              <mat-icon class="overview-icon" aria-hidden="true">location_on</mat-icon>
+              <div class="overview-details">
+                <span class="overview-label">Location</span>
+                <span class="overview-value">{{ job()!.location }}</span>
+              </div>
+            </div>
+
+            <div class="overview-item">
+              <mat-icon class="overview-icon" aria-hidden="true">payments</mat-icon>
+              <div class="overview-details">
+                <span class="overview-label">Salary</span>
+                <span class="overview-value">{{ formattedSalary() }}</span>
+              </div>
+            </div>
+
+            <div class="overview-item">
+              <mat-icon class="overview-icon" aria-hidden="true">work</mat-icon>
+              <div class="overview-details">
+                <span class="overview-label">Job Type</span>
+                <span class="overview-value">{{ getJobTypeDisplayName(job()!.jobType) }}</span>
+              </div>
+            </div>
+
+            @if (job()!.applicationCount !== undefined) {
+              <div class="overview-item">
+                <mat-icon class="overview-icon" aria-hidden="true">people</mat-icon>
+                <div class="overview-details">
+                  <span class="overview-label">Applications</span>
+                  <span class="overview-value">{{ job()!.applicationCount }} applicants</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Date Information for specific job types -->
+          @if (job()!.jobType === 'ONE_DAY' && job()!.jobDate) {
+            <div class="date-info">
+              <mat-icon class="date-icon" aria-hidden="true">event</mat-icon>
+              <span class="date-label">Job Date:</span>
+              <span class="date-value">{{ job()!.jobDate | date:'fullDate' }}</span>
+            </div>
+          }
+
+          @if (job()!.jobType === 'CONTRACT' && (job()!.startDate || job()!.endDate)) {
+            <div class="date-info">
+              <mat-icon class="date-icon" aria-hidden="true">date_range</mat-icon>
+              <span class="date-label">Contract Period:</span>
+              <span class="date-value">
+                @if (job()!.startDate && job()!.endDate) {
+                  {{ job()!.startDate | date:'mediumDate' }} - {{ job()!.endDate | date:'mediumDate' }}
+                } @else if (job()!.startDate) {
+                  From {{ job()!.startDate | date:'mediumDate' }}
+                } @else if (job()!.endDate) {
+                  Until {{ job()!.endDate | date:'mediumDate' }}
+                }
+              </span>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Job Description Card -->
+      <mat-card class="description-card">
+        <mat-card-header>
+          <mat-card-title>Job Description</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="description-content" [innerHTML]="job()!.description"></div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Required Skills Card -->
+      @if (skillsArray().length > 0) {
+        <mat-card class="skills-card">
+          <mat-card-header>
+            <mat-card-title>Required Skills</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="skills-container">
+              @for (skill of skillsArray(); track skill) {
+                <mat-chip class="skill-chip">{{ skill }}</mat-chip>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      <!-- Job Images -->
+      @if (job()!.imageUrls && job()!.imageUrls!.length > 0) {
+        <mat-card class="images-card">
+          <mat-card-header>
+            <mat-card-title>Job Images</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="images-grid">
+              @for (imageUrl of job()!.imageUrls!; track imageUrl) {
+                <div class="image-container">
+                  <img
+                    [src]="imageUrl"
+                    [alt]="'Job image for ' + job()!.jobTitle"
+                    class="job-image"
+                    loading="lazy"
+                    (error)="onImageError($event)"
+                  />
+                </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    <!-- Application Section for Workers -->
+    @if (isWorker()) {
+      <div class="application-section">
+        <mat-card class="application-card">
+          <mat-card-content>
+            @if (hasApplied()) {
+              <div class="application-status">
+                <mat-icon class="status-icon success" aria-hidden="true">check_circle</mat-icon>
+                <div class="status-content">
+                  <h3 class="status-title">Application Submitted</h3>
+                  <p class="status-message">
+                    You have successfully applied for this position.
+                    @if (applicationStatus()?.status) {
+                      Current status: {{ getApplicationStatusDisplayName(applicationStatus()!.status!) }}
+                    }
+                  </p>
+                  @if (applicationStatus()?.appliedAt) {
+                    <p class="applied-date">
+                      Applied on {{ applicationStatus()!.appliedAt! | date:'medium' }}
+                    </p>
+                  }
+                </div>
+              </div>
+            } @else {
+              <div class="apply-section">
+                <h3 class="apply-title">Ready to Apply?</h3>
+                <p class="apply-description">
+                  Submit your application for this position. Make sure your profile is complete to increase your chances.
+                </p>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  class="apply-button"
+                  [disabled]="!canApply()"
+                  (click)="applyForJob()"
+                  [attr.aria-label]="'Apply for ' + job()!.jobTitle + ' position'"
+                >
+                  @if (isApplying()) {
+                    <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+                    Submitting Application...
+                  } @else {
+                    <ng-container>
+                      <mat-icon>send</mat-icon>
+                      Apply Now
+                    </ng-container>
+                  }
+                </button>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+
+    <!-- Information for Employers -->
+    @if (userRole() === 'EMPLOYER') {
+      <div class="employer-info">
+        <mat-card class="info-card">
+          <mat-card-content>
+            <div class="info-content">
+              <mat-icon class="info-icon" aria-hidden="true">info</mat-icon>
+              <p class="info-message">
+                This is how your job posting appears to potential applicants.
+              </p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
   </div>
-
-  <div class="description">
-    <h3>Job Description</h3>
-    <p>{{ job.description }}</p>
-  </div>
-
-  <div class="skills">
-    <h3>Required Skills</h3>
-    <p>{{ job.requiredSkills }}</p>
-  </div>
-
-  <div class="apply-section" *ngIf="userRole === 'WORKER'">
-    <button *ngIf="!hasApplied" (click)="applyForJob(job.id)" [disabled]="isApplying">
-      {{ isApplying ? 'Submitting...' : 'Apply Now' }}
-    </button>
-
-    <p *ngIf="hasApplied" class="success-message">You have successfully applied for this job.</p>
-
-    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-  </div>
-</div>
-
-<ng-template #loading>
-  <p>Loading job details...</p>
-</ng-template>
+}

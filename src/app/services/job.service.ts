@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { JobDetail, JobListing, ApplicationStatusResponse } from '../models/api-models';
 
 @Injectable({
   providedIn: 'root'
@@ -12,23 +13,27 @@ export class JobService {
 
   constructor(private http: HttpClient) { }
 
-  getOpenJobs(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
-  }
-
-  getJobById(jobId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${jobId}`);
-  }
-
-  applyForJob(jobId: string, coverLetter?: string): Observable<any> {
-    const applicationData = coverLetter ? { coverLetter } : {};
-    return this.http.post(`${this.apiUrl}/${jobId}/apply`, applicationData).pipe(
+  getOpenJobs(): Observable<JobListing[]> {
+    return this.http.get<JobListing[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
 
-  checkApplicationStatus(jobId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${jobId}/application-status`).pipe(
+  getJobById(jobId: string): Observable<JobDetail> {
+    return this.http.get<JobDetail>(`${this.apiUrl}/${jobId}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  applyForJob(jobId: string, coverLetter?: string): Observable<string> {
+    const applicationData = coverLetter ? { coverLetter } : {};
+    return this.http.post<string>(`${this.apiUrl}/${jobId}/apply`, applicationData).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  checkApplicationStatus(jobId: string): Observable<ApplicationStatusResponse> {
+    return this.http.get<ApplicationStatusResponse>(`${this.apiUrl}/${jobId}/application-status`).pipe(
       catchError(this.handleError)
     );
   }
