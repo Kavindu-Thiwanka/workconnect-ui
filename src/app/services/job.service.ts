@@ -20,8 +20,17 @@ export class JobService {
     return this.http.get<any>(`${this.apiUrl}/${jobId}`);
   }
 
-  applyForJob(jobId: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${jobId}/apply`, {});
+  applyForJob(jobId: string, coverLetter?: string): Observable<any> {
+    const applicationData = coverLetter ? { coverLetter } : {};
+    return this.http.post(`${this.apiUrl}/${jobId}/apply`, applicationData).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  checkApplicationStatus(jobId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${jobId}/application-status`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   createJob(jobData: any): Observable<any> {

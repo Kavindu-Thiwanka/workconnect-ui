@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { LoadingService } from './loading.service';
@@ -207,6 +207,18 @@ export class JobApplicationService {
   hasAppliedForJob(jobId: number): Observable<boolean> {
     return this.applications$.pipe(
       map(applications => applications.some(app => app.jobId === jobId))
+    );
+  }
+
+  /**
+   * Check if user has already applied for a job (server-side check)
+   */
+  checkApplicationStatus(jobId: number): Observable<{ hasApplied: boolean; applicationId?: number; status?: ApplicationStatus }> {
+    return this.http.get<{ hasApplied: boolean; applicationId?: number; status?: ApplicationStatus }>(`${this.apiUrl}/jobs/${jobId}/application-status`).pipe(
+      catchError(error => {
+        console.error('Failed to check application status', error);
+        return of({ hasApplied: false });
+      })
     );
   }
 
