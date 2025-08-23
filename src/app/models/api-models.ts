@@ -84,7 +84,7 @@ export interface JobListing {
 // Legacy Job interface for backward compatibility
 export interface Job {
   id: number;
-  title: string;
+  jobTitle: string;
   description: string;
   location: string;
   jobType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'FREELANCE' | 'INTERNSHIP';
@@ -101,6 +101,7 @@ export interface Job {
   applicationCount?: number;
   createdAt: string;
   updatedAt: string;
+  employerCompanyName: string;
 }
 
 export interface JobApplication {

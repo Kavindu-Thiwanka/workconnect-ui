@@ -119,21 +119,21 @@
               <div class="job-recommendation" *ngFor="let job of recommendedJobs.slice(0, 3)">
                 <div class="job-info">
                   <div class="company-avatar">
-                    {{ job.employerProfile?.companyName?.charAt(0) || 'C' }}
+                    {{ job.employerCompanyName.charAt(0) || 'C' }}
                   </div>
                   <div class="job-details">
-                    <h4 class="job-title">{{ job.title }}</h4>
-                    <p class="company-name">{{ job.employerProfile?.companyName || 'Company' }}</p>
-                    <div class="job-meta">
+                    <h4 class="job-title">{{ job.jobTitle }}</h4>
+<!--                    <p class="company-name">{{ job.employerCompanyName || 'Company' }}</p>-->
+<!--                    <div class="job-meta">-->
                       <span class="location">
                         <mat-icon>location_on</mat-icon>
                         {{ job.location }}
                       </span>
-                      <span class="salary" *ngIf="job.salary">
-                        {{ formatSalary(job.salary, job.currency) }}
-                      </span>
-                      <span class="job-type">{{ job.jobType.replace('_', ' ') }}</span>
-                    </div>
+<!--                      <span class="salary" *ngIf="job.salary">-->
+<!--                        {{ formatSalary(job.salary, job.currency) }}-->
+<!--                      </span>-->
+<!--                      <span class="job-type">{{ job.jobType.replace('_', ' ') }}</span>-->
+<!--                    </div>-->
                   </div>
                 </div>
                 <div class="job-actions">
@@ -183,7 +183,7 @@
             <div *ngIf="recentApplications.length > 0; else noApplications" class="applications-list">
               <div class="application-item" *ngFor="let app of recentApplications.slice(0, 3)">
                 <div class="application-info">
-                  <h4 class="job-title">{{ app.job?.title || 'Job Title' }}</h4>
+                  <h4 class="job-title">{{ app.job?.jobTitle || 'Job Title' }}</h4>
                   <p class="company-name">{{ app.job?.employerProfile?.companyName || 'Company' }}</p>
                   <span class="application-date">Applied {{ formatDate(app.appliedAt) }}</span>
                 </div>
@@ -314,7 +314,7 @@
             <div class="jobs-list" *ngIf="activeJobs.length > 0; else noActiveJobs">
               <div class="job-item" *ngFor="let job of activeJobs; trackBy: trackByJobId" (click)="onJobClick(job.id)">
                 <div class="job-info">
-                  <h4 class="job-title">{{ job.title }}</h4>
+                  <h4 class="job-title">{{ job.jobTitle }}</h4>
                   <div class="job-meta">
                     <span class="applications-count">
                       <mat-icon>people</mat-icon>
@@ -389,7 +389,7 @@
                   </div>
                   <div class="applicant-details">
                     <h4 class="applicant-name">{{ getApplicantName(app.worker) }}</h4>
-                    <p class="applied-position">Applied for {{ app.job?.title || 'Unknown Position' }}</p>
+                    <p class="applied-position">Applied for {{ app.job?.jobTitle || 'Unknown Position' }}</p>
                     <span class="application-time">{{ getTimeAgo(app.appliedAt) }}</span>
                     <div class="application-status">
                       <span class="status-badge" [class]="'status-' + app.status.toLowerCase()">
