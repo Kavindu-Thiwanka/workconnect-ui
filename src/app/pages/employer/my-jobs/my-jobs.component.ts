@@ -60,7 +60,7 @@ export class MyJobsComponent implements OnInit {
   onFilterChange(): void {
     this.myJobs$.subscribe(jobs => {
       this.filteredJobs = this.statusFilter
-        ? jobs.filter(job => (job.status || 'ACTIVE') === this.statusFilter)
+        ? jobs.filter(job => (job.status || 'OPEN') === this.statusFilter)
         : jobs;
     });
   }
@@ -79,6 +79,17 @@ export class MyJobsComponent implements OnInit {
     return typeMap[jobType] || jobType;
   }
 
+  getStatusDisplay(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'OPEN': 'Open',
+      'CLOSED': 'Closed',
+      'FILLED': 'Filled',
+      'EXPIRED': 'Expired',
+      'DRAFT': 'Draft'
+    };
+    return statusMap[status] || 'Open';
+  }
+
   getDaysPosted(postedAt: string): number {
     const posted = new Date(postedAt);
     const now = new Date();
@@ -87,7 +98,7 @@ export class MyJobsComponent implements OnInit {
   }
 
   getActiveJobsCount(): number {
-    return this.filteredJobs.filter(job => (job.status || 'ACTIVE') === 'ACTIVE').length;
+    return this.filteredJobs.filter(job => (job.status || 'OPEN') === 'OPEN').length;
   }
 
   getTotalApplicationsCount(): number {

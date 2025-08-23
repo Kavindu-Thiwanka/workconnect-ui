@@ -25,8 +25,10 @@
           <mat-label>Filter by Status</mat-label>
           <mat-select [(ngModel)]="statusFilter" (selectionChange)="onFilterChange()">
             <mat-option value="">All Status</mat-option>
-            <mat-option value="ACTIVE">Active</mat-option>
+            <mat-option value="OPEN">Open</mat-option>
             <mat-option value="CLOSED">Closed</mat-option>
+            <mat-option value="FILLED">Filled</mat-option>
+            <mat-option value="EXPIRED">Expired</mat-option>
             <mat-option value="DRAFT">Draft</mat-option>
           </mat-select>
         </mat-form-field>
@@ -62,8 +64,8 @@
                 </div>
               </div>
             </div>
-            <div class="status-badge" [ngClass]="'status-' + (job.status || 'active').toLowerCase()">
-              {{ job.status || 'Active' }}
+            <div class="status-badge" [ngClass]="'status-' + (job.status || 'OPEN').toLowerCase()">
+              {{ getStatusDisplay(job.status) }}
             </div>
           </div>
 

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { JobService } from '../../services/job.service';
+import { JobListing } from '../../models/api-models';
 import { Observable, map, combineLatest, BehaviorSubject, catchError, of, startWith } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -31,8 +32,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrls: ['./job-list.component.scss']
 })
 export class JobListComponent implements OnInit {
-  jobs$!: Observable<any[]>;
-  filteredJobs: any[] = [];
+  jobs$!: Observable<JobListing[]>;
+  filteredJobs: JobListing[] = [];
   searchTerm: string = '';
   locationFilter: string = '';
   jobTypeFilter: string = '';
@@ -45,7 +46,10 @@ export class JobListComponent implements OnInit {
   private jobTypeSubject = new BehaviorSubject<string>('');
   private tradeSubject = new BehaviorSubject<string>('');
 
-  constructor(private jobService: JobService) {
+  constructor(
+    private jobService: JobService,
+    private router: Router
+  ) {
     // Initialize subjects with current values
     this.searchSubject.next(this.searchTerm);
     this.locationSubject.next(this.locationFilter);
@@ -135,33 +139,27 @@ export class JobListComponent implements OnInit {
   }
 
   applyToJob(jobId: number): void {
-    this.jobService.applyForJob(jobId.toString()).subscribe({
-      next: () => {
-        console.log('Application submitted successfully');
-        // Update the job to show as applied
-        this.filteredJobs = this.filteredJobs.map(job =>
-          job.id === jobId ? { ...job, hasApplied: true } : job
-        );
-      },
-      error: (err: any) => {
-        console.error('Failed to apply to job', err);
-      }
-    });
+    // Navigate to job details page where user can apply
+    this.viewJobDetails(jobId);
+  }
+
+  viewJobDetails(jobId: number): void {
+    this.router.navigate(['/app/jobs', jobId]);
   }
 
   toggleBookmark(jobId: number): void {
     console.log('Toggle bookmark for job:', jobId);
   }
 
-  shareJob(job: any): void {
+  shareJob(job: JobListing): void {
     if (navigator.share) {
       navigator.share({
         title: job.jobTitle,
-        text: `Check out this ${job.trade || 'job'} opportunity at ${job.employerCompanyName}`,
-        url: window.location.origin + `/jobs/${job.id}`
+        text: `Check out this job opportunity: ${job.jobTitle} at ${job.employerCompanyName}`,
+        url: window.location.origin + `/app/jobs/${job.id}`
       });
     } else {
-      navigator.clipboard.writeText(window.location.origin + `/jobs/${job.id}`);
+      navigator.clipboard.writeText(window.location.origin + `/app/jobs/${job.id}`);
       console.log('Job link copied to clipboard');
     }
   }
@@ -197,7 +195,7 @@ export class JobListComponent implements OnInit {
     return skills ? skills.split(',').map(s => s.trim()) : [];
   }
 
-  trackByJobId(index: number, job: any): any {
+  trackByJobId(index: number, job: JobListing): number {
     return job ? job.id : index;
   }
 
@@ -214,7 +212,7 @@ export class JobListComponent implements OnInit {
     return filters.join(', ');
   }
 
-  private applyFilters(jobs: any[], search: string, location: string, jobType: string, trade: string): any[] {
+  private applyFilters(jobs: JobListing[], search: string, location: string, jobType: string, trade: string): JobListing[] {
     if (!jobs || !Array.isArray(jobs)) {
       console.warn('Invalid jobs array provided to applyFilters');
       return [];
@@ -229,8 +227,7 @@ export class JobListComponent implements OnInit {
         job.jobTitle,
         job.employerCompanyName,
         job.description,
-        job.trade,
-        job.skills
+        job.requiredSkills
       ].some(field =>
         field && field.toString().toLowerCase().includes(searchTerm)
       );
@@ -244,9 +241,9 @@ export class JobListComponent implements OnInit {
       const matchesJobType = !jobType ||
         (job.jobType && job.jobType === jobType);
 
-      // Trade filter - exact match
+      // Trade filter - check if skills contain the trade
       const matchesTrade = !trade ||
-        (job.trade && job.trade === trade);
+        (job.requiredSkills && job.requiredSkills.toLowerCase().includes(trade.toLowerCase()));
 
       const matches = matchesSearch && matchesLocation && matchesJobType && matchesTrade;
 
@@ -260,4 +257,5 @@ export class JobListComponent implements OnInit {
     console.log(`Filtered ${filteredJobs.length} jobs from ${jobs.length} total`);
     return filteredJobs;
   }
+
 }

@@ -97,7 +97,7 @@
         <div class="job-header">
           <div class="company-info">
             <div class="company-avatar">
-              {{ job.employerCompanyName?.charAt(0) }}
+              {{ job.employerCompanyName.charAt(0) }}
             </div>
             <div class="job-basic-info">
               <h3 class="job-title">{{ job.jobTitle }}</h3>
@@ -107,7 +107,7 @@
 
           <div class="job-actions">
             <button mat-icon-button class="bookmark-btn" (click)="toggleBookmark(job.id)">
-              <mat-icon>{{ job.isBookmarked ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+              <mat-icon>bookmark_border</mat-icon>
             </button>
             <button mat-icon-button [matMenuTriggerFor]="jobMenu">
               <mat-icon>more_vert</mat-icon>
@@ -128,8 +128,7 @@
         <div class="job-details">
           <div class="detail-tags">
             <span class="job-type-tag">{{ getJobTypeDisplay(job.jobType) }}</span>
-            <span class="trade-tag" *ngIf="job.trade">{{ job.trade | titlecase }}</span>
-            <span class="urgency-tag" *ngIf="job.isUrgent">Urgent</span>
+            <span class="status-tag">{{ job.status | titlecase }}</span>
           </div>
 
           <div class="job-meta">
@@ -149,9 +148,9 @@
               <mat-icon>schedule</mat-icon>
               <span>{{ job.startDate | date:'MMM d' }} - {{ job.endDate | date:'MMM d' }}</span>
             </div>
-            <div class="meta-item" *ngIf="job.experienceRequired">
-              <mat-icon>work</mat-icon>
-              <span>{{ job.experienceRequired }} experience</span>
+            <div class="meta-item" *ngIf="job.applicationCount !== undefined">
+              <mat-icon>people</mat-icon>
+              <span>{{ job.applicationCount }} applications</span>
             </div>
           </div>
 
@@ -170,16 +169,16 @@
         <div class="job-footer">
           <div class="applicant-count">
             <mat-icon>people</mat-icon>
-            <span>{{ job.applicantCount || 0 }} applied</span>
+            <span>{{ job.applicationCount || 0 }} applied</span>
           </div>
 
           <div class="job-actions-footer">
-            <button mat-stroked-button [routerLink]="['/jobs', job.id]">
+            <button mat-stroked-button [routerLink]="['/app/jobs', job.id]">
               View Details
             </button>
-            <button mat-raised-button color="primary" (click)="applyToJob(job.id)" [disabled]="job.hasApplied">
-              <mat-icon>{{ job.hasApplied ? 'check' : 'send' }}</mat-icon>
-              {{ job.hasApplied ? 'Applied' : 'Apply Now' }}
+            <button mat-raised-button color="primary" (click)="applyToJob(job.id)">
+              <mat-icon>send</mat-icon>
+              Apply Now
             </button>
           </div>
         </div>
