@@ -183,6 +183,7 @@
   align-items: center;
 
   .content-header {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -219,11 +220,11 @@
 
       .filter-dropdown {
         min-width: 200px;
-        
+
         @media (max-width: 768px) {
           min-width: 100%;
         }
-        
+
         ::ng-deep {
           .mat-mdc-text-field-wrapper {
             background: var(--white);
