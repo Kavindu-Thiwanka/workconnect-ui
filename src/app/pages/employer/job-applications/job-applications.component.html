@@ -156,7 +156,7 @@
               <mat-select [value]="app.status" (selectionChange)="onStatusChange(app.applicationId || app.id || 0, $event.value)">
                 <mat-option *ngFor="let status of applicationStatusOptions" [value]="status">
                   <div class="status-option">
-                    <mat-icon>{{ getStatusIcon(status) }}</mat-icon>
+<!--                    <mat-icon>{{ getStatusIcon(status) }}</mat-icon>-->
                     {{ formatStatus(status) }}
                   </div>
                 </mat-option>

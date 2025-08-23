@@ -8,7 +8,7 @@ import {MatIcon} from '@angular/material/icon';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIcon, MatIconButton, MatIcon, MatButton, MatIcon, MatIcon],
+  imports: [CommonModule, RouterModule, MatIcon, MatIcon, MatButton, MatIcon, MatIcon],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss']
 })
