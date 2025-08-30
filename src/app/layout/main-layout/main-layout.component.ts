@@ -13,9 +13,10 @@ import {MatIcon} from '@angular/material/icon';
   styleUrls: ['./main-layout.component.scss']
 })
 export class MainLayoutComponent {
-  userRole: string | null = null;
-  constructor(private authService: AuthService, private router: Router) {
-    this.userRole = this.authService.getRole();
+  constructor(private authService: AuthService, private router: Router) {}
+
+  get userRole(): string | null {
+    return this.authService.getRole();
   }
 
   logout(): void {

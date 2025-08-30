@@ -59,17 +59,8 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'profile', component: ProfileComponent },
-      { path: 'jobs', component: JobListComponent },
-      { path: 'jobs/new', component: PostJobComponent },
-      { path: 'jobs/:jobId', component: JobDetailComponent },
-      { path: 'jobs/:jobId/edit', component: EditJobComponent },
-      { path: 'employer/jobs', component: MyJobsComponent },
-      { path: 'employer/jobs/:jobId/applications', component: JobApplicationsComponent },
-      { path: 'my-applications', component: MyApplicationsComponent },
-
-      // Admin routes (protected by admin guard)
+      // Admin routes (requires both authGuard from parent AND adminGuard)
+      // Guard execution order: authGuard (parent) → adminGuard (child)
       {
         path: 'admin',
         canActivate: [adminGuard],
@@ -81,7 +72,16 @@ export const routes: Routes = [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
       },
-
+      // Regular user routes (accessible to all authenticated users)
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'jobs', component: JobListComponent },
+      { path: 'jobs/new', component: PostJobComponent },
+      { path: 'jobs/:jobId', component: JobDetailComponent },
+      { path: 'jobs/:jobId/edit', component: EditJobComponent },
+      { path: 'employer/jobs', component: MyJobsComponent },
+      { path: 'employer/jobs/:jobId/applications', component: JobApplicationsComponent },
+      { path: 'my-applications', component: MyApplicationsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 /**
  * Admin Guard - Protects admin routes
  * Only allows users with ADMIN role to access admin routes
+ * Assumes user is already authenticated (checked by parent authGuard)
  * Redirects non-admin users to their appropriate dashboard
  */
 export const adminGuard: CanActivateFn = (route, state) => {
@@ -20,16 +21,16 @@ export const adminGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  // Check if user has admin role
   const userRole = authService.getRole();
-  
+
   if (userRole === 'ADMIN') {
     return true;
   } else {
-    // User is not an admin, redirect to their appropriate dashboard
+    // User is authenticated but not an admin, redirect to their appropriate dashboard
     if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
       router.navigate(['/app/dashboard']);
     } else {
+      // Fallback for unknown roles
       router.navigate(['/app']);
     }
     return false;
