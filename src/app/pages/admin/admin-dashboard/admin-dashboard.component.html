@@ -1,0 +1,212 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <button mat-raised-button color="primary" (click)="refreshStats()" [disabled]="isLoading">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading system statistics...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button color="primary" (click)="refreshStats()">Try Again</button>
+  </div>
+
+  <div *ngIf="stats && !isLoading" class="stats-container">
+    <!-- User Statistics -->
+    <div class="stats-section">
+      <h2>User Statistics</h2>
+      <mat-grid-list cols="4" rowHeight="200px" gutterSize="16px">
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="primary">people</mat-icon>
+              <mat-card-title>Total Users</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.totalUsers }}</div>
+              <div class="stat-breakdown">
+                <div>Workers: {{ stats.totalWorkers }}</div>
+                <div>Employers: {{ stats.totalEmployers }}</div>
+                <div>Admins: {{ stats.totalAdmins }}</div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="accent">verified_user</mat-icon>
+              <mat-card-title>Active Users</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.activeUsers }}</div>
+              <div class="stat-percentage">{{ getUserActivePercentage() }}% of total</div>
+              <div class="stat-breakdown">
+                <div>Inactive: {{ stats.inactiveUsers }}</div>
+                <div>Banned: {{ stats.bannedUsers }}</div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="primary">trending_up</mat-icon>
+              <mat-card-title>New Users</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.newUsersThisWeek }}</div>
+              <div class="stat-label">This Week</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="accent">analytics</mat-icon>
+              <mat-card-title>Avg Applications</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.averageApplicationsPerWorker | number:'1.1-1' }}</div>
+              <div class="stat-label">Per Worker</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+
+    <!-- Job Statistics -->
+    <div class="stats-section">
+      <h2>Job Statistics</h2>
+      <mat-grid-list cols="4" rowHeight="200px" gutterSize="16px">
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="primary">work</mat-icon>
+              <mat-card-title>Total Jobs</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.totalJobs }}</div>
+              <div class="stat-breakdown">
+                <div>Open: {{ stats.openJobs }}</div>
+                <div>Closed: {{ stats.closedJobs }}</div>
+                <div>Filled: {{ stats.filledJobs }}</div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="accent">work_outline</mat-icon>
+              <mat-card-title>Open Jobs</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.openJobs }}</div>
+              <div class="stat-percentage">{{ getJobOpenPercentage() }}% of total</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="primary">add_circle</mat-icon>
+              <mat-card-title>New Jobs</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.newJobsThisWeek }}</div>
+              <div class="stat-label">This Week</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="accent">business</mat-icon>
+              <mat-card-title>Avg Jobs</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.averageJobsPerEmployer | number:'1.1-1' }}</div>
+              <div class="stat-label">Per Employer</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+
+    <!-- Application Statistics -->
+    <div class="stats-section">
+      <h2>Application Statistics</h2>
+      <mat-grid-list cols="4" rowHeight="200px" gutterSize="16px">
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="primary">assignment</mat-icon>
+              <mat-card-title>Total Applications</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.totalApplications }}</div>
+              <div class="stat-breakdown">
+                <div>Pending: {{ stats.pendingApplications }}</div>
+                <div>Approved: {{ stats.approvedApplications }}</div>
+                <div>Rejected: {{ stats.rejectedApplications }}</div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="accent">check_circle</mat-icon>
+              <mat-card-title>Approved</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.approvedApplications }}</div>
+              <div class="stat-percentage">{{ getApplicationApprovedPercentage() }}% of total</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="primary">schedule</mat-icon>
+              <mat-card-title>Pending</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.pendingApplications }}</div>
+              <div class="stat-label">Awaiting Review</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+          <mat-card class="stat-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar color="accent">trending_up</mat-icon>
+              <mat-card-title>New Applications</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-number">{{ stats.newApplicationsThisWeek }}</div>
+              <div class="stat-label">This Week</div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+  </div>
+</div>

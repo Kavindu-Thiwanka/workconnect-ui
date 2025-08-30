@@ -2,7 +2,7 @@
 export interface User {
   id: number;
   email: string;
-  role: 'WORKER' | 'EMPLOYER';
+  role: 'WORKER' | 'EMPLOYER' | 'ADMIN';
   firstName?: string;
   lastName?: string;
   createdAt: string;
@@ -261,6 +261,96 @@ export interface UserSubscription {
   endDate: string;
   autoRenew: boolean;
   plan?: SubscriptionPlan;
+}
+
+// Admin Portal Models
+export interface AdminUser {
+  userId: number;
+  email: string;
+  role: 'WORKER' | 'EMPLOYER' | 'ADMIN';
+  status: 'ACTIVE' | 'INACTIVE' | 'BANNED';
+  profileType: string;
+  displayName: string;
+  location?: string;
+  phoneNumber?: string;
+  companyName?: string;
+  createdAt?: string;
+  lastLoginAt?: string;
+  totalApplications: number;
+  totalJobPostings: number;
+  averageRating?: number;
+}
+
+export interface AdminJob {
+  id: number;
+  jobTitle: string;
+  description: string;
+  requiredSkills: string;
+  location: string;
+  salary?: number;
+  jobType: 'ONE_DAY' | 'CONTRACT';
+  status: 'OPEN' | 'CLOSED' | 'FILLED' | 'EXPIRED';
+  startDate?: string;
+  endDate?: string;
+  createdAt: string;
+  employerEmail: string;
+  employerCompanyName: string;
+  totalApplications: number;
+  approvedApplications: number;
+  rejectedApplications: number;
+  pendingApplications: number;
+}
+
+export interface AdminApplication {
+  id: number;
+  jobId: number;
+  jobTitle: string;
+  employerEmail: string;
+  employerCompanyName: string;
+  workerId: number;
+  workerEmail: string;
+  workerName: string;
+  status: 'PENDING' | 'VIEWED' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED';
+  appliedAt: string;
+  statusUpdatedAt?: string;
+  coverLetter?: string;
+  resumeUrl?: string;
+}
+
+export interface AdminStats {
+  totalUsers: number;
+  totalWorkers: number;
+  totalEmployers: number;
+  totalAdmins: number;
+  activeUsers: number;
+  inactiveUsers: number;
+  bannedUsers: number;
+  totalJobs: number;
+  openJobs: number;
+  closedJobs: number;
+  filledJobs: number;
+  expiredJobs: number;
+  totalApplications: number;
+  pendingApplications: number;
+  approvedApplications: number;
+  rejectedApplications: number;
+  newUsersThisWeek: number;
+  newJobsThisWeek: number;
+  newApplicationsThisWeek: number;
+  averageJobsPerEmployer: number;
+  averageApplicationsPerJob: number;
+  averageApplicationsPerWorker: number;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
 }
 
 // Notification Models

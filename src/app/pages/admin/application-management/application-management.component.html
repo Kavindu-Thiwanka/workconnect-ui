@@ -1,0 +1,120 @@
+<div class="application-management">
+  <div class="page-header">
+    <h1>Application Management</h1>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="exportApplications()">
+        <mat-icon>download</mat-icon>
+        Export Applications
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <div *ngIf="isLoading" class="loading-overlay">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortChange($event)" class="applications-table">
+      <!-- Application ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let application">{{ application.id }}</td>
+      </ng-container>
+
+      <!-- Job Title Column -->
+      <ng-container matColumnDef="jobTitle">
+        <th mat-header-cell *matHeaderCellDef>Job Title</th>
+        <td mat-cell *matCellDef="let application">
+          <div class="job-title" [matTooltip]="application.jobTitle">
+            {{ truncateText(application.jobTitle, 25) }}
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Worker Name Column -->
+      <ng-container matColumnDef="workerName">
+        <th mat-header-cell *matHeaderCellDef>Worker</th>
+        <td mat-cell *matCellDef="let application">
+          <div class="worker-info">
+            <div class="name">{{ application.workerName || 'N/A' }}</div>
+            <div class="email">{{ application.workerEmail }}</div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Employer Company Column -->
+      <ng-container matColumnDef="employerCompanyName">
+        <th mat-header-cell *matHeaderCellDef>Company</th>
+        <td mat-cell *matCellDef="let application">
+          <div class="company-info">
+            <div class="company-name">{{ application.employerCompanyName || 'N/A' }}</div>
+            <div class="employer-email">{{ application.employerEmail }}</div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let application">
+          <mat-chip [color]="getStatusColor(application.status)" selected>{{ application.status }}</mat-chip>
+        </td>
+      </ng-container>
+
+      <!-- Applied At Column -->
+      <ng-container matColumnDef="appliedAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Applied</th>
+        <td mat-cell *matCellDef="let application">{{ formatDate(application.appliedAt) }}</td>
+      </ng-container>
+
+      <!-- Status Updated At Column -->
+      <ng-container matColumnDef="statusUpdatedAt">
+        <th mat-header-cell *matHeaderCellDef>Last Updated</th>
+        <td mat-cell *matCellDef="let application">
+          {{ application.statusUpdatedAt ? formatDate(application.statusUpdatedAt) : 'N/A' }}
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let application">
+          <button mat-icon-button [matMenuTriggerFor]="applicationMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #applicationMenu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>visibility</mat-icon>
+              <span>View Details</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>work</mat-icon>
+              <span>View Job</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>person</mat-icon>
+              <span>View Worker Profile</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div *ngIf="dataSource.length === 0 && !isLoading" class="no-data">
+      <mat-icon>assignment_outline</mat-icon>
+      <p>No applications found</p>
+    </div>
+  </div>
+
+  <mat-paginator
+    [length]="totalElements"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[10, 20, 50, 100]"
+    [pageIndex]="pageIndex"
+    (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

@@ -51,7 +51,9 @@ export class AuthService {
     }
 
     // Default redirection based on role
-    if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
+    if (userRole === 'ADMIN') {
+      this.router.navigate(['/app/admin/dashboard']);
+    } else if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
       this.router.navigate(['/app/dashboard']);
     } else {
       this.router.navigate(['/app']);
