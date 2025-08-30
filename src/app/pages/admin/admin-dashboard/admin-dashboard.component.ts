@@ -15,7 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRippleModule } from '@angular/material/core';
-import { BaseChartDirective } from 'ng2-charts';
+// import { BaseChartDirective } from 'ng2-charts'; // Commented out as not used in template
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 import { Subject, takeUntil, interval, timer } from 'rxjs';
 import { AdminService } from '../../../services/admin.service';
@@ -43,8 +43,7 @@ Chart.register(...registerables);
     MatInputModule,
     MatNativeDateModule,
     MatTooltipModule,
-    MatRippleModule,
-    BaseChartDirective
+    MatRippleModule
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']

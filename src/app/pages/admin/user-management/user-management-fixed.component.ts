@@ -93,9 +93,6 @@ export class UserManagementComponent implements OnInit, OnDestroy, AfterViewInit
   private destroy$ = new Subject<void>();
   private searchSubject = new Subject<string>();
 
-  // Make Math available in template
-  Math = Math;
-
   // Data source and selection
   dataSource = new MatTableDataSource<AdminUser>([]);
   selection = new SelectionModel<AdminUser>(true, []);
@@ -124,7 +121,7 @@ export class UserManagementComponent implements OnInit, OnDestroy, AfterViewInit
 
   // Search and filters
   searchControl = new FormControl('');
-  advancedFiltersForm!: FormGroup;
+  advancedFiltersForm: FormGroup;
   showAdvancedFilters = false;
 
   // Table configuration
@@ -256,17 +253,17 @@ export class UserManagementComponent implements OnInit, OnDestroy, AfterViewInit
 
       // Basic search across multiple fields
       const basicMatch = !searchStr ||
-        (data.displayName?.toLowerCase().includes(searchStr) ?? false) ||
-        (data.email?.toLowerCase().includes(searchStr) ?? false) ||
-        (data.role?.toLowerCase().includes(searchStr) ?? false) ||
-        (data.status?.toLowerCase().includes(searchStr) ?? false) ||
-        (data.location?.toLowerCase().includes(searchStr) ?? false);
+        data.displayName?.toLowerCase().includes(searchStr) ||
+        data.email?.toLowerCase().includes(searchStr) ||
+        data.role?.toLowerCase().includes(searchStr) ||
+        data.status?.toLowerCase().includes(searchStr) ||
+        data.location?.toLowerCase().includes(searchStr);
 
       // Advanced filters
       const advancedFilters = this.advancedFiltersForm.value;
       const advancedMatch = this.matchesAdvancedFilters(data, advancedFilters);
 
-      return Boolean(basicMatch && advancedMatch);
+      return basicMatch && advancedMatch;
     };
   }
 
@@ -288,7 +285,7 @@ export class UserManagementComponent implements OnInit, OnDestroy, AfterViewInit
     this.isLoading = true;
     this.showSkeletons = true;
 
-    this.adminService.getAllUsers(
+    this.adminService.getUsers(
       this.pageIndex,
       this.pageSize,
       this.sortBy,
@@ -304,7 +301,7 @@ export class UserManagementComponent implements OnInit, OnDestroy, AfterViewInit
         this.showSkeletons = false;
         this.error = null;
       },
-      error: (error: any) => {
+      error: (error) => {
         console.error('Error loading users:', error);
         this.error = 'Failed to load users';
         this.errorService.showError('Error', 'Failed to load users');
