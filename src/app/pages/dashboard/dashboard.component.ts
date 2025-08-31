@@ -14,6 +14,7 @@ import { ProfileService } from '../../services/profile.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { LoadingService } from '../../services/loading.service';
 import { ErrorService } from '../../services/error.service';
+import { EmployerDashboardComponent } from '../employer/employer-dashboard/employer-dashboard.component';
 import {
   WorkerDashboardStats,
   EmployerDashboardStats,
@@ -35,7 +36,8 @@ import {
     MatCardModule,
     MatProgressBarModule,
     MatChipsModule,
-    MatMenuModule
+    MatMenuModule,
+    EmployerDashboardComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
