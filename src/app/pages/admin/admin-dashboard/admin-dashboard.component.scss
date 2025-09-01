@@ -1,0 +1,672 @@
+// Modern Admin Dashboard Styles
+.modern-admin-dashboard {
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  // Header Section
+  .dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .title-section {
+      h1 {
+        margin: 0 0 8px 0;
+        font-size: 2.5rem;
+        font-weight: 300;
+        letter-spacing: -0.5px;
+      }
+
+      .subtitle {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+        font-weight: 300;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .date-filter-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+
+      button[mat-raised-button] {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: none;
+        backdrop-filter: blur(10px);
+        font-weight: 500;
+
+        &:hover:not([disabled]) {
+          background: rgba(255, 255, 255, 0.25);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        &[disabled] {
+          background: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+  }
+
+  // Date picker menu styles
+  .date-picker-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 300px;
+  }
+
+  // Loading Skeletons
+  .skeleton-container {
+    padding: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    .skeleton-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .skeleton-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      animation: pulse 1.5s ease-in-out infinite alternate;
+
+      .skeleton-header {
+        height: 20px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        border-radius: 4px;
+        margin-bottom: 16px;
+        animation: shimmer 2s infinite;
+      }
+
+      .skeleton-content {
+        .skeleton-number {
+          height: 32px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          border-radius: 4px;
+          margin-bottom: 12px;
+          animation: shimmer 2s infinite;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          border-radius: 4px;
+          width: 70%;
+          animation: shimmer 2s infinite;
+        }
+      }
+    }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    100% { opacity: 0.7; }
+  }
+
+  // Error State
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 32px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+
+    .error-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 24px;
+      opacity: 0.7;
+    }
+
+    h3 {
+      margin: 0 0 16px 0;
+      color: #333;
+      font-weight: 400;
+    }
+
+    p {
+      color: #666;
+      margin: 0 0 32px 0;
+      font-size: 1.1rem;
+    }
+
+    button {
+      min-width: 140px;
+    }
+  }
+
+  // Main Dashboard Content
+  .dashboard-content {
+    padding: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    h2 {
+      margin: 0 0 24px 0;
+      color: #333;
+      font-weight: 400;
+      font-size: 1.5rem;
+    }
+
+    // Quick Actions Section
+    .quick-actions-section {
+      margin-bottom: 48px;
+
+      .quick-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+
+        .quick-action-btn {
+          padding: 16px 24px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+          }
+
+          mat-icon {
+            font-size: 20px;
+          }
+
+          span {
+            font-size: 0.95rem;
+          }
+        }
+      }
+    }
+
+    // Metrics Overview
+    .metrics-overview {
+      margin-bottom: 48px;
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+      }
+    }
+
+    // Modern Stat Cards
+    .modern-stat-card {
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      background: white;
+
+      &.clickable {
+        cursor: pointer;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        &:focus {
+          outline: 2px solid #667eea;
+          outline-offset: 2px;
+        }
+      }
+
+      mat-card-header {
+        padding: 24px 24px 16px 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+
+        .card-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+
+          mat-icon {
+            font-size: 24px;
+            color: white;
+          }
+
+          &.users-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+          &.active-users-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+          &.jobs-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+          &.open-jobs-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+          &.applications-icon { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+          &.approved-icon { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        }
+
+        .card-title-section {
+          flex: 1;
+
+          mat-card-title {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+          }
+
+          mat-card-subtitle {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+          }
+        }
+
+        .trend-indicator {
+          mat-icon {
+            font-size: 20px;
+
+            &.success { color: #4caf50; }
+            &.warn { color: #ff9800; }
+            &.primary { color: #2196f3; }
+          }
+        }
+      }
+
+      mat-card-content {
+        padding: 0 24px 24px 24px;
+
+        .stat-number {
+          font-size: 2.5rem;
+          font-weight: 300;
+          color: #333;
+          margin-bottom: 16px;
+          line-height: 1;
+        }
+
+        .stat-progress {
+          margin-bottom: 16px;
+
+          mat-progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+          }
+
+          .progress-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+          }
+        }
+
+        .stat-breakdown {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+
+            .label {
+              color: #666;
+            }
+
+            .value {
+              font-weight: 500;
+              color: #333;
+            }
+          }
+        }
+
+        .weekly-change {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.9rem;
+
+          .change-label {
+            color: #666;
+          }
+
+          .change-value {
+            font-weight: 500;
+
+            &.positive {
+              color: #4caf50;
+            }
+
+            &.negative {
+              color: #f44336;
+            }
+          }
+        }
+      }
+    }
+
+    // Charts Section
+    .charts-section {
+      margin-bottom: 48px;
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 24px;
+      }
+
+      .chart-card {
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        background: white;
+
+        mat-card-header {
+          padding: 24px 24px 16px 24px;
+
+          mat-card-title {
+            margin: 0 0 4px 0;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #333;
+          }
+
+          mat-card-subtitle {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+          }
+        }
+
+        mat-card-content {
+          padding: 0 24px 24px 24px;
+
+          .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+
+            canvas {
+              max-width: 100%;
+              max-height: 100%;
+            }
+          }
+        }
+      }
+    }
+
+    // Recent Activity / Health Section
+    .recent-activity-section {
+      .health-indicators {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+
+      .health-card {
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        background: white;
+
+        mat-card-header {
+          padding: 24px 24px 16px 24px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          .health-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            mat-icon {
+              font-size: 24px;
+              color: white;
+            }
+
+            &.success { background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); }
+            &.primary { background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%); }
+            &.accent { background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); }
+          }
+
+          .health-info {
+            flex: 1;
+
+            mat-card-title {
+              margin: 0 0 4px 0;
+              font-size: 1.1rem;
+              font-weight: 500;
+              color: #333;
+            }
+
+            mat-card-subtitle {
+              margin: 0;
+              font-size: 0.9rem;
+              color: #666;
+            }
+          }
+        }
+
+        mat-card-content {
+          padding: 0 24px 24px 24px;
+
+          .health-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .metric {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 8px 0;
+              border-bottom: 1px solid #f0f0f0;
+
+              &:last-child {
+                border-bottom: none;
+              }
+
+              .metric-label {
+                color: #666;
+                font-size: 0.9rem;
+              }
+
+              .metric-value {
+                font-weight: 500;
+                color: #333;
+                font-size: 0.95rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 1200px) {
+    .dashboard-header {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+
+    .dashboard-content {
+      padding: 24px;
+
+      .metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-header {
+      padding: 24px 16px;
+
+      .title-section h1 {
+        font-size: 2rem;
+      }
+
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    .dashboard-content {
+      padding: 16px;
+
+      .quick-actions-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .modern-stat-card {
+        mat-card-header {
+          padding: 20px 20px 12px 20px;
+        }
+
+        mat-card-content {
+          padding: 0 20px 20px 20px;
+
+          .stat-number {
+            font-size: 2rem;
+          }
+        }
+      }
+
+      .health-indicators {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dashboard-header {
+      .title-section h1 {
+        font-size: 1.75rem;
+      }
+
+      .header-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+
+    .modern-stat-card {
+      mat-card-header {
+        .card-icon {
+          width: 40px;
+          height: 40px;
+
+          mat-icon {
+            font-size: 20px;
+          }
+        }
+      }
+
+      mat-card-content {
+        .stat-number {
+          font-size: 1.75rem;
+        }
+      }
+    }
+  }
+
+  // Accessibility Enhancements
+  @media (prefers-contrast: high) {
+    .modern-stat-card,
+    .chart-card,
+    .health-card {
+      border: 2px solid #333;
+
+      mat-card-header {
+        .card-icon {
+          border: 2px solid #fff;
+        }
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .modern-stat-card:hover {
+      transform: none;
+    }
+
+    .quick-action-btn:hover {
+      transform: none;
+    }
+  }
+}

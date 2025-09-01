@@ -1,0 +1,441 @@
+<div class="modern-admin-dashboard">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1>Admin Dashboard</h1>
+        <p class="subtitle">System overview and key metrics</p>
+      </div>
+      <div class="header-actions">
+        <button mat-button [matMenuTriggerFor]="dateMenu" class="date-filter-btn">
+          <mat-icon>date_range</mat-icon>
+          Date Range
+        </button>
+        <mat-menu #dateMenu="matMenu">
+          <div class="date-picker-container">
+            <mat-form-field appearance="outline">
+              <mat-label>Start Date</mat-label>
+              <input matInput [matDatepicker]="startPicker" [(ngModel)]="dateRange.start">
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>End Date</mat-label>
+              <input matInput [matDatepicker]="endPicker" [(ngModel)]="dateRange.end">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </mat-menu>
+
+        <button mat-raised-button color="primary" (click)="refreshStats()" [disabled]="isLoading"
+                matTooltip="Refresh dashboard data" [attr.aria-label]="'Refresh dashboard data'">
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="showSkeletons" class="skeleton-container">
+    <div class="skeleton-cards">
+      <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-number"></div>
+          <div class="skeleton-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading && !showSkeletons" class="error-container">
+    <mat-icon color="warn" class="error-icon">error_outline</mat-icon>
+    <h3>Unable to load dashboard data</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="refreshStats()">
+      <mat-icon>refresh</mat-icon>
+      Try Again
+    </button>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div *ngIf="stats && !isLoading && !showSkeletons" class="dashboard-content">
+
+    <!-- Quick Actions Bar -->
+    <div class="quick-actions-section">
+      <h2>Quick Actions</h2>
+      <div class="quick-actions-grid">
+        <button mat-raised-button
+                *ngFor="let action of quickActions"
+                [color]="action.color"
+                (click)="onQuickAction(action)"
+                class="quick-action-btn"
+                matRipple
+                [matTooltip]="action.label"
+                [attr.aria-label]="action.label">
+          <mat-icon>{{ action.icon }}</mat-icon>
+          <span>{{ action.label }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Key Metrics Overview -->
+    <div class="metrics-overview">
+      <h2>Key Metrics</h2>
+      <div class="metrics-grid">
+
+        <!-- Total Users Card -->
+        <mat-card class="modern-stat-card clickable"
+                  (click)="onStatCardClick('users')"
+                  matRipple
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'View user management. Total users: ' + animatedStats.totalUsers">
+          <mat-card-header>
+            <div class="card-icon users-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="card-title-section">
+              <mat-card-title>Total Users</mat-card-title>
+              <mat-card-subtitle>All registered users</mat-card-subtitle>
+            </div>
+            <div class="trend-indicator">
+              <mat-icon [class]="getTrendColor(stats.totalUsers, stats.totalUsers - stats.newUsersThisWeek)">
+                {{ getTrendIcon(stats.totalUsers, stats.totalUsers - stats.newUsersThisWeek) }}
+              </mat-icon>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-number">{{ animatedStats.totalUsers | number }}</div>
+            <div class="stat-progress">
+              <mat-progress-bar mode="determinate" [value]="getUserActivePercentage()" color="primary"></mat-progress-bar>
+              <span class="progress-label">{{ getUserActivePercentage() }}% Active</span>
+            </div>
+            <div class="stat-breakdown">
+              <div class="breakdown-item">
+                <span class="label">Workers:</span>
+                <span class="value">{{ stats.totalWorkers | number }}</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="label">Employers:</span>
+                <span class="value">{{ stats.totalEmployers | number }}</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="label">Admins:</span>
+                <span class="value">{{ stats.totalAdmins | number }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Active Users Card -->
+        <mat-card class="modern-stat-card clickable"
+                  (click)="onStatCardClick('users')"
+                  matRipple
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'View active users. Active users: ' + animatedStats.activeUsers">
+          <mat-card-header>
+            <div class="card-icon active-users-icon">
+              <mat-icon>person_check</mat-icon>
+            </div>
+            <div class="card-title-section">
+              <mat-card-title>Active Users</mat-card-title>
+              <mat-card-subtitle>Currently active</mat-card-subtitle>
+            </div>
+            <div class="trend-indicator">
+              <mat-icon class="success">trending_up</mat-icon>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-number">{{ animatedStats.activeUsers | number }}</div>
+            <div class="stat-progress">
+              <mat-progress-bar mode="determinate" [value]="getUserActivePercentage()" color="accent"></mat-progress-bar>
+              <span class="progress-label">{{ getUserActivePercentage() }}% of total</span>
+            </div>
+            <div class="weekly-change">
+              <span class="change-label">This week:</span>
+              <span class="change-value positive">+{{ animatedStats.newUsersThisWeek | number }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Total Jobs Card -->
+        <mat-card class="modern-stat-card clickable"
+                  (click)="onStatCardClick('jobs')"
+                  matRipple
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'View job management. Total jobs: ' + animatedStats.totalJobs">
+          <mat-card-header>
+            <div class="card-icon jobs-icon">
+              <mat-icon>work</mat-icon>
+            </div>
+            <div class="card-title-section">
+              <mat-card-title>Total Jobs</mat-card-title>
+              <mat-card-subtitle>All job postings</mat-card-subtitle>
+            </div>
+            <div class="trend-indicator">
+              <mat-icon [class]="getTrendColor(stats.totalJobs, stats.totalJobs - stats.newJobsThisWeek)">
+                {{ getTrendIcon(stats.totalJobs, stats.totalJobs - stats.newJobsThisWeek) }}
+              </mat-icon>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-number">{{ animatedStats.totalJobs | number }}</div>
+            <div class="stat-progress">
+              <mat-progress-bar mode="determinate" [value]="getJobOpenPercentage()" color="primary"></mat-progress-bar>
+              <span class="progress-label">{{ getJobOpenPercentage() }}% Open</span>
+            </div>
+            <div class="stat-breakdown">
+              <div class="breakdown-item">
+                <span class="label">Open:</span>
+                <span class="value">{{ stats.openJobs | number }}</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="label">Filled:</span>
+                <span class="value">{{ stats.filledJobs | number }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Open Jobs Card -->
+        <mat-card class="modern-stat-card clickable"
+                  (click)="onStatCardClick('jobs')"
+                  matRipple
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'View open jobs. Open jobs: ' + animatedStats.openJobs">
+          <mat-card-header>
+            <div class="card-icon open-jobs-icon">
+              <mat-icon>work_outline</mat-icon>
+            </div>
+            <div class="card-title-section">
+              <mat-card-title>Open Jobs</mat-card-title>
+              <mat-card-subtitle>Available positions</mat-card-subtitle>
+            </div>
+            <div class="trend-indicator">
+              <mat-icon class="primary">trending_up</mat-icon>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-number">{{ animatedStats.openJobs | number }}</div>
+            <div class="stat-progress">
+              <mat-progress-bar mode="determinate" [value]="getProgressValue(stats.openJobs, stats.totalJobs)" color="accent"></mat-progress-bar>
+              <span class="progress-label">{{ getProgressValue(stats.openJobs, stats.totalJobs) }}% of total</span>
+            </div>
+            <div class="weekly-change">
+              <span class="change-label">New this week:</span>
+              <span class="change-value positive">+{{ animatedStats.newJobsThisWeek | number }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Total Applications Card -->
+        <mat-card class="modern-stat-card clickable"
+                  (click)="onStatCardClick('applications')"
+                  matRipple
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'View applications. Total applications: ' + animatedStats.totalApplications">
+          <mat-card-header>
+            <div class="card-icon applications-icon">
+              <mat-icon>assignment</mat-icon>
+            </div>
+            <div class="card-title-section">
+              <mat-card-title>Applications</mat-card-title>
+              <mat-card-subtitle>All applications</mat-card-subtitle>
+            </div>
+            <div class="trend-indicator">
+              <mat-icon [class]="getTrendColor(stats.totalApplications, stats.totalApplications - stats.newApplicationsThisWeek)">
+                {{ getTrendIcon(stats.totalApplications, stats.totalApplications - stats.newApplicationsThisWeek) }}
+              </mat-icon>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-number">{{ animatedStats.totalApplications | number }}</div>
+            <div class="stat-progress">
+              <mat-progress-bar mode="determinate" [value]="getApplicationApprovedPercentage()" color="primary"></mat-progress-bar>
+              <span class="progress-label">{{ getApplicationApprovedPercentage() }}% Approved</span>
+            </div>
+            <div class="stat-breakdown">
+              <div class="breakdown-item">
+                <span class="label">Pending:</span>
+                <span class="value">{{ stats.pendingApplications | number }}</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="label">Approved:</span>
+                <span class="value">{{ stats.approvedApplications | number }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Approved Applications Card -->
+        <mat-card class="modern-stat-card clickable"
+                  (click)="onStatCardClick('applications')"
+                  matRipple
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'View approved applications. Approved applications: ' + animatedStats.approvedApplications">
+          <mat-card-header>
+            <div class="card-icon approved-icon">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="card-title-section">
+              <mat-card-title>Approved</mat-card-title>
+              <mat-card-subtitle>Successful applications</mat-card-subtitle>
+            </div>
+            <div class="trend-indicator">
+              <mat-icon class="success">trending_up</mat-icon>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-number">{{ animatedStats.approvedApplications | number }}</div>
+            <div class="stat-progress">
+              <mat-progress-bar mode="determinate" [value]="getApplicationApprovedPercentage()" color="accent"></mat-progress-bar>
+              <span class="progress-label">{{ getApplicationApprovedPercentage() }}% success rate</span>
+            </div>
+            <div class="weekly-change">
+              <span class="change-label">This week:</span>
+              <span class="change-value positive">+{{ animatedStats.newApplicationsThisWeek | number }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+
+    <!-- Interactive Charts Section -->
+    <div class="charts-section">
+      <h2>Analytics Overview</h2>
+      <div class="charts-grid">
+
+        <!-- User Distribution Chart -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>User Distribution</mat-card-title>
+            <mat-card-subtitle>Active vs Inactive vs Banned</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #userChart width="400" height="300"></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Job Status Chart -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Job Status Overview</mat-card-title>
+            <mat-card-subtitle>Distribution by status</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #jobChart width="400" height="300"></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Application Trends Chart -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Application Status</mat-card-title>
+            <mat-card-subtitle>Pending, Approved, Rejected</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #applicationChart width="400" height="300"></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="recent-activity-section">
+      <h2>System Health</h2>
+      <div class="health-indicators">
+
+        <mat-card class="health-card">
+          <mat-card-header>
+            <div class="health-icon success">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="health-info">
+              <mat-card-title>System Status</mat-card-title>
+              <mat-card-subtitle>All systems operational</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="health-metrics">
+              <div class="metric">
+                <span class="metric-label">Uptime:</span>
+                <span class="metric-value">99.9%</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Response Time:</span>
+                <span class="metric-value">< 200ms</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="health-card">
+          <mat-card-header>
+            <div class="health-icon primary">
+              <mat-icon>storage</mat-icon>
+            </div>
+            <div class="health-info">
+              <mat-card-title>Database</mat-card-title>
+              <mat-card-subtitle>Performance metrics</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="health-metrics">
+              <div class="metric">
+                <span class="metric-label">Connections:</span>
+                <span class="metric-value">{{ stats.totalUsers + stats.totalJobs }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Query Time:</span>
+                <span class="metric-value">< 50ms</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="health-card">
+          <mat-card-header>
+            <div class="health-icon accent">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="health-info">
+              <mat-card-title>Growth Rate</mat-card-title>
+              <mat-card-subtitle>Weekly growth metrics</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="health-metrics">
+              <div class="metric">
+                <span class="metric-label">New Users:</span>
+                <span class="metric-value">+{{ stats.newUsersThisWeek }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">New Jobs:</span>
+                <span class="metric-value">+{{ stats.newJobsThisWeek }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -13,26 +13,30 @@ export const rootRedirectGuard: CanActivateFn = (route, state) => {
 
   // Check if user is authenticated
   if (authService.isLoggedIn()) {
+    // Force role detection to ensure we have the latest role
     const userRole = authService.getRole();
-    
+
     // Validate that we have a valid role
     if (!userRole) {
       // Token might be invalid, logout and show home page
       authService.logout();
       return true; // Allow access to home page after logout
     }
-    
-    // Redirect authenticated users to their dashboard
-    if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
+
+    // Redirect authenticated users to their role-specific dashboard
+    if (userRole === 'ADMIN') {
+      router.navigate(['/app/admin/dashboard']);
+      return false;
+    } else if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
       router.navigate(['/app/dashboard']);
       return false;
+    } else {
+      // Unknown role but authenticated, redirect to app
+      router.navigate(['/app']);
+      return false;
     }
-    
-    // Unknown role but authenticated, redirect to app
-    router.navigate(['/app']);
-    return false;
   }
-  
+
   // User is not authenticated, allow access to home page
   return true;
 };

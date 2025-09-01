@@ -5,7 +5,7 @@ import { AuthService } from '../services/auth.service';
 /**
  * Auth Guard - Protects authenticated routes
  * Redirects unauthenticated users to login page
- * Handles role-based access if needed
+ * Works seamlessly with adminGuard and other guards
  */
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -16,8 +16,11 @@ export const authGuard: CanActivateFn = (route, state) => {
     const userRole = authService.getRole();
 
     if (!userRole) {
-      // Token might be invalid, redirect to login
+      // Token might be invalid, logout and redirect to login
       authService.logout();
+      router.navigate(['/login'], {
+        queryParams: { returnUrl: state.url }
+      });
       return false;
     }
 

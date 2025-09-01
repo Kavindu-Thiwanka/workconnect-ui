@@ -90,8 +90,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         if (response) {
           // Login successful - navigation and success message handled by AuthService
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/app/dashboard';
-          this.router.navigate([returnUrl]);
+          // AuthService.redirectAfterLogin() handles role-based redirection automatically
         }
       }
     });
