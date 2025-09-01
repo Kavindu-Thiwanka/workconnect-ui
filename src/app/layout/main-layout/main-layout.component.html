@@ -9,30 +9,53 @@
         </div>
 
         <nav class="main-nav">
-          <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-link">
-            <mat-icon>dashboard</mat-icon>
-            Dashboard
-          </a>
-          <a routerLink="/app/profile" routerLinkActive="active" class="nav-link">
-            <mat-icon>person</mat-icon>
-            Profile
-          </a>
-          <a *ngIf="userRole === 'WORKER'" routerLink="/app/jobs" routerLinkActive="active" class="nav-link">
-            <mat-icon>work</mat-icon>
-            Jobs
-          </a>
-          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/app/employer/jobs" routerLinkActive="active" class="nav-link">
-            <mat-icon>business</mat-icon>
-            My Jobs
-          </a>
-          <a *ngIf="userRole === 'EMPLOYER'" routerLink="/app/jobs/new" class="nav-link btn-primary">
-            <mat-icon>add</mat-icon>
-            Post Job
-          </a>
-          <a *ngIf="userRole === 'WORKER'" routerLink="/app/my-applications" routerLinkActive="active" class="nav-link">
-            <mat-icon>assignment</mat-icon>
-            Applications
-          </a>
+          <!-- Admin Navigation -->
+          <ng-container *ngIf="userRole === 'ADMIN'">
+            <a routerLink="/app/admin/dashboard" routerLinkActive="active" class="nav-link">
+              <mat-icon>admin_panel_settings</mat-icon>
+              Admin Dashboard
+            </a>
+            <a routerLink="/app/admin/users" routerLinkActive="active" class="nav-link">
+              <mat-icon>people</mat-icon>
+              Users
+            </a>
+            <a routerLink="/app/admin/jobs" routerLinkActive="active" class="nav-link">
+              <mat-icon>work</mat-icon>
+              Jobs
+            </a>
+            <a routerLink="/app/admin/applications" routerLinkActive="active" class="nav-link">
+              <mat-icon>assignment</mat-icon>
+              Applications
+            </a>
+          </ng-container>
+
+          <!-- Regular User Navigation -->
+          <ng-container *ngIf="userRole !== 'ADMIN'">
+            <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-link">
+              <mat-icon>dashboard</mat-icon>
+              Dashboard
+            </a>
+            <a routerLink="/app/profile" routerLinkActive="active" class="nav-link">
+              <mat-icon>person</mat-icon>
+              Profile
+            </a>
+            <a *ngIf="userRole === 'WORKER'" routerLink="/app/jobs" routerLinkActive="active" class="nav-link">
+              <mat-icon>work</mat-icon>
+              Jobs
+            </a>
+            <a *ngIf="userRole === 'EMPLOYER'" routerLink="/app/employer/jobs" routerLinkActive="active" class="nav-link">
+              <mat-icon>business</mat-icon>
+              My Jobs
+            </a>
+            <a *ngIf="userRole === 'EMPLOYER'" routerLink="/app/jobs/new" class="nav-link btn-primary">
+              <mat-icon>add</mat-icon>
+              Post Job
+            </a>
+            <a *ngIf="userRole === 'WORKER'" routerLink="/app/my-applications" routerLinkActive="active" class="nav-link">
+              <mat-icon>assignment</mat-icon>
+              Applications
+            </a>
+          </ng-container>
         </nav>
 
         <div class="header-actions">

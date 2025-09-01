@@ -40,18 +40,43 @@ export class AuthService {
    * Redirect user to appropriate page after login based on their role
    */
   private redirectAfterLogin(): void {
+    // Force role decoding from the fresh token to ensure we have the latest role
+    const token = localStorage.getItem('access_token');
+
+    if (token) {
+      this.decodeAndStoreRole(token);
+    }
+
     const userRole = this.getRole();
 
     // Check if there's a return URL
     const returnUrl = localStorage.getItem('returnUrl');
+
     if (returnUrl) {
       localStorage.removeItem('returnUrl');
-      this.router.navigate([returnUrl]);
-      return;
+
+      // Check if return URL is an admin route
+      const isAdminRoute = returnUrl.includes('/app/admin');
+
+      if (isAdminRoute && userRole !== 'ADMIN') {
+        // User tried to access admin route but is not admin, redirect to regular dashboard
+        this.router.navigate(['/app/dashboard']);
+        return;
+      } else if (isAdminRoute && userRole === 'ADMIN') {
+        // Admin user accessing admin route, allow it
+        this.router.navigate([returnUrl]);
+        return;
+      } else {
+        // Regular return URL, redirect normally
+        this.router.navigate([returnUrl]);
+        return;
+      }
     }
 
     // Default redirection based on role
-    if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
+    if (userRole === 'ADMIN') {
+      this.router.navigate(['/app/admin/dashboard']);
+    } else if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
       this.router.navigate(['/app/dashboard']);
     } else {
       this.router.navigate(['/app']);
@@ -146,7 +171,13 @@ export class AuthService {
   private decodeAndStoreRole(token: string): void {
     try {
       const decodedToken: any = jwtDecode(token);
-      this.userRole = decodedToken.role.replace('ROLE_', '');
+
+      if (decodedToken.role) {
+        this.userRole = decodedToken.role.replace('ROLE_', '');
+      } else {
+        console.warn('No role found in token');
+        this.userRole = null;
+      }
     } catch(error) {
       console.error("Failed to decode token", error);
       this.userRole = null;
@@ -158,9 +189,10 @@ export class AuthService {
   }
 
   getRole(): string | null {
-    if (!this.userRole) {
-      const token = localStorage.getItem('access_token');
-      if (token) { this.decodeAndStoreRole(token); }
+    // Always try to decode role from token to ensure we have the latest role
+    const token = localStorage.getItem('access_token');
+    if (token && !this.userRole) {
+      this.decodeAndStoreRole(token);
     }
     return this.userRole;
   }
@@ -248,6 +280,30 @@ export class AuthService {
    */
   isEmployer(): boolean {
     return this.hasRole('EMPLOYER');
+  }
+
+  /**
+   * Check if user is an admin
+   */
+  isAdmin(): boolean {
+    return this.hasRole('ADMIN');
+  }
+
+  /**
+   * Get decoded token for debugging purposes
+   */
+  getDecodedToken(): any {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      return null;
+    }
+
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      return null;
+    }
   }
 
   logout(): void {

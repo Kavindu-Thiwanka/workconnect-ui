@@ -15,16 +15,27 @@ export const publicGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // If user is logged in, redirect to their dashboard
+  // If user is logged in, redirect to their role-specific dashboard
   const userRole = authService.getRole();
-  
-  if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
-    // Redirect to the app dashboard (which will show role-specific content)
-    router.navigate(['/app/dashboard']);
-    return false;
+
+  // Validate that we have a valid role
+  if (!userRole) {
+    // Token might be invalid, logout and allow access to public page
+    authService.logout();
+    return true;
   }
 
-  // If role is unknown but user is logged in, redirect to app
-  router.navigate(['/app']);
-  return false;
+  if (userRole === 'ADMIN') {
+    // Redirect admin users to admin dashboard
+    router.navigate(['/app/admin/dashboard']);
+    return false;
+  } else if (userRole === 'WORKER' || userRole === 'EMPLOYER') {
+    // Redirect regular users to app dashboard
+    router.navigate(['/app/dashboard']);
+    return false;
+  } else {
+    // If role is unknown but user is logged in, redirect to app
+    router.navigate(['/app']);
+    return false;
+  }
 };
