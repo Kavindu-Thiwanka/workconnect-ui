@@ -1,101 +1,54 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterLink} from '@angular/router';
-import {AuthService} from '../../services/auth.service';
-import {JobService} from '../../services/job.service';
-import {ProfileService} from '../../services/profile.service';
-import {type AuthUser} from '@aws-amplify/auth';
-import {TestimonialsComponent} from '../../components/testimonials/testimonials.component';
-import {FaqComponent} from '../../components/faq/faq.component';
-import {CtaComponent} from '../../components/cta/cta.component';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, TestimonialsComponent, FaqComponent, CtaComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  currentUser: AuthUser | null = null;
-  userProfile: any = null;
-  recommendedJobs: any[] = [];
-  isLoading = true;
-  error: string | null = null;
-  applicationStatus: any[] = [];
-  messages: any[] = [];
+  isAuthenticated = false;
 
-  constructor(
-    private authService: AuthService,
-    private jobService: JobService,
-    private profileService: ProfileService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.authService.currentUser.subscribe(user => {
-      this.currentUser = user;
-      if (user) {
-        this.loadUserData();
-      } else {
-        this.isLoading = false;
-      }
-    });
+    // This should only be called for unauthenticated users due to the guard
+    // but we'll double-check for safety
+    this.isAuthenticated = this.authService.isLoggedIn();
   }
+  features = [
+    {
+      icon: 'construction',
+      title: 'Find Skilled Trade Work',
+      description: 'Browse thousands of construction, plumbing, electrical, and other trade opportunities'
+    },
+    {
+      icon: 'handyman',
+      title: 'Connect with Contractors',
+      description: 'Contractors can find and hire skilled tradespeople and laborers for their projects'
+    },
+    {
+      icon: 'trending_up',
+      title: 'Build Your Career',
+      description: 'Access training resources, certifications, and advance in the skilled trades'
+    }
+  ];
 
-  loadUserData(): void {
-    this.isLoading = true;
-    this.profileService.getCurrentUserProfile().subscribe({
-      next: (profile) => {
-        this.userProfile = profile;
-        if (this.userProfile.completeProfile && this.userProfile.userRole === 'WORKER') {
-          this.initWorkerHome();
-        } else if (this.userProfile.completeProfile && this.userProfile.userRole === 'EMPLOYER') {
-          this.initEmployerHome()
-          this.isLoading = false;
-        }
-        else {
-          this.isLoading = false;
-        }
-      },
-      error: (err) => {
-        this.error = "Could not load your user profile.";
-        this.isLoading = false;
-      }
-    });
-  }
-
-  initWorkerHome() {
-    this.fetchRecommendations();
-    this.fetchJobApplications();
-  }
-
-  fetchRecommendations(): void {
-    this.jobService.getRecommendedJobs().subscribe({
-      next: (data) => {
-        this.recommendedJobs = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.error = err.error;
-        this.isLoading = false;
-      }
-    });
-  }
-
-  fetchJobApplications() {
-    this.jobService.getAllJobApplications().subscribe({
-      next: (data) => {
-        this.applicationStatus = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.error = err.error;
-        this.isLoading = false;
-      }
-    });
-  }
-
-  private initEmployerHome() {
-
-  }
+  stats = [
+    { number: '5K+', label: 'Active Jobs' },
+    { number: '25K+', label: 'Skilled Workers' },
+    { number: '800+', label: 'Contractors' },
+    { number: '98%', label: 'Job Completion Rate' }
+  ];
 }

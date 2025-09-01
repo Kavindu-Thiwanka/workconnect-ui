@@ -1,71 +1,97 @@
 <div class="login-container">
-  <div class="login-background">
-    <div class="login-hero">
-      <div class="hero-content">
-        <h1>Welcome Back</h1>
-        <p>Sign in to continue your journey with WorkConnect</p>
-        <div class="hero-image">
-          <img src="assets/images/hero-login.svg" alt="Login Illustration" />
+  <div class="container">
+    <div class="login-content">
+      <!-- Left Side - Branding -->
+      <div class="login-branding animate-fade-in-up">
+        <div class="branding-content">
+          <h1 class="brand-title">
+            Welcome to <span class="gradient-text">WorkConnect</span>
+          </h1>
+          <p class="brand-subtitle">
+            Sign in to access your account and continue your professional journey.
+          </p>
+
+          <div class="features-list">
+            <div class="feature-item">
+              <mat-icon>check_circle</mat-icon>
+              <span>Access your personalized dashboard</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>check_circle</mat-icon>
+              <span>View and apply to matched opportunities</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>check_circle</mat-icon>
+              <span>Connect with professionals in your field</span>
+            </div>
+          </div>
+
+          <div class="register-prompt">
+            <span>Don't have an account yet?</span>
+            <a routerLink="/register" class="register-link">Create one here</a>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="login-content">
-    <div class="login-card">
-      <div class="login-header">
-        <img src="assets/images/logo.svg" alt="WorkConnect Logo" class="login-logo">
-        <h2>Sign in to WorkConnect</h2>
+      <!-- Right Side - Login Form -->
+      <div class="login-form-section animate-fade-in-right">
+        <div class="form-card modern-card">
+          <div class="form-header">
+            <h2 class="form-title">Sign In</h2>
+            <p class="form-subtitle">Access your WorkConnect account</p>
+          </div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="modern-form">
+            <!-- Email Field -->
+            <div class="form-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="Enter your email">
+                <mat-icon matPrefix>email</mat-icon>
+                <mat-error *ngIf="hasError('email')">
+                  {{ getErrorMessage('email') }}
+                </mat-error>
+              </mat-form-field>
+              <app-form-error [control]="loginForm.get('email')!" fieldName="email"></app-form-error>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password">
+                <mat-icon matPrefix>lock</mat-icon>
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="hasError('password')">
+                  {{ getErrorMessage('password') }}
+                </mat-error>
+              </mat-form-field>
+              <app-form-error [control]="loginForm.get('password')!" fieldName="password"></app-form-error>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="form-field login-options">
+              <mat-checkbox formControlName="rememberMe" class="remember-me">
+                Remember me
+              </mat-checkbox>
+              <a routerLink="/forgot-password" class="forgot-password">Forgot password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button mat-raised-button color="primary" type="submit"
+                      [disabled]="loginForm.invalid || (loadingService.isLoading('login') | async)"
+                      class="login-btn">
+                <mat-spinner *ngIf="loadingService.isLoading('login') | async" diameter="20"></mat-spinner>
+                <mat-icon *ngIf="!(loadingService.isLoading('login') | async)">login</mat-icon>
+                {{ (loadingService.isLoading('login') | async) ? 'Signing In...' : 'Sign In' }}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-
-      <form (ngSubmit)="onSubmit()" autocomplete="on" class="login-form">
-        <div class="form-group">
-          <label for="email">Email address</label>
-          <div class="input-wrapper">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <input id="email" type="email" [(ngModel)]="model.email" name="email" placeholder="Enter your email" required autofocus>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="input-wrapper">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M16 8a4 4 0 0 1-8 0"></path>
-              <rect x="2" y="9" width="20" height="6" rx="2" ry="2"></rect>
-              <circle cx="8" cy="14" r="1"></circle>
-              <path d="M12 21v-7"></path>
-            </svg>
-            <input id="password" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="model.password" name="password" placeholder="Enter your password" required>
-            <button type="button" class="toggle-password" (click)="togglePassword()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <div class="remember-me">
-            <input type="checkbox" id="remember" [(ngModel)]="model.remember" name="remember">
-            <label for="remember">Remember me</label>
-          </div>
-          <div class="forgot-password">
-            <a href="#">Forgot password?</a>
-          </div>
-        </div>
-
-        <button type="submit" class="login-button">Sign In</button>
-
-        <div class="signup-link">
-          <span>Don't have an account?</span>
-          <a routerLink="/register">Create one</a>
-        </div>
-      </form>
     </div>
   </div>
 </div>

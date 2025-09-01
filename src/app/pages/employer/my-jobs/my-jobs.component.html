@@ -1,0 +1,173 @@
+<div class="my-jobs-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">My Job Postings</h1>
+      <p class="page-subtitle">Manage your job listings and track applications</p>
+    </div>
+
+    <div class="header-actions">
+      <button mat-raised-button routerLink="/app/jobs/new" class="post-job-btn">
+        <mat-icon>add</mat-icon>
+        Post New Job
+      </button>
+      <button mat-stroked-button class="analytics-btn">
+        <mat-icon>analytics</mat-icon>
+        View Analytics
+      </button>
+    </div>
+  </div>
+
+  <div class="jobs-content">
+    <div class="content-header" *ngIf="myJobs$ | async as jobs">
+      <span class="results-count">{{ jobs.length }} job{{ jobs.length !== 1 ? 's' : '' }} posted</span>
+      <div class="view-controls">
+        <mat-form-field appearance="outline" class="filter-dropdown">
+          <mat-label>Filter by Status</mat-label>
+          <mat-select [(ngModel)]="statusFilter" (selectionChange)="onFilterChange()">
+            <mat-option value="">All Status</mat-option>
+            <mat-option value="OPEN">Open</mat-option>
+            <mat-option value="CLOSED">Closed</mat-option>
+            <mat-option value="FILLED">Filled</mat-option>
+            <mat-option value="EXPIRED">Expired</mat-option>
+            <mat-option value="DRAFT">Draft</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="view-toggle">
+          <button mat-icon-button [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
+            <mat-icon>view_list</mat-icon>
+          </button>
+          <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+            <mat-icon>grid_view</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="job-grid" [class.list-view]="viewMode === 'list'" *ngIf="myJobs$ | async as jobs; else loading">
+      <div *ngIf="filteredJobs.length > 0; else emptyState">
+        <div *ngFor="let job of filteredJobs" class="job-card" [class.list-card]="viewMode === 'list'">
+          <div class="job-header">
+            <div class="job-info">
+              <h3 class="job-title">{{ job.jobTitle }}</h3>
+              <div class="job-meta">
+                <div class="meta-item">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ job.location }}</span>
+                </div>
+                <div class="meta-item">
+                  <mat-icon>attach_money</mat-icon>
+                  <span>${{ job.salary | number }}</span>
+                </div>
+                <div class="meta-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ getJobTypeDisplay(job.jobType) }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="posted-date">Posted {{ job.postedAt | date: 'MMM d, y' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="status-badge" [ngClass]="'status-' + (job.status || 'OPEN').toLowerCase()">
+              {{ getStatusDisplay(job.status) }}
+            </div>
+          </div>
+
+          <div class="job-details">
+            <p class="job-description">{{ job.description }}</p>
+            <div class="job-stats">
+              <div class="stat-item">
+                <span class="stat-number">{{ job.applicantCount || 0 }}</span>
+                <span class="stat-label">Applications</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ job.viewCount || 0 }}</span>
+                <span class="stat-label">Views</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ getDaysPosted(job.postedAt) }}</span>
+                <span class="stat-label">Days Posted</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-footer">
+            <div class="job-actions">
+              <div class="status-control">
+                <mat-form-field appearance="outline" class="status-field">
+                  <mat-label>Status</mat-label>
+                  <mat-select [value]="job.status" (selectionChange)="onStatusChange(job.id, $event.value)" [disabled]="isUpdatingStatus">
+                    <mat-option value="OPEN">
+                      <mat-icon class="status-icon open">radio_button_checked</mat-icon>
+                      Open
+                    </mat-option>
+                    <mat-option value="CLOSED">
+                      <mat-icon class="status-icon closed">pause_circle</mat-icon>
+                      Closed
+                    </mat-option>
+                    <mat-option value="FILLED">
+                      <mat-icon class="status-icon filled">check_circle</mat-icon>
+                      Filled
+                    </mat-option>
+                    <mat-option value="EXPIRED">
+                      <mat-icon class="status-icon expired">cancel</mat-icon>
+                      Expired
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="action-buttons">
+                <button mat-raised-button [routerLink]="['/app/employer/jobs', job.id, 'applications']" class="view-applications-btn">
+                  <mat-icon>people</mat-icon>
+                  <span>Applications ({{ job.applicationCount || 0 }})</span>
+                </button>
+                <button mat-stroked-button (click)="editJob(job)" class="edit-btn">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+<!--                <button mat-icon-button [matMenuTriggerFor]="jobMenu" class="more-actions-btn">-->
+<!--                  <mat-icon>more_vert</mat-icon>-->
+<!--                </button>-->
+<!--                <mat-menu #jobMenu="matMenu">-->
+<!--                  <button mat-menu-item (click)="duplicateJob(job)">-->
+<!--                    <mat-icon>content_copy</mat-icon>-->
+<!--                    Duplicate Job-->
+<!--                  </button>-->
+<!--                  <button mat-menu-item (click)="shareJob(job)">-->
+<!--                    <mat-icon>share</mat-icon>-->
+<!--                    Share Job-->
+<!--                  </button>-->
+<!--                  <mat-divider></mat-divider>-->
+<!--                  <button mat-menu-item (click)="confirmDeleteJob(job)" class="delete-action" [disabled]="job.applicationCount > 0">-->
+<!--                    <mat-icon>delete</mat-icon>-->
+<!--                    Delete Job-->
+<!--                    <span *ngIf="job.applicationCount > 0" class="disabled-reason">(Has applications)</span>-->
+<!--                  </button>-->
+<!--                </mat-menu>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">work_outline</mat-icon>
+        <h3>No Job Postings Yet</h3>
+        <p>Start building your team by posting your first job. It only takes a few minutes to get started.</p>
+        <button mat-raised-button routerLink="/app/jobs/new" class="post-first-job-btn">
+          <mat-icon>add</mat-icon>
+          Post Your First Job
+        </button>
+      </div>
+    </ng-template>
+
+    <ng-template #loading>
+      <div class="loading-state">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading your job postings...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

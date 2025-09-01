@@ -1,0 +1,29 @@
+<div class="profile-container" *ngIf="profileData$ | async as data; else loading">
+  <section class="profile-header">
+    <h2>{{ data.profile.firstName }} {{ data.profile.lastName }}</h2>
+    <p>{{ data.profile.location }}</p>
+  </section>
+
+  <section class="badges-section" *ngIf="data.badges.length > 0">
+    <h3>Badges</h3>
+    <div class="badge-list">
+      <div class="badge" *ngFor="let badge of data.badges">
+        <span class="badge-name">{{ badge.displayName }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="reviews-section" *ngIf="data.reviews.length > 0">
+    <h3>Reviews</h3>
+    <div class="review-list">
+      <div class="review-card" *ngFor="let review of data.reviews">
+        <p class="rating">Rating: {{ review.rating }} / 5</p>
+        <p class="comment">"{{ review.comment }}"</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<ng-template #loading>
+  <p>Loading profile...</p>
+</ng-template>

@@ -1,44 +1,103 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { FormErrorService } from '../../services/form-error.service';
+import { LoadingService } from '../../services/loading.service';
+import { FormErrorComponent } from '../../components/form-error/form-error.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    FormErrorComponent
+  ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
-  selectedRole: 'WORKER' | 'EMPLOYER' | null = null;
+  registerForm: FormGroup;
+  hidePassword: boolean = true;
 
-  model: any = {};
-
-  constructor(private authService: AuthService, private router: Router) { }
-
-  selectRole(role: 'WORKER' | 'EMPLOYER'): void {
-    this.selectedRole = role;
-    this.model.userRole = role;
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private formErrorService: FormErrorService,
+    public loadingService: LoadingService
+  ) {
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      role: ['WORKER', [Validators.required]],
+      acceptTerms: [false, [Validators.requiredTrue]]
+    });
   }
 
   onSubmit(): void {
-    if (!this.model.email || !this.model.password) {
-      alert('Please fill out all required fields.');
+    if (this.registerForm.invalid) {
+      this.formErrorService.markAllFieldsAsTouched(this.registerForm);
       return;
     }
 
-    this.authService.register(this.model).subscribe({
+    const formData = { ...this.registerForm.value };
+    delete formData.acceptTerms; // Remove acceptTerms from the data sent to backend
+
+    this.authService.register(formData).pipe(
+      catchError(error => {
+        console.error('Registration error in component:', error);
+
+        // Only handle actual errors (not success responses)
+        if (error.status >= 400) {
+          // Handle validation errors specifically for registration form
+          if (error.error?.fieldErrors) {
+            this.formErrorService.applyErrorsToForm(this.registerForm, error.error);
+          }
+        }
+        return of(null); // Return null to complete the observable
+      })
+    ).subscribe({
       next: (response) => {
-        console.log('Registration successful', response);
-        alert('Registration successful! Please check your email for a verification code.');
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        console.error('Registration failed', err);
-        alert(err.error?.message || 'Registration failed');
+        console.log('Registration response in component:', response);
+        if (response) {
+          // Registration successful - navigate to login with success message
+          this.router.navigate(['/login'], {
+            queryParams: { message: 'Registration successful! Please log in.' }
+          });
+        }
       }
     });
+  }
+
+  // Helper methods for form error handling
+  hasError(fieldName: string): boolean {
+    const control = this.registerForm.get(fieldName);
+    return control ? this.formErrorService.hasError(control) : false;
+  }
+
+  getErrorMessage(fieldName: string): string | null {
+    const control = this.registerForm.get(fieldName);
+    return control ? this.formErrorService.getErrorMessage(control, fieldName) : null;
   }
 }

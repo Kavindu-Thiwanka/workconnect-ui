@@ -1,0 +1,202 @@
+<div class="dashboard-container">
+  <!-- Worker Dashboard -->
+  <section *ngIf="userRole === 'WORKER'" class="worker-dashboard section">
+    <div class="container">
+      <div class="dashboard-grid">
+        <!-- Recommended Jobs -->
+        <div class="dashboard-card modern-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>recommend</mat-icon>
+              Recommended for You
+            </h2>
+            <button mat-button class="view-all-btn" routerLink="/app/jobs">
+              View All
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+
+          <div class="card-content">
+            <div *ngIf="recommendedJobs.length > 0; else noRecs" class="recommendations-list">
+              <div class="job-recommendation" *ngFor="let job of recommendedJobs.slice(0, 3)">
+                <div class="job-info">
+                  <div class="company-avatar">
+                    {{ job.employerCompanyName.charAt(0) || 'C' }}
+                  </div>
+                  <div class="job-details">
+                    <h4 class="job-title">{{ job.jobTitle }}</h4>
+<!--                    <p class="company-name">{{ job.employerCompanyName || 'Company' }}</p>-->
+<!--                    <div class="job-meta">-->
+                      <span class="location">
+                        <mat-icon>location_on</mat-icon>
+                        {{ job.location }}
+                      </span>
+<!--                      <span class="salary" *ngIf="job.salary">-->
+<!--                        {{ formatSalary(job.salary, job.currency) }}-->
+<!--                      </span>-->
+<!--                      <span class="job-type">{{ job.jobType.replace('_', ' ') }}</span>-->
+<!--                    </div>-->
+                  </div>
+                </div>
+                <div class="job-actions">
+                  <button mat-stroked-button [routerLink]="['/app/jobs', job.id]" class="view-btn">
+                    View
+                  </button>
+                  <button mat-raised-button color="primary" class="apply-btn" (click)="onJobClick(job.id)">
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #noRecs>
+              <div class="empty-state">
+                <mat-icon class="empty-icon">work_off</mat-icon>
+                <h4>No recommendations yet</h4>
+                <p>Complete your profile to get personalized job recommendations</p>
+                <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
+                  Update Profile
+                </button>
+              </div>
+            </ng-template>
+
+            <!-- Loading state -->
+            <div *ngIf="isLoading" class="loading-state">
+              <mat-spinner diameter="40"></mat-spinner>
+              <p>Finding perfect matches for you...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="dashboard-card modern-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>assignment</mat-icon>
+              Recent Applications
+            </h2>
+            <button mat-button class="view-all-btn" routerLink="/app/my-applications">
+              View All
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+
+          <div class="card-content">
+            <div *ngIf="recentApplications.length > 0; else noApplications" class="applications-list">
+              <div class="application-item" *ngFor="let app of recentApplications.slice(0, 3)">
+                <div class="application-info">
+                  <h4 class="job-title">{{ app.job?.jobTitle || 'Job Title' }}</h4>
+                  <p class="company-name">{{ app.job?.employerProfile?.companyName || 'Company' }}</p>
+                  <span class="application-date">Applied {{ formatDate(app.appliedAt) }}</span>
+                </div>
+                <div class="application-status">
+                  <span class="status-badge"
+                        [ngClass]="'badge-' + getApplicationStatusColor(app.status)">
+                    {{ app.status.replace('_', ' ') }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #noApplications>
+              <div class="empty-state">
+                <mat-icon class="empty-icon">assignment_late</mat-icon>
+                <h4>No applications yet</h4>
+                <p>Start applying to jobs to see your application history here</p>
+                <button mat-raised-button color="primary" routerLink="/app/jobs" class="btn-modern">
+                  Browse Jobs
+                </button>
+              </div>
+            </ng-template>
+
+            <!-- Loading state -->
+            <div *ngIf="isLoading" class="loading-state">
+              <mat-spinner diameter="30"></mat-spinner>
+              <p>Loading applications...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Completion -->
+        <div class="dashboard-card modern-card profile-completion">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>person</mat-icon>
+              Profile Strength
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div *ngIf="profileCompletion; else loadingProfile" class="progress-section">
+              <div class="progress-info">
+                <span class="progress-label">Profile Completion</span>
+                <span class="progress-percentage">{{ profileCompletion.percentage }}%</span>
+              </div>
+              <mat-progress-bar
+                mode="determinate"
+                [value]="profileCompletion.percentage"
+                [color]="getProfileCompletionColor()">
+              </mat-progress-bar>
+            </div>
+
+            <div *ngIf="profileCompletion && profileCompletion.tips && profileCompletion.tips.length > 0" class="improvement-tips">
+              <h4>Boost your profile:</h4>
+              <ul class="tips-list">
+                <li *ngFor="let tip of profileCompletion.tips.slice(0, 3)">
+                  <mat-icon>add_circle_outline</mat-icon>
+                  {{ tip }}
+                </li>
+              </ul>
+              <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
+                Complete Profile
+              </button>
+            </div>
+
+            <ng-template #loadingProfile>
+              <div class="loading-state">
+                <mat-spinner diameter="30"></mat-spinner>
+                <p>Loading profile data...</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-card modern-card quick-actions">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>flash_on</mat-icon>
+              Quick Actions
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div class="actions-grid">
+              <button mat-raised-button class="action-btn" routerLink="/app/jobs">
+                <mat-icon>search</mat-icon>
+                Browse Jobs
+              </button>
+              <button mat-raised-button class="action-btn" routerLink="/app/profile">
+                <mat-icon>edit</mat-icon>
+                Edit Profile
+              </button>
+              <button mat-raised-button class="action-btn" routerLink="/app/my-applications">
+                <mat-icon>assignment</mat-icon>
+                My Applications
+              </button>
+              <button mat-raised-button class="action-btn">
+                <mat-icon>help</mat-icon>
+                Get Help
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Employer Dashboard -->
+  <section *ngIf="userRole === 'EMPLOYER'" class="employer-dashboard section">
+    <app-employer-dashboard></app-employer-dashboard>
+  </section>
+</div>

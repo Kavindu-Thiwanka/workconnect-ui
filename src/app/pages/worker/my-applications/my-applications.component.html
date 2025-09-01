@@ -1,0 +1,253 @@
+<div class="my-applications-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">My Applications</h1>
+        <p class="page-subtitle">Track your job applications and leave reviews for completed work</p>
+      </div>
+      <div class="header-actions">
+        <button mat-icon-button (click)="refreshApplications()" [disabled]="isLoading" title="Refresh">
+          <mat-icon [class.spinning]="isLoading">refresh</mat-icon>
+        </button>
+      </div>
+      <div class="header-stats" *ngIf="applicationStats$ | async as stats">
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.totalApplications }}</div>
+          <div class="stat-label">Total Applications</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.pendingApplications }}</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.acceptedApplications }}</div>
+          <div class="stat-label">Accepted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.completedApplications }}</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="applications-content">
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === 'ALL'"
+        (click)="setFilter('ALL')">
+        All Applications
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === ApplicationStatus.PENDING"
+        (click)="setFilter(ApplicationStatus.PENDING)">
+        Pending
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === ApplicationStatus.VIEWED"
+        (click)="setFilter(ApplicationStatus.VIEWED)">
+        Under Review
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === ApplicationStatus.ACCEPTED"
+        (click)="setFilter(ApplicationStatus.ACCEPTED)">
+        Accepted
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === ApplicationStatus.COMPLETED"
+        (click)="setFilter(ApplicationStatus.COMPLETED)">
+        Completed
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeFilter === ApplicationStatus.REJECTED"
+        (click)="setFilter(ApplicationStatus.REJECTED)">
+        Rejected
+      </button>
+    </div>
+
+    <div *ngIf="filteredApplications$ | async as applications; else loading" class="applications-grid">
+      <div *ngIf="applications.length > 0; else noApplications">
+        <div class="application-card modern-card" *ngFor="let app of applications; trackBy: trackByApplicationId">
+          <div class="card-header">
+            <div class="job-info">
+              <h3 class="job-title" (click)="onViewJobDetails(app.jobId)">{{ getJobTitle(app) }}</h3>
+              <p class="company-name">
+                <mat-icon>business</mat-icon>
+                {{ getCompanyName(app) }}
+              </p>
+            </div>
+            <div class="status-badge" [ngClass]="getStatusColorClass(app.status)">
+              <mat-icon>{{ getStatusIcon(app.status) }}</mat-icon>
+              {{ formatStatus(app.status) }}
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="application-meta">
+              <div class="meta-item">
+                <mat-icon>schedule</mat-icon>
+                <span>Applied {{ getTimeAgo(app.appliedAt) }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ getJobLocation(app) }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>attach_money</mat-icon>
+                <span>{{ getJobSalary(app) }}</span>
+              </div>
+            </div>
+
+            <div class="job-description" *ngIf="app.job?.description">
+              <p>{{ getJobDescription(app) }}</p>
+            </div>
+
+            <!-- Progress Timeline -->
+            <div class="progress-timeline">
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.PENDING, app.status)">
+                <div class="step-icon">
+                  <mat-icon>send</mat-icon>
+                </div>
+                <span>Applied</span>
+              </div>
+              <div class="timeline-connector" [class.completed]="isStepCompleted(ApplicationStatus.VIEWED, app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.VIEWED, app.status)">
+                <div class="step-icon">
+                  <mat-icon>visibility</mat-icon>
+                </div>
+                <span>Reviewed</span>
+              </div>
+              <div class="timeline-connector" [class.completed]="isStepCompleted(ApplicationStatus.ACCEPTED, app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.ACCEPTED, app.status)">
+                <div class="step-icon">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+                <span>Accepted</span>
+              </div>
+              <div class="timeline-connector" [class.completed]="isStepCompleted(ApplicationStatus.COMPLETED, app.status)"></div>
+              <div class="timeline-step" [class.completed]="isStepCompleted(ApplicationStatus.COMPLETED, app.status)">
+                <div class="step-icon">
+                  <mat-icon>done_all</mat-icon>
+                </div>
+                <span>Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button mat-stroked-button (click)="onViewJobDetails(app.jobId)" class="view-job-btn">
+              <mat-icon>visibility</mat-icon>
+              View Job
+            </button>
+
+            <button
+              *ngIf="canReview(app)"
+              mat-raised-button
+              color="primary"
+              (click)="toggleReviewForm(getApplicationId(app))"
+              class="review-btn">
+              <mat-icon>rate_review</mat-icon>
+              {{ reviewingApplicationId === getApplicationId(app) ? 'Cancel Review' : 'Leave Review' }}
+            </button>
+
+            <div *ngIf="app.review" class="review-indicator">
+              <mat-icon>star</mat-icon>
+              <span>Review Submitted ({{ app.review.rating }}/5)</span>
+            </div>
+          </div>
+
+          <!-- Review Form -->
+          <div *ngIf="reviewingApplicationId === getApplicationId(app)" class="review-form-container">
+            <div class="review-form glass">
+              <h4 class="form-title">
+                <mat-icon>rate_review</mat-icon>
+                Rate Your Experience
+              </h4>
+
+              <form [formGroup]="reviewForm" (ngSubmit)="onReviewSubmit()">
+                <div class="form-group">
+                  <label class="form-label">Overall Rating</label>
+                  <div class="rating-input">
+                    <div class="star-rating">
+                      <button
+                        type="button"
+                        *ngFor="let star of [1,2,3,4,5]"
+                        class="star-btn"
+                        [class.active]="star <= reviewForm.get('rating')?.value"
+                        (click)="setRating(star)">
+                        <mat-icon>{{ star <= reviewForm.get('rating')?.value ? 'star' : 'star_border' }}</mat-icon>
+                      </button>
+                    </div>
+                    <span class="rating-text">{{ getRatingText(reviewForm.get('rating')?.value) }}</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="comment" class="form-label">Your Review</label>
+                  <textarea
+                    id="comment"
+                    formControlName="comment"
+                    class="form-textarea"
+                    placeholder="Share your experience working with this employer..."
+                    rows="4">
+                  </textarea>
+                  <div class="char-count">
+                    {{ reviewForm.get('comment')?.value?.length || 0 }}/500
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    mat-stroked-button
+                    (click)="toggleReviewForm(getApplicationId(app))"
+                    class="cancel-btn">
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="reviewForm.invalid || isSubmittingReview"
+                    class="submit-btn">
+                    <mat-icon *ngIf="isSubmittingReview">hourglass_empty</mat-icon>
+                    <mat-icon *ngIf="!isSubmittingReview">send</mat-icon>
+                    {{ isSubmittingReview ? 'Submitting...' : 'Submit Review' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noApplications>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <h3>{{ getEmptyStateTitle() }}</h3>
+          <p>{{ getEmptyStateMessage() }}</p>
+          <button mat-raised-button color="primary" (click)="onBrowseJobs()" class="browse-jobs-btn">
+            <mat-icon>search</mat-icon>
+            Browse Jobs
+          </button>
+        </div>
+      </ng-template>
+    </div>
+
+    <ng-template #loading>
+      <div class="loading-state">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading your applications...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
