@@ -1,30 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './components/header/header.component';
-import { FooterComponent } from './components/footer/footer.component';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs';
+import { NotificationComponent } from './components/notification/notification.component';
+import { AuthService } from './services/auth.service';
+import { TokenRefreshService } from './services/token-refresh.service';
 
 @Component({
   selector: 'app-root',
+  imports: [RouterOutlet, NotificationComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [
-    RouterOutlet,
-    HeaderComponent,
-    FooterComponent
-  ]
+  styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'workconnect-frontend';
-  isHomePage = false;
+export class AppComponent implements OnInit, OnDestroy {
+  title = 'workconnect-ui';
 
-  constructor(private router: Router) {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.isHomePage = event.url === '/' || event.url === '/home';
-    });
+  constructor(
+    private authService: AuthService,
+    private tokenRefreshService: TokenRefreshService
+  ) {}
+
+  ngOnInit(): void {
+    // Start token refresh timer if user is logged in
+    if (this.authService.isLoggedIn()) {
+      this.tokenRefreshService.startTokenRefreshTimer();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.tokenRefreshService.stopTokenRefreshTimer();
   }
 }

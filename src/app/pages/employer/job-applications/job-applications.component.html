@@ -1,0 +1,221 @@
+<div class="applications-container">
+  <!-- Header Section -->
+  <div class="page-header" *ngIf="job$ | async as job">
+    <div class="header-content">
+      <div class="header-text">
+        <button mat-icon-button (click)="onBackToJobs()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="title-section">
+          <h1 class="page-title">Applications for {{ job.title }}</h1>
+          <p class="page-subtitle">{{ job.location }} • Posted {{ getTimeAgo(job.createdAt) }}</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button mat-icon-button (click)="refreshApplications()" [disabled]="isLoading" title="Refresh">
+          <mat-icon [class.spinning]="isLoading">refresh</mat-icon>
+        </button>
+        <button mat-stroked-button (click)="onEditJob()">
+          <mat-icon>edit</mat-icon>
+          Edit Job
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-section" *ngIf="getApplicationStats() | async as stats">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total Applications</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.pending }}</div>
+        <div class="stat-label">Pending Review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.accepted }}</div>
+        <div class="stat-label">Accepted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.completed }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button
+      class="tab-button"
+      [class.active]="activeFilter === 'ALL'"
+      (click)="setFilter('ALL')">
+      All Applications
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeFilter === ApplicationStatus.PENDING"
+      (click)="setFilter(ApplicationStatus.PENDING)">
+      Pending
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeFilter === ApplicationStatus.VIEWED"
+      (click)="setFilter(ApplicationStatus.VIEWED)">
+      Viewed
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeFilter === ApplicationStatus.ACCEPTED"
+      (click)="setFilter(ApplicationStatus.ACCEPTED)">
+      Accepted
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeFilter === ApplicationStatus.REJECTED"
+      (click)="setFilter(ApplicationStatus.REJECTED)">
+      Rejected
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeFilter === ApplicationStatus.COMPLETED"
+      (click)="setFilter(ApplicationStatus.COMPLETED)">
+      Completed
+    </button>
+  </div>
+
+  <!-- Applications List -->
+  <div class="applications-content">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading applications...</p>
+    </div>
+
+    <div *ngIf="!isLoading && (filteredApplications$ | async) as applications">
+      <div *ngIf="applications.length > 0; else emptyState" class="applications-list">
+        <div class="application-card modern-card" *ngFor="let app of applications; trackBy: trackByApplicationId">
+          <div class="card-header">
+            <div class="applicant-info">
+              <div class="applicant-avatar">
+                {{ getApplicantInitials(app) }}
+              </div>
+              <div class="applicant-details">
+                <h3 class="applicant-name" (click)="onViewApplicantProfile(app.workerId || app.worker?.id)">
+                  {{ getApplicantName(app) }}
+                </h3>
+                <p class="applicant-email">{{ app.worker?.email }}</p>
+                <div class="application-meta">
+                  <span class="applied-time">
+                    <mat-icon>schedule</mat-icon>
+                    Applied {{ getTimeAgo(app.appliedAt) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="status-section">
+              <div class="current-status" [ngClass]="getStatusColorClass(app.status)">
+                <mat-icon>{{ getStatusIcon(app.status) }}</mat-icon>
+                {{ formatStatus(app.status) }}
+              </div>
+            </div>
+          </div>
+
+          <div class="card-content">
+            <!-- Cover Letter -->
+            <div class="cover-letter" *ngIf="app.coverLetter">
+              <h4>Cover Letter</h4>
+              <p>{{ app.coverLetter }}</p>
+            </div>
+
+            <!-- Skills -->
+            <div class="skills-section" *ngIf="app.worker?.skills && (app.worker?.skills?.length || 0) > 0">
+              <h4>Skills</h4>
+              <div class="skills-chips">
+                <mat-chip *ngFor="let skill of (app.worker?.skills || [])">{{ skill }}</mat-chip>
+              </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="contact-info" *ngIf="app.worker?.phone">
+              <h4>Contact Information</h4>
+              <p>
+                <mat-icon>phone</mat-icon>
+                {{ app.worker?.phone }}
+              </p>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button mat-stroked-button (click)="onViewApplicantProfile(app.workerId || app.worker?.id)" class="view-profile-btn">
+              <mat-icon>person</mat-icon>
+              View Profile
+            </button>
+
+            <!-- Status Update Dropdown -->
+            <mat-form-field appearance="outline" class="status-select">
+              <mat-label>Update Status</mat-label>
+              <mat-select [value]="app.status" (selectionChange)="onStatusChange(app.applicationId || app.id || 0, $event.value)">
+                <mat-option *ngFor="let status of applicationStatusOptions" [value]="status">
+                  <div class="status-option">
+<!--                    <mat-icon>{{ getStatusIcon(status) }}</mat-icon>-->
+                    {{ formatStatus(status) }}
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-icon-button [matMenuTriggerFor]="appMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #appMenu="matMenu">
+              <button mat-menu-item (click)="onViewApplicantProfile(app.workerId || app.worker?.id)">
+                <mat-icon>person</mat-icon>
+                View Full Profile
+              </button>
+              <button mat-menu-item>
+                <mat-icon>email</mat-icon>
+                Send Message
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <h3>{{ getEmptyStateTitle() }}</h3>
+          <p>{{ getEmptyStateMessage() }}</p>
+          <button mat-raised-button color="primary" (click)="setFilter('ALL')" *ngIf="activeFilter !== 'ALL'">
+            View All Applications
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Image Management Section (Collapsible) -->
+  <div class="image-management-section" *ngIf="job$ | async as job">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Job Images</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="image-grid" *ngIf="job.imageUrls && job.imageUrls.length > 0">
+          <img *ngFor="let imageUrl of job.imageUrls" [src]="imageUrl" alt="Job Image" class="job-image">
+        </div>
+        <div class="upload-section">
+          <mat-form-field appearance="outline">
+            <mat-label>Upload New Image</mat-label>
+            <input matInput type="file" (change)="onFileSelected($event)" accept="image/*">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="onImageUpload()" [disabled]="!selectedFile">
+            <mat-icon>upload</mat-icon>
+            Upload Image
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

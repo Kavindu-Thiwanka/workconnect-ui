@@ -1,52 +1,399 @@
 <div class="profile-container">
-  <div class="profile-card">
-    <h2>My Profile</h2>
-    <div *ngIf="userProfile; else loadingOrError">
-      <div class="user-info">
-        <p><strong>Email:</strong> {{ userProfile.email }}</p>
-        <p><strong>Role:</strong> {{ userProfile.userRole }}</p>
-        <p><strong>Member Since:</strong> {{ userProfile.createdAt | date: 'longDate' }}</p>
+  <!-- Profile Header -->
+  <section class="profile-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="profile-banner glass">
+          <div class="banner-content">
+            <h1 class="page-title">Your Profile</h1>
+            <p class="page-subtitle">Manage your professional information and preferences</p>
+          </div>
+        </div>
       </div>
-      <div class="divider"><span>Profile Details</span></div>
-      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="profileForm">
-        <ng-container *ngIf="userProfile.userRole === 'WORKER'">
-          <div class="form-group">
-            <label for="headline">Headline</label>
-            <input id="headline" type="text" formControlName="headline" placeholder="e.g., Experienced Electrician">
-          </div>
-          <div class="form-group">
-            <label for="skills">Skills</label>
-            <input id="skills" type="text" formControlName="skills" placeholder="e.g., Wiring, Plumbing, Carpentry">
-          </div>
-          <div class="form-group">
-            <label for="experience">Experience</label>
-            <textarea id="experience" formControlName="experience" rows="4"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="availability">Availability</label>
-            <input id="availability" type="text" formControlName="availability" placeholder="e.g., Available Immediately">
-          </div>
-        </ng-container>
-        <ng-container *ngIf="userProfile.userRole === 'EMPLOYER'">
-          <div class="form-group">
-            <label for="companyName">Company Name</label>
-            <input id="companyName" type="text" formControlName="companyName">
-          </div>
-          <div class="form-group">
-            <label for="industry">Industry</label>
-            <input id="industry" type="text" formControlName="industry" placeholder="e.g., Construction">
-          </div>
-          <div class="form-group">
-            <label for="description">Company Description</label>
-            <textarea id="description" formControlName="description" rows="4"></textarea>
-          </div>
-        </ng-container>
-        <button type="submit" [disabled]="profileForm.invalid" class="save-button">Save Profile</button>
-      </form>
     </div>
-    <ng-template #loadingOrError>
-      <p *ngIf="error; else loading">{{ error }}</p>
-      <ng-template #loading><p>Loading profile...</p></ng-template>
-    </ng-template>
-  </div>
+  </section>
+
+  <!-- Profile Content -->
+  <section class="profile-content section">
+    <div class="container">
+      <div class="profile-grid">
+
+        <!-- Profile Picture Section -->
+        <div class="profile-card modern-card image-upload-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>photo_camera</mat-icon>
+              Profile Picture
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div class="image-upload-section">
+              <div class="current-image">
+                <div class="image-container">
+                  <!-- Show preview image if file is selected -->
+                  <img
+                    [src]="previewImageUrl"
+                    *ngIf="previewImageUrl"
+                    alt="Selected Image Preview"
+                    class="profile-picture-preview preview-image"
+                  >
+                  <!-- Show current profile image if no preview -->
+                  <img
+                    [src]="currentImageUrl"
+                    *ngIf="currentImageUrl && !previewImageUrl"
+                    alt="Current Profile Picture"
+                    class="profile-picture-preview"
+                  >
+                  <!-- Show placeholder if no image -->
+                  <div *ngIf="!currentImageUrl && !previewImageUrl" class="placeholder-avatar">
+                    <mat-icon>person</mat-icon>
+                  </div>
+                </div>
+                <div class="image-overlay">
+                  <mat-icon>camera_alt</mat-icon>
+                </div>
+                <!-- Preview indicator -->
+                <div *ngIf="previewImageUrl" class="preview-indicator">
+                  <span class="preview-text">Preview</span>
+                </div>
+              </div>
+
+              <div class="upload-controls">
+                <div class="file-input-wrapper">
+                  <input
+                    id="picture"
+                    type="file"
+                    (change)="onFileSelected($event)"
+                    accept="image/*"
+                    class="file-input"
+                  >
+                  <label for="picture" class="file-input-label">
+                    <mat-icon>upload</mat-icon>
+                    Choose Photo
+                  </label>
+                </div>
+
+                <!-- Selected file info -->
+                <div *ngIf="selectedFile" class="selected-file-info">
+                  <div class="file-details">
+                    <mat-icon>image</mat-icon>
+                    <span class="file-name">{{ selectedFile.name }}</span>
+                    <span class="file-size">({{ formatFileSize(selectedFile.size) }})</span>
+                  </div>
+                  <button
+                    mat-icon-button
+                    (click)="clearFileSelection()"
+                    class="clear-btn"
+                    title="Clear selection"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+
+                <div class="action-buttons">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="onPictureUpload()"
+                    class="upload-btn"
+                    [attr.disabled]="isFileSelected ? null : true"
+                  >
+                    <mat-icon *ngIf="!isUploading">cloud_upload</mat-icon>
+                    <mat-spinner *ngIf="isUploading" diameter="20"></mat-spinner>
+                    {{ isUploading ? 'Uploading...' : 'Upload Picture' }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="upload-tips">
+                <p class="tip-text">
+                  <mat-icon>info</mat-icon>
+                  Upload a professional photo for better visibility
+                </p>
+                <ul class="requirements">
+                  <li>JPG, PNG or GIF format</li>
+                  <li>Maximum 5MB file size</li>
+                  <li>Square aspect ratio recommended</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="profile-card modern-card form-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>edit</mat-icon>
+              Profile Information
+            </h2>
+            <div class="completion-section">
+              <div class="completion-info">
+                <span class="completion-text">{{ profileCompletionPercentage }}% Complete</span>
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="profileCompletionPercentage"
+                  [attr.aria-valuenow]="profileCompletionPercentage"
+                  [attr.aria-valuemin]="0"
+                  [attr.aria-valuemax]="100"
+                  class="completion-bar"
+                  role="progressbar">
+                </mat-progress-bar>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-content">
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="modern-form">
+
+              <!-- Worker Fields -->
+              <div *ngIf="userRole === 'WORKER'" class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>person</mat-icon>
+                  Personal Information
+                </h3>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>First Name</mat-label>
+                    <input matInput formControlName="firstName" placeholder="Enter your first name">
+                    <mat-icon matSuffix>person</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput formControlName="lastName" placeholder="Enter your last name">
+                    <mat-icon matSuffix>person</mat-icon>
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Phone Number</mat-label>
+                  <input matInput formControlName="phoneNumber" placeholder="Enter your phone number">
+                  <mat-icon matSuffix>phone</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Bio</mat-label>
+                  <textarea matInput formControlName="bio" rows="3" placeholder="Tell us about yourself"></textarea>
+                  <mat-icon matSuffix>description</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Experience</mat-label>
+                  <textarea matInput formControlName="experience" rows="3" placeholder="Describe your work experience"></textarea>
+                  <mat-icon matSuffix>work</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Education</mat-label>
+                  <textarea matInput formControlName="education" rows="3" placeholder="Describe your educational background"></textarea>
+                  <mat-icon matSuffix>school</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Skills</mat-label>
+                  <input matInput formControlName="skills" placeholder="e.g. JavaScript, React, Node.js">
+                  <mat-icon matSuffix>code</mat-icon>
+                  <mat-hint>Separate skills with commas</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Availability</mat-label>
+                  <mat-select formControlName="availability">
+                    <mat-option value="full-time">Full Time</mat-option>
+                    <mat-option value="part-time">Part Time</mat-option>
+                    <mat-option value="contract">Contract</mat-option>
+                    <mat-option value="freelance">Freelance</mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>schedule</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <!-- Employer Fields -->
+              <div *ngIf="userRole === 'EMPLOYER'" class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>business</mat-icon>
+                  Company Information
+                </h3>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Company Name</mat-label>
+                  <input matInput formControlName="companyName" placeholder="Enter your company name">
+                  <mat-icon matSuffix>business</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Company Description</mat-label>
+                  <textarea
+                    matInput
+                    formControlName="companyDescription"
+                    rows="4"
+                    placeholder="Describe your company, culture, and values"
+                  ></textarea>
+                  <mat-icon matSuffix>description</mat-icon>
+                  <mat-hint>Tell candidates about your company</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <!-- Common Fields -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>location_on</mat-icon>
+                  Location & Contact
+                </h3>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Location</mat-label>
+                  <input matInput formControlName="location" placeholder="City, State or Remote">
+                  <mat-icon matSuffix>location_on</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="form-actions">
+                <button
+                  type="button"
+                  mat-stroked-button
+                  class="cancel-btn"
+                  (click)="onCancel()"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  mat-raised-button
+                  color="primary"
+                  class="save-btn"
+                  [disabled]="profileForm.invalid"
+                >
+                  <mat-icon>save</mat-icon>
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Profile Preview -->
+        <div class="profile-card modern-card preview-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>preview</mat-icon>
+              Profile Preview
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div class="profile-preview">
+              <div class="preview-header">
+                <div class="preview-avatar">
+                  <img [src]="currentImageUrl" *ngIf="currentImageUrl" alt="Profile">
+                  <mat-icon *ngIf="!currentImageUrl">person</mat-icon>
+                </div>
+                <div class="preview-info">
+                  <h3 class="preview-name" *ngIf="userRole === 'WORKER'">
+                    {{ profileForm.get('firstName')?.value || 'First' }}
+                    {{ profileForm.get('lastName')?.value || 'Last' }}
+                  </h3>
+                  <h3 class="preview-name" *ngIf="userRole === 'EMPLOYER'">
+                    {{ profileForm.get('companyName')?.value || 'Company Name' }}
+                  </h3>
+                  <p class="preview-location">
+                    <mat-icon>location_on</mat-icon>
+                    {{ profileForm.get('location')?.value || 'Location' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="preview-content" *ngIf="userRole === 'WORKER'">
+                <div class="preview-section" *ngIf="profileForm.get('skills')?.value">
+                  <h4>Skills</h4>
+                  <div class="skills-preview">
+                    <span
+                      class="skill-tag"
+                      *ngFor="let skill of getSkillsArray()"
+                    >
+                      {{ skill }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="preview-section" *ngIf="profileForm.get('availability')?.value">
+                  <h4>Availability</h4>
+                  <span class="availability-badge badge badge-success">
+                    {{ profileForm.get('availability')?.value | titlecase }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="preview-content" *ngIf="userRole === 'EMPLOYER'">
+                <div class="preview-section" *ngIf="profileForm.get('companyDescription')?.value">
+                  <h4>About Company</h4>
+                  <p class="company-description">
+                    {{ profileForm.get('companyDescription')?.value }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Tips -->
+        <div class="profile-card modern-card tips-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <mat-icon>lightbulb</mat-icon>
+              Profile Tips
+            </h2>
+          </div>
+
+          <div class="card-content">
+            <div class="tips-list">
+              <div class="tip-item" *ngIf="userRole === 'WORKER'">
+                <div class="tip-icon">
+                  <mat-icon>photo_camera</mat-icon>
+                </div>
+                <div class="tip-content">
+                  <h4>Add a Professional Photo</h4>
+                  <p>Profiles with photos get 3x more views</p>
+                </div>
+              </div>
+
+              <div class="tip-item" *ngIf="userRole === 'WORKER'">
+                <div class="tip-icon">
+                  <mat-icon>code</mat-icon>
+                </div>
+                <div class="tip-content">
+                  <h4>List Relevant Skills</h4>
+                  <p>Include both technical and soft skills</p>
+                </div>
+              </div>
+
+              <div class="tip-item" *ngIf="userRole === 'EMPLOYER'">
+                <div class="tip-icon">
+                  <mat-icon>business</mat-icon>
+                </div>
+                <div class="tip-content">
+                  <h4>Showcase Your Company</h4>
+                  <p>A compelling description attracts top talent</p>
+                </div>
+              </div>
+
+              <div class="tip-item">
+                <div class="tip-icon">
+                  <mat-icon>location_on</mat-icon>
+                </div>
+                <div class="tip-content">
+                  <h4>Be Specific About Location</h4>
+                  <p>Include remote work options if available</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

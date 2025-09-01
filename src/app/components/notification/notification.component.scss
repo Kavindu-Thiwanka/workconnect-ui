@@ -1,0 +1,173 @@
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 400px;
+  width: 100%;
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+}
+
+.notification {
+  margin-bottom: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &.notification-success {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: white;
+    
+    .notification-icon {
+      color: #e8f5e8;
+    }
+  }
+
+  &.notification-error {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    color: white;
+    
+    .notification-icon {
+      color: #ffebee;
+    }
+  }
+
+  &.notification-warning {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    
+    .notification-icon {
+      color: #fff3e0;
+    }
+  }
+
+  &.notification-info {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+    
+    .notification-icon {
+      color: #e3f2fd;
+    }
+  }
+}
+
+.notification-content {
+  padding: 16px;
+}
+
+.notification-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.notification-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notification-title {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.close-button {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin: -8px -8px -8px 0;
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.notification-message {
+  margin: 0 0 12px 36px;
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.95;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 0 36px;
+  flex-wrap: wrap;
+
+  button {
+    min-width: auto;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &[color="primary"] {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #333;
+
+      &:hover {
+        background-color: white;
+      }
+    }
+  }
+}
+
+// Animation improvements
+.notification {
+  transform-origin: top right;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateX(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .notification {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .notification {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
