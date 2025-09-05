@@ -142,7 +142,27 @@
           margin-bottom: 0;
         }
 
+        // Standardized full-width form field styling
+        .mat-mdc-form-field {
+          width: 100% !important;
+
+          &.full-width {
+            width: 100% !important;
+          }
+        }
+
         ::ng-deep {
+          // Ensure consistent width for all form field components
+          .mat-mdc-text-field-wrapper {
+            width: 100%;
+          }
+
+          .mat-mdc-form-field-infix {
+            width: 100%;
+            // Standardized padding for all form fields to ensure consistent width
+            padding-left: 52px !important; // Consistent space for prefix icons
+            padding-right: 52px !important; // Consistent space for suffix icons/buttons
+          }
           .mat-mdc-text-field-wrapper {
             background: var(--white);
             border-radius: var(--radius-lg);
@@ -336,6 +356,34 @@
       .form-header {
         .form-title {
           font-size: 1.75rem;
+        }
+      }
+
+      // Mobile responsive form field width adjustments
+      .modern-form {
+        .form-field {
+          .mat-mdc-form-field {
+            width: 100% !important;
+          }
+
+          ::ng-deep {
+            .mat-mdc-text-field-wrapper {
+              width: 100%;
+              min-height: 52px; // Slightly smaller on mobile
+            }
+
+            .mat-mdc-form-field-infix {
+              width: 100%;
+              // Adjusted padding for mobile while maintaining consistency
+              padding-left: 46px !important; // Adjusted for smaller mobile icons
+              padding-right: 46px !important;
+            }
+
+            .mdc-text-field__input {
+              font-size: 16px; // Prevent zoom on iOS
+              padding: 14px 12px;
+            }
+          }
         }
       }
     }
