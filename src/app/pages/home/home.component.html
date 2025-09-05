@@ -1,39 +1,70 @@
 <div class="home-container">
-  <!-- Hero Section -->
-  <section class="hero-section">
+  <!-- Enhanced Hero Section -->
+  <section class="hero-section" #heroSection [@fadeInUp]>
     <div class="container">
       <div class="hero-content">
-        <div class="hero-text animate-fade-in-up">
+        <div class="hero-text" [@slideInLeft]>
+          <div class="hero-badge">
+            <mat-icon>verified</mat-icon>
+            <span>Trusted by 25,000+ Professionals</span>
+          </div>
+
           <h1 class="hero-title">
-            Find Your Next
-            <span class="gradient-text">Trade Job</span>
+            Connect. Work.
+            <span class="gradient-text">Succeed.</span>
           </h1>
+
           <p class="hero-subtitle">
-            Connect skilled tradespeople with quality work opportunities.
-            Whether you're a contractor looking for reliable workers or a tradesperson
-            seeking your next project, TradeConnect makes it happen.
+            The premier platform connecting skilled tradespeople with quality work opportunities.
+            Whether you're a contractor seeking reliable professionals or a tradesperson
+            looking for your next project, WorkConnect makes success happen.
           </p>
 
           <div class="hero-actions">
             <button mat-raised-button color="primary" routerLink="/register" class="cta-btn primary">
               <mat-icon>work</mat-icon>
-              Find Work
+              Find Work Today
             </button>
-            <button mat-stroked-button routerLink="/login" class="cta-btn secondary">
-              <mat-icon>login</mat-icon>
-              Sign In
+            <button mat-stroked-button routerLink="/register" class="cta-btn secondary">
+              <mat-icon>business</mat-icon>
+              Hire Professionals
             </button>
           </div>
 
-          <div class="hero-stats">
-            <div class="stat-item" *ngFor="let stat of stats">
-              <span class="stat-number">{{ stat.number }}</span>
-              <span class="stat-label">{{ stat.label }}</span>
+          <div class="hero-features">
+            <div class="feature-item">
+              <mat-icon>check_circle</mat-icon>
+              <span>Free to Join</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>security</mat-icon>
+              <span>Secure Payments</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>support_agent</mat-icon>
+              <span>24/7 Support</span>
+            </div>
+          </div>
+
+          <div class="hero-stats" [@staggerIn]>
+            <div class="stat-item" *ngFor="let stat of stats; let i = index">
+              <div class="stat-icon">
+                <mat-icon>{{ stat.icon }}</mat-icon>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number">
+                  {{ i === 0 ? animatedStats.activeJobs :
+                     i === 1 ? animatedStats.workers :
+                     i === 2 ? animatedStats.contractors :
+                     animatedStats.completionRate }}{{ stat.suffix }}
+                </span>
+                <span class="stat-label">{{ stat.label }}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="hero-visual animate-fade-in-right">
+        <div class="hero-visual" [@slideInRight]>
           <div class="visual-card glass">
             <div class="card-header">
               <div class="user-avatar">
@@ -42,31 +73,57 @@
               <div class="user-info">
                 <h4>Mike Rodriguez</h4>
                 <p>Licensed Electrician</p>
+                <div class="rating">
+                  <mat-icon *ngFor="let star of getStarArray(5)">star</mat-icon>
+                  <span>5.0</span>
+                </div>
               </div>
-              <div class="status-badge badge-success">Available</div>
+              <div class="status-badge badge-success">
+                <div class="status-dot"></div>
+                Available Now
+              </div>
             </div>
             <div class="card-content">
               <div class="skills">
-                <span class="skill-tag">Residential Wiring</span>
-                <span class="skill-tag">Commercial</span>
-                <span class="skill-tag">Licensed</span>
+                <mat-chip-set>
+                  <mat-chip>Residential Wiring</mat-chip>
+                  <mat-chip>Commercial</mat-chip>
+                  <mat-chip>Licensed</mat-chip>
+                </mat-chip-set>
               </div>
               <div class="match-indicator">
-                <mat-icon>star</mat-icon>
+                <mat-icon>verified</mat-icon>
                 <span>Perfect Match</span>
+              </div>
+              <div class="card-stats">
+                <div class="stat">
+                  <span class="value">150+</span>
+                  <span class="label">Jobs Completed</span>
+                </div>
+                <div class="stat">
+                  <span class="value">$85/hr</span>
+                  <span class="label">Rate</span>
+                </div>
               </div>
             </div>
           </div>
 
+          <!-- Floating Elements -->
           <div class="floating-elements">
-            <div class="floating-icon" style="--delay: 0s">
-              <mat-icon>construction</mat-icon>
+            <div class="floating-card notification-card">
+              <mat-icon>notifications</mat-icon>
+              <div class="notification-content">
+                <span class="notification-title">New Job Match!</span>
+                <span class="notification-text">Electrical work in your area</span>
+              </div>
             </div>
-            <div class="floating-icon" style="--delay: 1s">
-              <mat-icon>plumbing</mat-icon>
-            </div>
-            <div class="floating-icon" style="--delay: 2s">
-              <mat-icon>electrical_services</mat-icon>
+
+            <div class="floating-card payment-card">
+              <mat-icon>payment</mat-icon>
+              <div class="payment-content">
+                <span class="payment-amount">$2,450</span>
+                <span class="payment-text">Payment received</span>
+              </div>
             </div>
           </div>
         </div>
@@ -74,23 +131,93 @@
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features-section section">
+  <!-- Enhanced Features Section -->
+  <section class="features-section section" [@fadeInUp]>
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Why Choose TradeConnect?</h2>
+        <div class="section-badge">
+          <mat-icon>star</mat-icon>
+          <span>Why Choose WorkConnect</span>
+        </div>
+        <h2 class="section-title">Everything You Need to Succeed</h2>
         <p class="section-subtitle">
-          Everything you need to succeed in the skilled trades
+          Powerful tools and features designed specifically for skilled trades professionals
         </p>
       </div>
 
-      <div class="features-grid">
-        <div class="feature-card modern-card" *ngFor="let feature of features">
-          <div class="feature-icon">
-            <mat-icon>{{ feature.icon }}</mat-icon>
+      <div class="features-grid" [@staggerIn]>
+        <mat-card class="feature-card" *ngFor="let feature of features; let i = index" [@scaleIn]>
+          <mat-card-content>
+            <div class="feature-icon" [ngClass]="'icon-' + feature.color">
+              <mat-icon>{{ feature.icon }}</mat-icon>
+            </div>
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-description">{{ feature.description }}</p>
+            <div class="feature-link">
+              <span>Learn more</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof Section -->
+  <section class="social-proof-section section" [@fadeInUp]>
+    <div class="container">
+      <div class="social-proof-content">
+        <div class="testimonial-section">
+          <div class="section-header">
+            <h2 class="section-title">Trusted by Professionals</h2>
+            <p class="section-subtitle">See what our community has to say</p>
           </div>
-          <h3 class="feature-title">{{ feature.title }}</h3>
-          <p class="feature-description">{{ feature.description }}</p>
+
+          <div class="testimonial-card glass" [@slideInLeft]>
+            <div class="testimonial-content">
+              <div class="quote-icon">
+                <mat-icon>format_quote</mat-icon>
+              </div>
+              <p class="testimonial-text">{{ getCurrentTestimonial().text }}</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <div class="author-info">
+                  <h4 class="author-name">{{ getCurrentTestimonial().name }}</h4>
+                  <p class="author-role">{{ getCurrentTestimonial().role }}</p>
+                  <p class="author-location">{{ getCurrentTestimonial().location }}</p>
+                </div>
+                <div class="author-rating">
+                  <mat-icon *ngFor="let star of getStarArray(getCurrentTestimonial().rating)">star</mat-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="trust-indicators" [@slideInRight]>
+          <div class="trust-item">
+            <mat-icon>verified_user</mat-icon>
+            <div class="trust-content">
+              <h4>Background Verified</h4>
+              <p>All professionals undergo thorough background checks</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <mat-icon>security</mat-icon>
+            <div class="trust-content">
+              <h4>Secure Platform</h4>
+              <p>Bank-level security protects your data and payments</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <mat-icon>support_agent</mat-icon>
+            <div class="trust-content">
+              <h4>Expert Support</h4>
+              <p>Get help from our dedicated support team anytime</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -164,127 +291,176 @@
     </div>
   </section>
 
-  <!-- How It Works Section -->
-  <section class="how-it-works-section section">
+  <!-- Enhanced How It Works Section -->
+  <section class="how-it-works-section section" [@fadeInUp]>
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">How It Works</h2>
+        <div class="section-badge">
+          <mat-icon>timeline</mat-icon>
+          <span>Simple Process</span>
+        </div>
+        <h2 class="section-title">How WorkConnect Works</h2>
         <p class="section-subtitle">
-          Get started in just a few simple steps
+          Get started and find work in just four simple steps
         </p>
       </div>
 
-      <div class="steps-container">
-        <div class="step-item">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Create Your Profile</h3>
-            <p>Showcase your skills, certifications, and experience</p>
+      <div class="steps-container" [@staggerIn]>
+        <div class="step-item" *ngFor="let step of howItWorks; let i = index; let last = last" [@scaleIn]>
+          <div class="step-card modern-card">
+            <div class="step-header">
+              <div class="step-number">{{ step.step }}</div>
+              <div class="step-icon">
+                <mat-icon>{{ step.icon }}</mat-icon>
+              </div>
+            </div>
+            <div class="step-content">
+              <h3 class="step-title">{{ step.title }}</h3>
+              <p class="step-description">{{ step.description }}</p>
+              <div class="step-details">
+                <div class="detail-item" *ngFor="let detail of step.details">
+                  <mat-icon>check</mat-icon>
+                  <span>{{ detail }}</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div class="step-connector"></div>
-
-        <div class="step-item">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>Browse Jobs</h3>
-            <p>Find work that matches your trade and location</p>
-          </div>
-        </div>
-
-        <div class="step-connector"></div>
-
-        <div class="step-item">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>Get Hired</h3>
-            <p>Apply for jobs and start working with quality contractors</p>
+          <div class="step-connector" *ngIf="!last">
+            <mat-icon>arrow_forward</mat-icon>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials Section -->
-  <section class="testimonials-section section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">What Our Community Says</h2>
-        <p class="section-subtitle">
-          Real stories from real tradespeople and contractors
-        </p>
-      </div>
-
-      <div class="testimonials-grid">
-        <div class="testimonial-card modern-card">
-          <div class="testimonial-content">
-            <p>"TradeConnect helped me find consistent work as an electrician. The contractors are professional and pay on time."</p>
-          </div>
-          <div class="testimonial-author">
-            <div class="author-avatar">
-              <mat-icon>person</mat-icon>
-            </div>
-            <div class="author-info">
-              <h4>Carlos Martinez</h4>
-              <p>Licensed Electrician</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card modern-card">
-          <div class="testimonial-content">
-            <p>"As a contractor, I can quickly find skilled workers for my projects. The quality of tradespeople is excellent."</p>
-          </div>
-          <div class="testimonial-author">
-            <div class="author-avatar">
-              <mat-icon>person</mat-icon>
-            </div>
-            <div class="author-info">
-              <h4>Sarah Johnson</h4>
-              <p>General Contractor</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card modern-card">
-          <div class="testimonial-content">
-            <p>"I've built my plumbing business through TradeConnect. Great platform for connecting with homeowners and contractors."</p>
-          </div>
-          <div class="testimonial-author">
-            <div class="author-avatar">
-              <mat-icon>person</mat-icon>
-            </div>
-            <div class="author-info">
-              <h4>David Kim</h4>
-              <p>Master Plumber</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="cta-section section">
+  <!-- Enhanced CTA Section -->
+  <section class="cta-section section" [@fadeInUp]>
     <div class="container">
       <div class="cta-content glass">
-        <h2 class="cta-title">Ready to Start Working?</h2>
-        <p class="cta-subtitle">
-          Join thousands of skilled tradespeople who have found success with TradeConnect
-        </p>
+        <div class="cta-header">
+          <h2 class="cta-title">Ready to Transform Your Career?</h2>
+          <p class="cta-subtitle">
+            Join over 25,000 skilled professionals who have found success with WorkConnect
+          </p>
+        </div>
+
+        <div class="cta-stats">
+          <div class="cta-stat">
+            <span class="stat-number">$2.5M+</span>
+            <span class="stat-label">Paid to Workers</span>
+          </div>
+          <div class="cta-stat">
+            <span class="stat-number">4.9/5</span>
+            <span class="stat-label">Average Rating</span>
+          </div>
+          <div class="cta-stat">
+            <span class="stat-number">24hrs</span>
+            <span class="stat-label">Avg. Response Time</span>
+          </div>
+        </div>
 
         <div class="cta-actions">
-          <button mat-raised-button color="primary" routerLink="/register" class="cta-btn">
-            <mat-icon>construction</mat-icon>
-            Start Finding Work
+          <button mat-raised-button color="primary" routerLink="/register" class="cta-btn primary">
+            <mat-icon>work</mat-icon>
+            Find Work Today
+          </button>
+          <button mat-stroked-button routerLink="/register" class="cta-btn secondary">
+            <mat-icon>business</mat-icon>
+            Hire Professionals
           </button>
         </div>
 
-        <div class="cta-note">
-          <p>Free to join • No hidden fees • Get paid faster</p>
+        <div class="cta-features">
+          <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>Free to join</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>security</mat-icon>
+            <span>Secure payments</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>support_agent</mat-icon>
+            <span>24/7 support</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>verified</mat-icon>
+            <span>Verified professionals</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Footer Section -->
+  <footer class="footer-section">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3 class="brand-title">WorkConnect</h3>
+          <p class="brand-description">
+            Connecting skilled tradespeople with quality work opportunities across the nation.
+          </p>
+          <div class="social-links">
+            <button mat-icon-button>
+              <mat-icon>facebook</mat-icon>
+            </button>
+            <button mat-icon-button>
+              <mat-icon>twitter</mat-icon>
+            </button>
+            <button mat-icon-button>
+              <mat-icon>linkedin</mat-icon>
+            </button>
+            <button mat-icon-button>
+              <mat-icon>instagram</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <div class="link-group">
+            <h4>For Workers</h4>
+            <a href="#" routerLink="/register">Find Jobs</a>
+            <a href="#" routerLink="/register">Create Profile</a>
+            <a href="#" routerLink="/login">Worker Login</a>
+            <a href="#">Success Stories</a>
+          </div>
+          <div class="link-group">
+            <h4>For Employers</h4>
+            <a href="#" routerLink="/register">Post Jobs</a>
+            <a href="#" routerLink="/register">Find Workers</a>
+            <a href="#" routerLink="/login">Employer Login</a>
+            <a href="#">Pricing</a>
+          </div>
+          <div class="link-group">
+            <h4>Support</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Contact Us</a>
+            <a href="#">Safety</a>
+            <a href="#">Trust & Safety</a>
+          </div>
+          <div class="link-group">
+            <h4>Company</h4>
+            <a href="#">About Us</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="footer-bottom">
+        <div class="footer-legal">
+          <p>&copy; 2024 WorkConnect. All rights reserved.</p>
+          <div class="legal-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Cookie Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 </div>

@@ -175,6 +175,26 @@ body {
   }
 }
 
+/* Standardized Full-Width Form Field Utility */
+.full-width {
+  width: 100% !important;
+  box-sizing: border-box;
+
+  .mat-mdc-form-field {
+    width: 100% !important;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .mat-mdc-form-field-infix {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+}
+
 /* Modern Grid System */
 .grid {
   display: grid;
