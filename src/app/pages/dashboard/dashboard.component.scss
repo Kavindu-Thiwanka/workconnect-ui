@@ -693,3 +693,132 @@
     }
   }
 }
+
+// AI-Powered Recommendation Styling
+.recommendation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+
+  &.primary {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+  }
+
+  &.accent {
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent);
+  }
+
+  .badge-icon {
+    font-size: 0.875rem;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+.recommendation-reason {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin: 0.5rem 0 0 0;
+  font-style: italic;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+// Enhanced job recommendation cards
+.job-recommendation {
+  position: relative;
+
+  &.ai-powered {
+    border-left: 3px solid var(--primary);
+
+    //&::before {
+    //  content: '??';
+    //  position: absolute;
+    //  top: 0.5rem;
+    //  right: 0.5rem;
+    //  font-size: 1rem;
+    //  opacity: 0.7;
+    //}
+  }
+
+  &.basic-recommendation {
+    border-left: 3px solid var(--accent);
+  }
+}
+
+// Loading state for recommendations
+.recommendations-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+
+  mat-spinner {
+    margin-right: 1rem;
+  }
+}
+
+// AI status indicator animation
+.recommendation-badge {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Enhanced empty state styling
+.empty-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+
+  .btn-modern {
+    min-width: 120px;
+  }
+}
+
+// Responsive design for recommendation badges
+@media (max-width: 768px) {
+  .recommendation-badge {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+
+    .badge-icon {
+      font-size: 0.75rem;
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+  }
+
+  .card-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .recommendation-reason {
+    font-size: 0.75rem;
+  }
+}

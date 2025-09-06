@@ -6,9 +6,9 @@
         <p class="page-subtitle">Track your job applications and leave reviews for completed work</p>
       </div>
       <div class="header-actions">
-        <button mat-icon-button (click)="refreshApplications()" [disabled]="isLoading" title="Refresh">
-          <mat-icon [class.spinning]="isLoading">refresh</mat-icon>
-        </button>
+<!--        <button mat-icon-button (click)="refreshApplications()" [disabled]="isLoading" title="Refresh">-->
+<!--          <mat-icon [class.spinning]="isLoading">refresh</mat-icon>-->
+<!--        </button>-->
       </div>
       <div class="header-stats" *ngIf="applicationStats$ | async as stats">
         <div class="stat-card">
