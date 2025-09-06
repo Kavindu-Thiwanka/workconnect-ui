@@ -353,6 +353,23 @@ export interface PageResponse<T> {
   numberOfElements: number;
 }
 
+// Recommendation Models
+export interface JobRecommendation {
+  recommendations: Job[];
+  totalCount: number;
+  recommendationReason: string;
+  isAiPowered?: boolean;
+  aiServiceUsed?: boolean;
+}
+
+export interface RecommendationResponse {
+  recommendations: Job[];
+  totalCount: number;
+  recommendationReason: string;
+  isAiPowered?: boolean;
+  fallbackUsed?: boolean;
+}
+
 // Notification Models
 export interface Notification {
   id: number;

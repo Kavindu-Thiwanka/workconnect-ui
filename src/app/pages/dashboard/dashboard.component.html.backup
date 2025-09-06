@@ -107,15 +107,7 @@
             <h2 class="card-title">
               <mat-icon>recommend</mat-icon>
               Recommended for You
-              <span class="recommendation-badge" [ngClass]="getRecommendationStatus().statusColor"
-                    *ngIf="recommendationReason">
-                  <mat-icon class="badge-icon">{{ getRecommendationStatus().statusIcon }}</mat-icon>
-                {{ getRecommendationStatus().statusText }}
-                </span>
             </h2>
-<!--            <p class="recommendation-reason" *ngIf="recommendationReason">-->
-<!--              {{ recommendationReason }}-->
-<!--            </p>-->
             <button mat-button class="view-all-btn" routerLink="/app/jobs">
               View All
               <mat-icon>arrow_forward</mat-icon>
@@ -124,18 +116,24 @@
 
           <div class="card-content">
             <div *ngIf="recommendedJobs.length > 0; else noRecs" class="recommendations-list">
-              <div class="job-recommendation" [ngClass]="isAiPowered ? 'ai-powered' : 'basic-recommendation'"
-                   *ngFor="let job of recommendedJobs.slice(0, 3)">
+              <div class="job-recommendation" *ngFor="let job of recommendedJobs.slice(0, 3)">
                 <div class="job-info">
                   <div class="company-avatar">
                     {{ job.employerCompanyName.charAt(0) || 'C' }}
                   </div>
                   <div class="job-details">
                     <h4 class="job-title">{{ job.jobTitle }}</h4>
-                    <span class="location">
+<!--                    <p class="company-name">{{ job.employerCompanyName || 'Company' }}</p>-->
+<!--                    <div class="job-meta">-->
+                      <span class="location">
                         <mat-icon>location_on</mat-icon>
-                      {{ job.location }}
-                    </span>
+                        {{ job.location }}
+                      </span>
+<!--                      <span class="salary" *ngIf="job.salary">-->
+<!--                        {{ formatSalary(job.salary, job.currency) }}-->
+<!--                      </span>-->
+<!--                      <span class="job-type">{{ job.jobType.replace('_', ' ') }}</span>-->
+<!--                    </div>-->
                   </div>
                 </div>
                 <div class="job-actions">
@@ -152,18 +150,11 @@
             <ng-template #noRecs>
               <div class="empty-state">
                 <mat-icon class="empty-icon">work_off</mat-icon>
-                <h4>No recommendations available</h4>
-                <p *ngIf="!isAiPowered">Complete your profile with skills to get AI-powered job recommendations</p>
-                <p *ngIf="isAiPowered">No matching jobs found based on your skills. Try updating your profile or check
-                  back later.</p>
-                <div class="empty-actions">
-                  <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
-                    Update Profile
-                  </button>
-                  <button mat-stroked-button routerLink="/app/jobs" class="btn-modern">
-                    Browse All Jobs
-                  </button>
-                </div>
+                <h4>No recommendations yet</h4>
+                <p>Complete your profile to get personalized job recommendations</p>
+                <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
+                  Update Profile
+                </button>
               </div>
             </ng-template>
 
@@ -246,8 +237,7 @@
               </mat-progress-bar>
             </div>
 
-            <div *ngIf="profileCompletion && profileCompletion.tips && profileCompletion.tips.length > 0"
-                 class="improvement-tips">
+            <div *ngIf="profileCompletion && profileCompletion.tips && profileCompletion.tips.length > 0" class="improvement-tips">
               <h4>Boost your profile:</h4>
               <ul class="tips-list">
                 <li *ngFor="let tip of profileCompletion.tips.slice(0, 3)">
@@ -308,6 +298,3 @@
     <app-employer-dashboard></app-employer-dashboard>
   </section>
 </div>
-
-
-
