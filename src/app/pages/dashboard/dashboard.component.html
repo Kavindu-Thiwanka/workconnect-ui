@@ -192,8 +192,8 @@
             <div *ngIf="recentApplications.length > 0; else noApplications" class="applications-list">
               <div class="application-item" *ngFor="let app of recentApplications.slice(0, 3)">
                 <div class="application-info">
-                  <h4 class="job-title">{{ app.job?.jobTitle || 'Job Title' }}</h4>
-                  <p class="company-name">{{ app.job?.employerProfile?.companyName || 'Company' }}</p>
+                  <h4 class="job-title">{{ app.jobTitle || 'Job Title' }}</h4>
+                  <p class="company-name">{{ app.employerCompanyName || 'Company' }}</p>
                   <span class="application-date">Applied {{ formatDate(app.appliedAt) }}</span>
                 </div>
                 <div class="application-status">

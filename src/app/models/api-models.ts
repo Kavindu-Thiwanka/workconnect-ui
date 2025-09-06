@@ -107,6 +107,8 @@ export interface Job {
 export interface JobApplication {
   id: number;
   jobId: number;
+  jobTitle?: string;
+  employerCompanyName?: string;
   workerId: number;
   status: 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'INTERVIEWED' | 'OFFERED' | 'HIRED' | 'REJECTED' | 'COMPLETED';
   coverLetter?: string;
