@@ -14,7 +14,6 @@ import { ProfileService } from '../../services/profile.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { LoadingService } from '../../services/loading.service';
 import { ErrorService } from '../../services/error.service';
-import { RecommendationService } from '../../services/recommendation.service';
 import { EmployerDashboardComponent } from '../employer/employer-dashboard/employer-dashboard.component';
 import {
   WorkerDashboardStats,
@@ -54,8 +53,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   workerProfile: WorkerProfile | null = null;
   recentApplications: JobApplication[] = [];
   recommendedJobs: Job[] = [];
-  recommendationReason: string = '';
-  isAiPowered: boolean = false;
   profileCompletion = { percentage: 0, tips: [] as string[] };
 
   // Employer Dashboard Data
@@ -70,8 +67,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private dashboardService: DashboardService,
     public loadingService: LoadingService,
     private errorService: ErrorService,
-    private router: Router,
-    private recommendationService: RecommendationService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -108,7 +104,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (dashboard) {
           this.workerStats = dashboard;
           this.recentApplications = dashboard.recentApplications || [];
-          this.loadEnhancedRecommendations();
+          this.recommendedJobs = dashboard.recommendedJobs || [];
           this.profileCompletion = {
             percentage: dashboard.profileCompletionPercentage || 0,
             tips: dashboard.profileCompletionTips || []
@@ -358,40 +354,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onUpdateApplicationStatus(applicationId: number): void {
     // This could open a dialog or navigate to a status update page
     this.router.navigate(['/app/employer/applications', applicationId]);
-  }
-
-  /**
-   * Load enhanced AI-powered recommendations
-   */
-  private loadEnhancedRecommendations(): void {
-    this.dashboardService.getRecommendedJobs(6).pipe(
-      takeUntil(this.destroy$),
-      catchError(error => {
-        console.error('Error loading enhanced recommendations:', error);
-        // Fallback to basic recommendations
-        return of({
-          recommendations: [],
-          recommendationReason: 'Unable to load recommendations at this time',
-          isAiPowered: false
-        });
-      })
-    ).subscribe({
-      next: (response) => {
-        this.recommendedJobs = response.recommendations;
-        this.recommendationReason = response.recommendationReason;
-        this.isAiPowered = response.isAiPowered;
-      }
-    });
-  }
-
-  /**
-   * Get recommendation status for UI display
-   */
-  getRecommendationStatus(): {
-    statusText: string;
-    statusIcon: string;
-    statusColor: string;
-  } {
-    return this.recommendationService.getRecommendationStatus(this.recommendationReason);
   }
 }

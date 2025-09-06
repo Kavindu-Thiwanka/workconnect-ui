@@ -1,6 +1,6 @@
 <div class="dashboard-container">
   <!-- Dashboard Header -->
-  <section class="dashboard-header" *ngIf="userRole === 'WORKER'">
+  <section class="dashboard-header">
     <div class="container">
       <div class="header-content animate-fade-in-up">
         <div class="welcome-section">
@@ -8,8 +8,11 @@
             Welcome back!
             <span class="wave">👋</span>
           </h1>
-          <p class="welcome-subtitle">
+          <p class="welcome-subtitle" *ngIf="userRole === 'WORKER'">
             Ready to find your next opportunity?
+          </p>
+          <p class="welcome-subtitle" *ngIf="userRole === 'EMPLOYER'">
+            Manage your jobs and find the perfect candidates
           </p>
         </div>
 
@@ -51,6 +54,45 @@
             <mat-spinner diameter="30"></mat-spinner>
           </div>
         </div>
+
+        <div class="quick-stats" *ngIf="userRole === 'EMPLOYER' && employerStats">
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>business</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">{{ employerStats.activeJobs }}</span>
+              <span class="stat-label">Active Jobs</span>
+            </div>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">{{ employerStats.totalApplications }}</span>
+              <span class="stat-label">Applications</span>
+            </div>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="stat-number">{{ employerStats.newApplicationsThisWeek }}</span>
+              <span class="stat-label">New This Week</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading state for employer stats -->
+        <div class="quick-stats" *ngIf="userRole === 'EMPLOYER' && !employerStats && isLoading">
+          <div class="stat-card glass">
+            <mat-spinner diameter="30"></mat-spinner>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -65,15 +107,7 @@
             <h2 class="card-title">
               <mat-icon>recommend</mat-icon>
               Recommended for You
-              <span class="recommendation-badge" [ngClass]="getRecommendationStatus().statusColor"
-                    *ngIf="recommendationReason">
-                  <mat-icon class="badge-icon">{{ getRecommendationStatus().statusIcon }}</mat-icon>
-                {{ getRecommendationStatus().statusText }}
-                </span>
             </h2>
-<!--            <p class="recommendation-reason" *ngIf="recommendationReason">-->
-<!--              {{ recommendationReason }}-->
-<!--            </p>-->
             <button mat-button class="view-all-btn" routerLink="/app/jobs">
               View All
               <mat-icon>arrow_forward</mat-icon>
@@ -82,18 +116,24 @@
 
           <div class="card-content">
             <div *ngIf="recommendedJobs.length > 0; else noRecs" class="recommendations-list">
-              <div class="job-recommendation" [ngClass]="isAiPowered ? 'ai-powered' : 'basic-recommendation'"
-                   *ngFor="let job of recommendedJobs.slice(0, 3)">
+              <div class="job-recommendation" *ngFor="let job of recommendedJobs.slice(0, 3)">
                 <div class="job-info">
                   <div class="company-avatar">
                     {{ job.employerCompanyName.charAt(0) || 'C' }}
                   </div>
                   <div class="job-details">
                     <h4 class="job-title">{{ job.jobTitle }}</h4>
-                    <span class="location">
+<!--                    <p class="company-name">{{ job.employerCompanyName || 'Company' }}</p>-->
+<!--                    <div class="job-meta">-->
+                      <span class="location">
                         <mat-icon>location_on</mat-icon>
-                      {{ job.location }}
-                    </span>
+                        {{ job.location }}
+                      </span>
+<!--                      <span class="salary" *ngIf="job.salary">-->
+<!--                        {{ formatSalary(job.salary, job.currency) }}-->
+<!--                      </span>-->
+<!--                      <span class="job-type">{{ job.jobType.replace('_', ' ') }}</span>-->
+<!--                    </div>-->
                   </div>
                 </div>
                 <div class="job-actions">
@@ -110,18 +150,11 @@
             <ng-template #noRecs>
               <div class="empty-state">
                 <mat-icon class="empty-icon">work_off</mat-icon>
-                <h4>No recommendations available</h4>
-                <p *ngIf="!isAiPowered">Complete your profile with skills to get AI-powered job recommendations</p>
-                <p *ngIf="isAiPowered">No matching jobs found based on your skills. Try updating your profile or check
-                  back later.</p>
-                <div class="empty-actions">
-                  <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
-                    Update Profile
-                  </button>
-                  <button mat-stroked-button routerLink="/app/jobs" class="btn-modern">
-                    Browse All Jobs
-                  </button>
-                </div>
+                <h4>No recommendations yet</h4>
+                <p>Complete your profile to get personalized job recommendations</p>
+                <button mat-raised-button color="primary" routerLink="/app/profile" class="btn-modern">
+                  Update Profile
+                </button>
               </div>
             </ng-template>
 
@@ -150,8 +183,8 @@
             <div *ngIf="recentApplications.length > 0; else noApplications" class="applications-list">
               <div class="application-item" *ngFor="let app of recentApplications.slice(0, 3)">
                 <div class="application-info">
-                  <h4 class="job-title">{{ app.jobTitle || 'Job Title' }}</h4>
-                  <p class="company-name">{{ app.employerCompanyName || 'Company' }}</p>
+                  <h4 class="job-title">{{ app.job?.jobTitle || 'Job Title' }}</h4>
+                  <p class="company-name">{{ app.job?.employerProfile?.companyName || 'Company' }}</p>
                   <span class="application-date">Applied {{ formatDate(app.appliedAt) }}</span>
                 </div>
                 <div class="application-status">
@@ -204,8 +237,7 @@
               </mat-progress-bar>
             </div>
 
-            <div *ngIf="profileCompletion && profileCompletion.tips && profileCompletion.tips.length > 0"
-                 class="improvement-tips">
+            <div *ngIf="profileCompletion && profileCompletion.tips && profileCompletion.tips.length > 0" class="improvement-tips">
               <h4>Boost your profile:</h4>
               <ul class="tips-list">
                 <li *ngFor="let tip of profileCompletion.tips.slice(0, 3)">
@@ -266,6 +298,3 @@
     <app-employer-dashboard></app-employer-dashboard>
   </section>
 </div>
-
-
-

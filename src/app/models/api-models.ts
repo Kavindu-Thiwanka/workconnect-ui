@@ -107,6 +107,8 @@ export interface Job {
 export interface JobApplication {
   id: number;
   jobId: number;
+  jobTitle?: string;
+  employerCompanyName?: string;
   workerId: number;
   status: 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'INTERVIEWED' | 'OFFERED' | 'HIRED' | 'REJECTED' | 'COMPLETED';
   coverLetter?: string;
@@ -351,6 +353,23 @@ export interface PageResponse<T> {
   first: boolean;
   last: boolean;
   numberOfElements: number;
+}
+
+// Recommendation Models
+export interface JobRecommendation {
+  recommendations: Job[];
+  totalCount: number;
+  recommendationReason: string;
+  isAiPowered?: boolean;
+  aiServiceUsed?: boolean;
+}
+
+export interface RecommendationResponse {
+  recommendations: Job[];
+  totalCount: number;
+  recommendationReason: string;
+  isAiPowered?: boolean;
+  fallbackUsed?: boolean;
 }
 
 // Notification Models
